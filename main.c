@@ -1,4 +1,6 @@
-//
-// Created by fares on 26/10/2022.
-//
+#include <stdio.h>
 
+int main(){
+    printf("Hello world!\n") ;
+    return  0 ;
+}
