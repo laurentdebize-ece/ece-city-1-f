@@ -12,4 +12,6 @@ typedef struct {
     int mode_de_jeu ;
 }Menu;
 
+void dessinerMenu(ALLEGRO_FONT* font, int mouse_x, int mouse_y) ;
+
 #endif //ECE_CITY_1_F_MENU_H

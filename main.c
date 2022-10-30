@@ -36,8 +36,10 @@ int main() {
     int mouse_x = 0, mouse_y = 0;
     times = al_create_timer(0.02);
     Menu menu;
+    int rect1 = 0, rect2 = 0, rect3 = 0 ;
 
     ALLEGRO_BITMAP* background = al_load_bitmap("../backgroundMenu.jpg") ;
+    ALLEGRO_FONT* font = al_load_ttf_font("../Blomberg-8MKKZ.otf", 50, ALLEGRO_ALIGN_LEFT) ;
 
     queue = al_create_event_queue();
     assert(queue);
@@ -45,7 +47,7 @@ int main() {
     al_register_event_source(queue, al_get_mouse_event_source());
     al_register_event_source(queue, al_get_timer_event_source(times));
     al_start_timer(times);
-
+    menu.mode_de_jeu = MENU ;
     while (!isFin) {
         while (menu.mode_de_jeu != JOUER && menu.mode_de_jeu != FIN) {
             al_wait_for_event(queue, &event);
@@ -54,7 +56,7 @@ int main() {
                     switch (event.keyboard.keycode) {
                         case ALLEGRO_KEY_ESCAPE : {
                             menu.mode_de_jeu = FIN;
-                            isFin = 1 ;
+                            isFin = 1;
                             break;
                         }
                     }
@@ -69,6 +71,15 @@ int main() {
                     if ((event.mouse.button & 1) == 1) {
                         switch (menu.mode_de_jeu) {
                             case MENU : {
+                                if (mouse_x > 357 && mouse_x < 662 && mouse_y > 300 && mouse_y < 380) {
+                                    menu.mode_de_jeu = JOUER;
+                                }
+                                if (mouse_x > 357 && mouse_x < 662 && mouse_y > 430 && mouse_y < 510) {
+                                    menu.mode_de_jeu = REGLES;
+                                }
+                                if (mouse_x > 357 && mouse_x < 662 && mouse_y > 560 && mouse_y < 640) {
+                                    menu.mode_de_jeu = EQUIPE;
+                                }
                                 break;
                             }
                             case EQUIPE : {
@@ -83,19 +94,22 @@ int main() {
                 }
                 case ALLEGRO_EVENT_TIMER : {
                     draw = 1;
+                    break ;
                 }
             }
             if (draw) {
-                al_draw_bitmap(background, 0, 0, 0) ;
+                al_draw_bitmap(background, 0, 0, 0);
                 switch (menu.mode_de_jeu) {
                     case MENU : {
+                        dessinerMenu(font, mouse_x, mouse_y);
                         break;
                     }
                     case EQUIPE : {
+                        al_draw_filled_rectangle(0, 0, width, height, al_map_rgba(150, 150, 150, 150)) ;
                         break;
                     }
                     case REGLES : {
-
+                        al_draw_filled_rectangle(0, 0, width, height, al_map_rgba(150, 150, 150, 150)) ;
                     }
                 }
                 al_flip_display();
@@ -103,7 +117,33 @@ int main() {
                 draw = 0;
             }
         }
+        while(menu.mode_de_jeu == JOUER) {
+            al_wait_for_event(queue, &event);
+            switch (event.type) {
+                case ALLEGRO_EVENT_KEY_DOWN : {
+                    switch (event.keyboard.keycode) {
+                        case ALLEGRO_KEY_ESCAPE : {
+                            menu.mode_de_jeu = FIN;
+                            isFin = 1;
+                            break;
+                        }
+                    }
+                    break ;
+                }
+                case ALLEGRO_EVENT_TIMER : {
+                        draw = 1;
+                        break ;
+                }
+            }
+            if (draw) {
+                al_draw_text(font, black, 507, 360, ALLEGRO_ALIGN_CENTER, "valentin ntm");
+                al_flip_display();
+                al_clear_to_color(white);
+                draw = 0;
+            }
+        }
     }
+
     ///DESTRUCTION DES ELEMENTS DU JEU
     return 0;
 }
