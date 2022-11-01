@@ -19,6 +19,7 @@ void dessinerMenu(ALLEGRO_FONT* font, int mouse_x, int mouse_y) {
 
     ///JOUER
     if (mouse_x > 357 && mouse_x < 662 && mouse_y > 300 && mouse_y < 380) {
+        al_draw_rectangle(357, 300, 662, 380, al_map_rgb(232, 30, 23), 1.5 * largeur);
         al_draw_filled_triangle(337, 340, 302, 310, 302, 370, al_map_rgb(232, 30, 23));
         al_draw_triangle(337, 340, 302, 310, 302, 370, al_map_rgb(0, 0, 0), 0.6 * largeur);
 
@@ -27,6 +28,7 @@ void dessinerMenu(ALLEGRO_FONT* font, int mouse_x, int mouse_y) {
     }
     ///REGLES
     if (mouse_x > 357 && mouse_x < 662 && mouse_y > 430 && mouse_y < 510) {
+        al_draw_rectangle(357, 430, 662, 510, al_map_rgb(232, 30, 23), 1.5 * largeur);
         al_draw_filled_triangle(337, 470, 302, 440, 302, 500, al_map_rgb(232, 30, 23));
         al_draw_triangle(337, 470, 302, 440, 302, 500, al_map_rgb(0, 0, 0), 0.6 * largeur);
 
@@ -36,6 +38,7 @@ void dessinerMenu(ALLEGRO_FONT* font, int mouse_x, int mouse_y) {
 
     ///EQUIPE
     if (mouse_x > 357 && mouse_x < 662 && mouse_y > 560 && mouse_y < 640) {
+        al_draw_rectangle(357, 560, 662, 640, al_map_rgb(232, 30, 23), 1.5 * largeur);
         al_draw_filled_triangle(337, 600, 302, 570, 302, 630, al_map_rgb(232, 30, 23));
         al_draw_triangle(337, 600, 302, 570, 302, 630, al_map_rgb(0, 0, 0), 0.6 * largeur);
 

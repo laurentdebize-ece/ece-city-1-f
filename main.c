@@ -39,6 +39,7 @@ int main() {
     int rect1 = 0, rect2 = 0, rect3 = 0 ;
 
     ALLEGRO_BITMAP* background = al_load_bitmap("../backgroundMenu.jpg") ;
+    ALLEGRO_BITMAP* equipe = al_load_bitmap("../team.png") ;
     ALLEGRO_FONT* font = al_load_ttf_font("../Blomberg-8MKKZ.otf", 50, ALLEGRO_ALIGN_LEFT) ;
 
     queue = al_create_event_queue();
@@ -106,6 +107,7 @@ int main() {
                     }
                     case EQUIPE : {
                         al_draw_filled_rectangle(0, 0, width, height, al_map_rgba(150, 150, 150, 150)) ;
+                        al_draw_scaled_bitmap(equipe, 0, 0, 658, 384, -100, -50, 1316, 768, 0);
                         break;
                     }
                     case REGLES : {
