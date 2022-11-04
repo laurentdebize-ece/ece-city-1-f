@@ -21,7 +21,7 @@ int main() {
 
     ///CREATION DU DISPLAY
     al_set_new_display_flags(ALLEGRO_WINDOWED);
-    display = al_create_display(1024, 768);
+    display = al_create_display(1150, 900);
     double height = al_get_display_height(display);
     double width = al_get_display_width(display);
     al_set_window_position(display, 0, 0);
@@ -80,13 +80,13 @@ int main() {
                     if ((event.mouse.button & 1) == 1) {
                         switch (menu.mode_de_jeu) {
                             case MENU : {
-                                if (mouse_x > 357 && mouse_x < 662 && mouse_y > 300 && mouse_y < 380) {
+                                if (mouse_x > 422 && mouse_x < 728 && mouse_y > 400 && mouse_y < 480) {
                                     menu.mode_de_jeu = JOUER;
                                 }
-                                if (mouse_x > 357 && mouse_x < 662 && mouse_y > 430 && mouse_y < 510) {
+                                if (mouse_x > 422 && mouse_x < 728 && mouse_y > 530 && mouse_y < 610) {
                                     menu.mode_de_jeu = REGLES;
                                 }
-                                if (mouse_x > 357 && mouse_x < 662 && mouse_y > 560 && mouse_y < 640) {
+                                if (mouse_x > 422 && mouse_x < 728 && mouse_y > 660 && mouse_y < 740) {
                                     menu.mode_de_jeu = EQUIPE;
                                 }
                                 break;
@@ -113,7 +113,7 @@ int main() {
                 }
             }
             if (draw) {
-                al_draw_bitmap(background, 0, 0, 0);
+                al_draw_scaled_bitmap(background, 0, 0, 1024, 767, 0, 0, width, height, 0);
                 switch (menu.mode_de_jeu) {
                     case MENU : {
                         dessinerMenu(font, mouse_x, mouse_y);
