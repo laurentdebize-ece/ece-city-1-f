@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "menu.h"
+#include "jeu.h"
 
 int main() {
     ///INITIALISATION DU DISPLAY ET DU TIMER
@@ -33,9 +34,14 @@ int main() {
 
     ///CREATION DES DONNEES DU JEU
     int isFin = 0, draw = 0;
-    int mouse_x = 0, mouse_y = 0, time = 0;
+    int mouse_x = 0, mouse_y = 0, compteur = 0;
     times = al_create_timer(0.02);
     Menu menu;
+    Jeu jeu ;
+    initJeu(&jeu) ;
+
+
+    ///CREATION DES IMAGES
     ALLEGRO_BITMAP* background = al_load_bitmap("../Bitmap/backgroundMenu.jpg") ;
     menu.batimentDeco[0] = al_load_bitmap("../Bitmap/bat1.png") ;
     menu.batimentDeco[1] = al_load_bitmap("../Bitmap/bat2.png") ;
@@ -45,9 +51,12 @@ int main() {
     menu.batimentDeco[5] = al_load_bitmap("../Bitmap/bat6.png") ;
     menu.batimentDeco[6] = al_load_bitmap("../Bitmap/fares.png") ;
     menu.batimentDeco[7] = al_load_bitmap("../Bitmap/valentin.png") ;
+    ALLEGRO_BITMAP* habitant = al_load_bitmap("../Bitmap/habitant.png") ;
 
-
+    ///CREATION DE L'ECRITURE
     ALLEGRO_FONT* font = al_load_ttf_font("../Blomberg-8MKKZ.otf", 50, ALLEGRO_ALIGN_LEFT) ;
+    ALLEGRO_FONT* smallfont = al_load_ttf_font("../Blomberg-8MKKZ.otf", 25, ALLEGRO_ALIGN_LEFT) ;
+
 
 
     queue = al_create_event_queue();
@@ -147,13 +156,17 @@ int main() {
                 }
                 case ALLEGRO_EVENT_TIMER : {
                         draw = 1;
+                        compteur++ ;
+                        temps(&jeu.time, compteur) ;
                         break ;
                 }
             }
             if (draw) {
-                al_draw_text(font, black, 507, 360, ALLEGRO_ALIGN_CENTER, "valentin ntm");
+                dessinerJeu(smallfont, jeu, width, height) ;
+                al_draw_scaled_bitmap(habitant, 0, 0, 1024, 985, 1000, 3, 40, 30, 0) ;
+                al_draw_textf(smallfont, al_map_rgb(255, 255, 255), 980, 7, ALLEGRO_ALIGN_CENTER, "%d", jeu.nbHabitants) ;
                 al_flip_display();
-                al_clear_to_color(white);
+                al_clear_to_color(black);
                 draw = 0;
             }
         }

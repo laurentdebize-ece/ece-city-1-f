@@ -16,6 +16,5 @@ typedef struct {
 
 void dessinerMenu(ALLEGRO_FONT* font, int mouse_x, int mouse_y) ;
 void dessinerEquipe(Menu* menu, ALLEGRO_FONT* font, float width, float height, float mouse_x, float mouse_y) ;
-void ntmsalefidpute(ALLEGRO_BITMAP* taMereLaPutamadre) ;
 
 #endif //ECE_CITY_1_F_MENU_H
