@@ -48,6 +48,39 @@ void dessinerMenu(ALLEGRO_FONT* font, int mouse_x, int mouse_y) {
     al_draw_text(font, al_map_rgb(232, 30, 23), 507, 320, ALLEGRO_ALIGN_CENTER, "Jouer") ;
     al_draw_text(font, al_map_rgb(232, 30, 23), 507, 450, ALLEGRO_ALIGN_CENTER, "Regles") ;
     al_draw_text(font, al_map_rgb(232, 30, 23), 507, 580, ALLEGRO_ALIGN_CENTER, "Equipe ") ;
+}
+
+void dessinerEquipe(Menu* menu, ALLEGRO_FONT* font, float width, float height, float mouse_x, float mouse_y) {
+    float largeur = 4;
+    double color = 2;
+    al_draw_filled_rectangle(0, 0, width, height, al_map_rgba(150, 150, 150, 150)) ;
+
+    if ( mouse_x < 170 && mouse_x > 10 && mouse_y < 70 && mouse_y > 10) {
+        al_draw_filled_rectangle(10, 10, 170, 70, al_map_rgb(200,200,200)) ;
+    }
+    else   al_draw_filled_rectangle(10, 10, 170, 70, al_map_rgb(150,150,150)) ;
+    al_draw_rectangle(10, 10, 170, 70, al_map_rgb(10,10, 10), 2);
+    al_draw_text(font, al_map_rgb(10, 10, 10), 90, 20, ALLEGRO_ALIGN_CENTER, "Retour") ;
+
+    for (int i = 0; i < 70; i++) {
+        al_draw_line(157, 100 + i * largeur, 862, 100 + i * largeur,al_map_rgba(255,20 + color*i,color * i, 100), largeur);
+        al_draw_line(157, 380 + i * largeur, 862, 380 + i * largeur,al_map_rgba(255,160 - color*i,140- color * i, 50), largeur);
+    }
+
+    al_draw_scaled_bitmap(menu->batimentDeco[6], 0, 0, 307, 305, 230, 200, 282/2, 321/2, 0) ;
+    al_draw_scaled_bitmap(menu->batimentDeco[7], 0, 0, 330, 322, 630, 460, 282/2, 321/2, 0) ;
+
+    al_draw_scaled_bitmap(menu->batimentDeco[2], 0, 0, 360, 1000, 95, 360, 360/3, 1000/3, 0) ;
+    al_draw_scaled_bitmap(menu->batimentDeco[3], 0, 0, 300, 1115, 800, 320, 300/3, 1115/3, 1) ;
+
+    al_draw_text(font, al_map_rgb(0, 0, 0), 300, 140, ALLEGRO_ALIGN_CENTER, "Fares") ;
+    al_draw_text(font, al_map_rgb(0, 0, 0), 700, 140, ALLEGRO_ALIGN_CENTER, "Lisa") ;
+    al_draw_text(font, al_map_rgb(0, 0, 0), 300, 400, ALLEGRO_ALIGN_CENTER, "Eva") ;
+    al_draw_text(font, al_map_rgb(0, 0, 0), 700, 400, ALLEGRO_ALIGN_CENTER, "Valentin") ;
+
+
+
+
 
 
 }

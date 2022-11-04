@@ -33,14 +33,22 @@ int main() {
 
     ///CREATION DES DONNEES DU JEU
     int isFin = 0, draw = 0;
-    int mouse_x = 0, mouse_y = 0;
+    int mouse_x = 0, mouse_y = 0, time = 0;
     times = al_create_timer(0.02);
     Menu menu;
-    int rect1 = 0, rect2 = 0, rect3 = 0 ;
+    ALLEGRO_BITMAP* background = al_load_bitmap("../Bitmap/backgroundMenu.jpg") ;
+    menu.batimentDeco[0] = al_load_bitmap("../Bitmap/bat1.png") ;
+    menu.batimentDeco[1] = al_load_bitmap("../Bitmap/bat2.png") ;
+    menu.batimentDeco[2] = al_load_bitmap("../Bitmap/bat3.png") ;
+    menu.batimentDeco[3] = al_load_bitmap("../Bitmap/bat4.png") ;
+    menu.batimentDeco[4] = al_load_bitmap("../Bitmap/bat5.png") ;
+    menu.batimentDeco[5] = al_load_bitmap("../Bitmap/bat6.png") ;
+    menu.batimentDeco[6] = al_load_bitmap("../Bitmap/fares.png") ;
+    menu.batimentDeco[7] = al_load_bitmap("../Bitmap/valentin.png") ;
 
-    ALLEGRO_BITMAP* background = al_load_bitmap("../backgroundMenu.jpg") ;
-    ALLEGRO_BITMAP* equipe = al_load_bitmap("../team.png") ;
+
     ALLEGRO_FONT* font = al_load_ttf_font("../Blomberg-8MKKZ.otf", 50, ALLEGRO_ALIGN_LEFT) ;
+
 
     queue = al_create_event_queue();
     assert(queue);
@@ -84,9 +92,15 @@ int main() {
                                 break;
                             }
                             case EQUIPE : {
+                                if (mouse_x < 170 && mouse_x > 10 && mouse_y < 70 && mouse_y > 10) {
+                                    menu.mode_de_jeu = MENU;
+                                }
                                 break;
                             }
                             case REGLES : {
+                                if (mouse_x < 170 && mouse_x > 10 && mouse_y < 70 && mouse_y > 10) {
+                                    menu.mode_de_jeu = MENU;
+                                }
                                 break;
                             }
                         }
@@ -106,8 +120,7 @@ int main() {
                         break;
                     }
                     case EQUIPE : {
-                        al_draw_filled_rectangle(0, 0, width, height, al_map_rgba(150, 150, 150, 150)) ;
-                        al_draw_scaled_bitmap(equipe, 0, 0, 658, 384, -100, -50, 1316, 768, 0);
+                        dessinerEquipe(&menu, font, (float)width, (float)height, (float)mouse_x, (float)mouse_y) ;
                         break;
                     }
                     case REGLES : {
