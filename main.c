@@ -22,7 +22,7 @@ int main() {
 
     ///CREATION DU DISPLAY
     al_set_new_display_flags(ALLEGRO_WINDOWED);
-    display = al_create_display(1150, 900);
+    display = al_create_display(1024, 768);
     double height = al_get_display_height(display);
     double width = al_get_display_width(display);
     al_set_window_position(display, 0, 0);
@@ -51,7 +51,8 @@ int main() {
     menu.batimentDeco[5] = al_load_bitmap("../Bitmap/bat6.png") ;
     menu.batimentDeco[6] = al_load_bitmap("../Bitmap/fares.png") ;
     menu.batimentDeco[7] = al_load_bitmap("../Bitmap/valentin.png") ;
-    ALLEGRO_BITMAP* habitant = al_load_bitmap("../Bitmap/habitant.png") ;
+    ALLEGRO_BITMAP* map = al_load_bitmap("../Bitmap/map.png") ;
+    jeu.bitmap[1] = al_load_bitmap("../Bitmap/habitant.png") ;
 
     ///CREATION DE L'ECRITURE
     ALLEGRO_FONT* font = al_load_ttf_font("../Blomberg-8MKKZ.otf", 50, ALLEGRO_ALIGN_LEFT) ;
@@ -65,7 +66,7 @@ int main() {
     al_register_event_source(queue, al_get_mouse_event_source());
     al_register_event_source(queue, al_get_timer_event_source(times));
     al_start_timer(times);
-    menu.mode_de_jeu = MENU ;
+    menu.mode_de_jeu = MENU    ;
     while (!isFin) {
         while (menu.mode_de_jeu != JOUER && menu.mode_de_jeu != FIN) {
             al_wait_for_event(queue, &event);
@@ -89,13 +90,13 @@ int main() {
                     if ((event.mouse.button & 1) == 1) {
                         switch (menu.mode_de_jeu) {
                             case MENU : {
-                                if (mouse_x > 422 && mouse_x < 728 && mouse_y > 400 && mouse_y < 480) {
+                                if (mouse_x > 357 && mouse_x < 662 && mouse_y > 300 && mouse_y < 380) {
                                     menu.mode_de_jeu = JOUER;
                                 }
-                                if (mouse_x > 422 && mouse_x < 728 && mouse_y > 530 && mouse_y < 610) {
+                                if (mouse_x > 357 && mouse_x < 662 && mouse_y > 430 && mouse_y < 510) {
                                     menu.mode_de_jeu = REGLES;
                                 }
-                                if (mouse_x > 422 && mouse_x < 728 && mouse_y > 660 && mouse_y < 740) {
+                                if (mouse_x > 357 && mouse_x < 662 && mouse_y > 560 && mouse_y < 640) {
                                     menu.mode_de_jeu = EQUIPE;
                                 }
                                 break;
@@ -122,7 +123,7 @@ int main() {
                 }
             }
             if (draw) {
-                al_draw_scaled_bitmap(background, 0, 0, 1024, 767, 0, 0, width, height, 0);
+                al_draw_bitmap(background, 0, 0, 0);
                 switch (menu.mode_de_jeu) {
                     case MENU : {
                         dessinerMenu(font, mouse_x, mouse_y);
@@ -162,9 +163,8 @@ int main() {
                 }
             }
             if (draw) {
-                dessinerJeu(smallfont, jeu, width, height) ;
-                al_draw_scaled_bitmap(habitant, 0, 0, 1024, 985, 1000, 3, 40, 30, 0) ;
-                al_draw_textf(smallfont, al_map_rgb(255, 255, 255), 980, 7, ALLEGRO_ALIGN_CENTER, "%d", jeu.nbHabitants) ;
+                al_draw_bitmap(map, -20, -55, 0) ;
+                dessinerJeu(smallfont, &jeu) ;
                 al_flip_display();
                 al_clear_to_color(black);
                 draw = 0;

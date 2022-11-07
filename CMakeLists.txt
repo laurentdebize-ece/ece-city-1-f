@@ -5,6 +5,7 @@ set(CMAKE_C_STANDARD 11)
 
 add_executable(ece_city_1_f main.c menu.c menu.h jeu.c jeu.h)
 
+
 IF(WIN32)
     target_link_libraries(ece_city_1_f -lmingw32 -lallegro-5.0.10-monolith-md-debug)
 ELSE()
