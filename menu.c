@@ -1,6 +1,23 @@
 #include "menu.h"
 
 
+void initBitmapDeco(Menu* menu) {
+    menu->deco[0].width = 360 ;
+    menu->deco[0].height = 1000 ;
+
+    menu->deco[1].width = 300 ;
+    menu->deco[1].height = 1115 ;
+
+    menu->deco[2].width = 307 ;
+    menu->deco[2].height = 305 ;
+
+    menu->deco[3].width = 330 ;
+    menu->deco[3].height = 322 ;
+
+    menu->deco[4].width = 1024 ;
+    menu->deco[4].height = 767 ;
+}
+
 void dessinerMenu(ALLEGRO_FONT* font, int mouse_x, int mouse_y) {
     float largeur = 2;
     double color = 2.5;
@@ -65,11 +82,11 @@ void dessinerEquipe(Menu* menu, ALLEGRO_FONT* font, float width, float height, f
                      al_map_rgba(255, 160 - color * i, 140 - color * i, 50), largeur);
     }
 
-    al_draw_scaled_bitmap(menu->batimentDeco[6], 0, 0, 307, 305, 230, 200, 282 / 2, 321 / 2, 0);
-    al_draw_scaled_bitmap(menu->batimentDeco[7], 0, 0, 330, 322, 630, 460, 282 / 2, 321 / 2, 0);
+    al_draw_scaled_bitmap(menu->deco[2].image, 0, 0, menu->deco[2].width, menu->deco[2].height, 230, 200, 282 / 2, 321 / 2, 0);
+    al_draw_scaled_bitmap(menu->deco[3].image, 0, 0, menu->deco[3].width, menu->deco[3].height, 630, 460, 282 / 2, 321 / 2, 0);
 
-    al_draw_scaled_bitmap(menu->batimentDeco[2], 0, 0, 360, 1000, 80, 275, 3*360 /7, 3*1000 / 7, 0);
-    al_draw_scaled_bitmap(menu->batimentDeco[3], 0, 0, 300, 1115, 800, 230, 3*300 /7, 3*1115 / 7, 1);
+    al_draw_scaled_bitmap(menu->deco[0].image, 0, 0, menu->deco[0].width, menu->deco[0].height, 80, 275, 3 * 360 / 7, 3 * 1000 / 7, 0);
+    al_draw_scaled_bitmap(menu->deco[1].image, 0, 0, menu->deco[1].width, menu->deco[1].height, 800, 230, 3 * 300 / 7, 3 * 1115 / 7, 1);
 
     al_draw_text(font, al_map_rgb(0, 0, 0), 300, 140, ALLEGRO_ALIGN_CENTER, "Fares");
     al_draw_text(font, al_map_rgb(0, 0, 0), 700, 140, ALLEGRO_ALIGN_CENTER, "Lisa");
