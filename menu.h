@@ -10,7 +10,6 @@
 
 enum Menu {MENU, REGLES, EQUIPE, JOUER, FIN};
 
-
 typedef struct{
     ALLEGRO_BITMAP* image ;
     int width, height ;

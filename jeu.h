@@ -4,10 +4,10 @@
 #define NBICONE 10
 #define COLONNE 45
 #define LIGNE 35
+#define CAPACITE 5000
 
 enum BATIMENTS{RIEN, ROUTE, CENTRALE, CHATEAU, TERRAIN, CABANE, MAISON, IMMEUBLE, GRATTE_CIEL};
 enum Niveau{ROUTIER, EAU, ELECTRICITE};
-
 
 
 typedef struct{
@@ -19,7 +19,31 @@ typedef struct{
 }Case;
 
 typedef struct {
+    int quantitedistri;
+    int x, y,type;
+    Bitmap bitmapeau;
+}Chateau;
+
+typedef struct {
+    int quantitedistri;
+    int x, y,type;
+    Bitmap bitmapcen;
+}Centralelectrique;
+
+typedef struct{
+    int x,y,type;
+    Bitmap habitation;
+}Habitation;
+
+
+typedef struct {
     int nbHabitants, width, height, mouse_x, mouse_y ;
+    int argent;
+    int nbcentrale;
+    Centralelectrique tabcentrale;
+    int nbchateau;
+    Chateau tabchat;
+    Habitation tabhabitation;
     bool mouseIsPressed;
     int niveauAfficher, objetSelectionne ;
     Case map[COLONNE][LIGNE] ;
@@ -36,5 +60,6 @@ int determinerCaseX(int mouse_x) ;
 int determinerCaseY(int mouse_y) ;
 
 void dessinerTerrain() ;
+void mettreCentrale();
 
 #endif //ECE_CITY_1_F_JEU_H

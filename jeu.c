@@ -10,9 +10,11 @@ void initJeu(Jeu* jeu) {
     jeu->icone[2].width = 288 ;
     jeu->icone[2].height = 279 ;
 
-    jeu->time.secondes =  jeu->time.minutes = jeu->nbHabitants = jeu->mouse_x = jeu->mouse_y = 0;
+    jeu->time.secondes =  jeu->time.minutes = jeu->nbHabitants = jeu->mouse_x = jeu->mouse_y = jeu->nbcentrale = jeu->nbchateau = 0;
+    jeu->argent= 500000;
     jeu->niveauAfficher = ROUTIER ;
     jeu->mouseIsPressed = false ;
+
 
     for(int i = 0 ; i < COLONNE ; i++) {
         for(int j = 0 ; j < LIGNE ; j++) {
@@ -49,7 +51,6 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
 
 
     //al_draw_filled_rectangle(0, 720, jeu->width, 768, al_map_rgb(30, 144, 255));
-
 
     ///TIMER
     if (jeu->time.secondes < 10) {
@@ -143,7 +144,6 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
         if(jeu->mouseIsPressed) {
             if ((jeu->mouse_x - 49.5) * (jeu->mouse_x - 49.5) + (jeu->mouse_y - 387.5) * (jeu->mouse_y - 387.5) <
                 42.5 * 42.5) {
-
                 jeu->objetSelectionne = ROUTE;
             }
             else if(!(jeu->mouse_x > 120 && jeu->mouse_x < 1020 && jeu->mouse_y > 6 && jeu->mouse_y < 706)){
@@ -154,6 +154,8 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                     jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].type = ROUTE ;
                 }
             }
+
+
         }
         switch (jeu->objetSelectionne) {
             case ROUTE : {
@@ -161,6 +163,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                 al_draw_filled_rectangle(jeu->mouse_x-10, jeu->mouse_y-10, jeu->mouse_x+10, jeu->mouse_y+10, al_map_rgb(50, 50, 50)) ;
                 break ;
             }
+
         }
     }
 
@@ -187,4 +190,10 @@ int determinerCaseY(int mouse_x) {
     caseY = mouse_x - 6 ;
     caseY = caseY/20 ;
     return (int)caseY ;
+}
+
+void mettreCentrale(){
+
+
+
 }
