@@ -2,9 +2,11 @@
 #define MAPX 310
 #define MAPY 100
 #define CASEX_X 24
+#define ARGENTDEP 500000
 
 
 void initJeu(Jeu* jeu) {
+
     jeu->icone[0].width = 1024 ;
     jeu->icone[0].height = 985 ;
 
@@ -21,7 +23,7 @@ void initJeu(Jeu* jeu) {
     jeu->icone[4].height = 305 ;
 
     jeu->time.secondes =  jeu->time.minutes = jeu->nbHabitants = jeu->mouse_x = jeu->mouse_y = jeu->nbcentrale = jeu->nbchateau = 0;
-    jeu->argent= 500000;
+    jeu->argent= ARGENTDEP;
     jeu->niveauAfficher = ROUTIER ;
     jeu->mouseIsPressed = false ;
 
@@ -69,8 +71,12 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
         al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 990, 725, ALLEGRO_ALIGN_CENTER, "%d : 0%d",
                       jeu->time.minutes, jeu->time.secondes);
     } else al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 990, 7, ALLEGRO_ALIGN_CENTER, "%d : %d", jeu->time.minutes,jeu->time.secondes);
+    ///DESSINER NB HABIT
     al_draw_scaled_bitmap(jeu->icone[0].image, 0, 0, 1024, 985, 900, 3, 40, 30, 0);
     al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 880, 7, ALLEGRO_ALIGN_CENTER, "%d", jeu->nbHabitants);
+    ///DESSINER ARGENT
+    al_draw_textf(smallFont, al_map_rgb(47, 58, 124), 700, 7, ALLEGRO_ALIGN_CENTER, "TIMER : %d", jeu->argent);
+
 
     ///TOOLBOX
     al_draw_filled_rounded_rectangle(-10, 100, 205, 815, 10, 10, al_map_rgba(150, 150, 150, 150));
@@ -119,7 +125,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
         al_draw_text(font, al_map_rgb(232, 23, 30), 103, 325, ALLEGRO_ALIGN_CENTER, "1");
     }
 
-    ///NIVEAU 2 SI PRESSEe
+    /// NIVEAU 2 SI PRESSEe
     if (jeu->mouse_x > 40 && jeu->mouse_x < 165 && jeu->mouse_y > 440 && jeu->mouse_y < 565) {
         if (jeu->mouseIsPressed == true) {
             jeu->niveauAfficher = ELECTRICITE;
@@ -172,16 +178,18 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
             } else if (!(jeu->mouse_x > MAPX && jeu->mouse_x < MAPX + 45 * CASEX_X && jeu->mouse_y > MAPY &&jeu->mouse_y < MAPY + 35 * CASEX_X)) {
                 jeu->objetSelectionne = RIEN;
             } else if (jeu->objetSelectionne == ROUTE) {
-                if (jeu->map[caseX][caseY].type == RIEN) {
+                if (jeu->map[caseX][caseY].type == RIEN && jeu->argent >= 10;) {
                     jeu->map[caseX][caseY].type = ROUTE;
-
+                    jeu->argent -= 10;
                 }
             } else if (jeu->objetSelectionne == TERRAIN) {
                 if(verifierTerrain3_3v2(&jeu, caseX, caseY) == false) {
                     al_draw_rectangle(jeu->map[caseX][caseY].x -3 * CASEX_X / 2,jeu->map[caseX][caseY].y -3*CASEX_X / 2,jeu->map[caseX][caseY].x +3 * CASEX_X / 2,jeu->map[caseX][caseY].y +3 * CASEX_X / 2,al_map_rgb(255, 0, 0), 4) ;
+                    ///Surbrillance DU TERRAIN
 
                 }
-                else if (routeProximite(&jeu, caseX,caseY) == true){
+                else if (routeProximite(&jeu, caseX,caseY) == true && jeu->argent >= 1000){
+                    jeu->argent -= 1000;
                     for(int i = 0 ; i < 3 ; i++) {
                         jeu->map[caseX-1][caseY+1-i].type = TERRAIN ;
                         jeu->map[caseX][caseY+1-i].type = TERRAIN;
@@ -190,6 +198,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                     jeu->tabhabitation[jeu->nbMaisons].x = caseX ;
                     jeu->tabhabitation[jeu->nbMaisons].y = caseY ;
                     jeu->nbMaisons ++ ;
+                    ///POSE DU TERRAIN + CREATION DANS LE TAB
 
                 }
             }
