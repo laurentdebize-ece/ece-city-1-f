@@ -59,6 +59,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) ;
 int determinerCaseX(int mouse_x) ;
 int determinerCaseY(int mouse_y) ;
 bool verifierTerrain3_3(Jeu** jeu, int caseSourisX, int caseSourisY) ;
+bool verifierTerrain3_3v2(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 
 
 void dessinerTerrain() ;

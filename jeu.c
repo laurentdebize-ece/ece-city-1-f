@@ -208,7 +208,11 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                                 al_draw_line(jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].x -CASEX_X / 2,jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].y -3 * CASEX_X / 2,jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].x -CASEX_X / 2,jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].y +3 * CASEX_X / 2, al_map_rgb(235, 133, 63), 1);
                                 al_draw_line(jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].x +CASEX_X / 2,jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].y -3 * CASEX_X / 2,jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].x +CASEX_X / 2,jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].y +3 * CASEX_X / 2, al_map_rgb(235, 133, 63), 1);
                         }
+                        if(verifierTerrain3_3v2(&jeu, determinerCaseX(jeu->mouse_x), determinerCaseY(jeu->mouse_y))== false){
+                            al_draw_filled_rectangle(jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].x -3 * CASEX_X / 2,jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].y -3*CASEX_X / 2,jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].x +3 * CASEX_X / 2,jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].y +3 * CASEX_X / 2,al_map_rgba(255, 0, 0, 50)) ;
+                        }
                     }
+
                     break;
                 }
 
@@ -223,6 +227,8 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
             }
             if (jeu->map[i][j].type == TERRAIN) {
                 al_draw_filled_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,al_map_rgb(139, 69, 19));
+                al_draw_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,al_map_rgb(200, 69, 19),1);
+
             }
         }
     }
@@ -262,6 +268,26 @@ bool verifierTerrain3_3(Jeu** jeu, int caseSourisX, int caseSourisY) {
             (*jeu)->map[caseSourisX][caseSourisY+1-i].type = TERRAIN ;
             (*jeu)->map[caseSourisX+1][caseSourisY+1-i].type = TERRAIN ;
         }
+        return true ;
+    }
+    else return false ;
+}
+
+
+bool verifierTerrain3_3v2(Jeu** jeu, int caseSourisX, int caseSourisY) {
+    int caseLibre = 0 ;
+    for(int i = 0 ; i < 3 ; i++) {
+        if ((*jeu)->map[caseSourisX-1][caseSourisY+1-i].type == RIEN) {
+            caseLibre++ ;
+        }
+        if ((*jeu)->map[caseSourisX][caseSourisY+1-i].type == RIEN) {
+            caseLibre++ ;
+        }
+        if ((*jeu)->map[caseSourisX+1][caseSourisY+1-i].type == RIEN) {
+            caseLibre++ ;
+        }
+    }
+    if(caseLibre == 9) {
         return true ;
     }
     else return false ;
