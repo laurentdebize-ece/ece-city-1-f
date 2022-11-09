@@ -16,18 +16,19 @@ typedef struct{
 } Temps ;
 
 typedef struct{
-    int x, y, type ;
+    float x, y ;
+    int type ;
 }Case;
 
 typedef struct {
-    int quantitedistri;
-    int x, y,type;
+    int quantitedistri,type;
+    float x, y;
     Bitmap bitmapeau;
 }Chateau;
 
 typedef struct {
-    int quantitedistri;
-    int x, y,type;
+    int quantitedistri,type;
+    float x, y;
     Bitmap bitmapcen;
 }Centralelectrique;
 
@@ -39,15 +40,14 @@ typedef struct{
 
 
 typedef struct {
-    int nbHabitants, width, height, mouse_x, mouse_y ;
-    int argent;
-    int nbcentrale, nbMaisons ;
-    Centralelectrique tabcentrale;
-    int nbchateau;
-    Chateau tabchat;
-    Habitation tabhabitation[MAX];
+    float width, height ;       // Info écran
+    int mouse_x, mouse_y ;
+    int niveauAfficher, objetSelectionne ;   //Selection
+    int nbCentrale, nbMaisons, nbChateau, nbHabitants, argent ; //Info du jeu
     bool mouseIsPressed;
-    int niveauAfficher, objetSelectionne ;
+    Centralelectrique tabCentrale;  //Différentes structures du jeu
+    Chateau tabChateau;
+    Habitation tabHabitations[MAX];
     Case map[COLONNE][LIGNE] ;
     Temps time ;
     Bitmap icone[NBICONE]  ;
