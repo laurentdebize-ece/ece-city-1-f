@@ -22,11 +22,11 @@ int main() {
 
     ///CREATION DU DISPLAY
     al_set_new_display_flags(ALLEGRO_WINDOWED);
-    display = al_create_display(1024, 768);
+    display = al_create_display(1700, 956);
     double height = al_get_display_height(display);
     double width = al_get_display_width(display);
     al_set_window_position(display, 0, 0);
-    al_set_window_title(display, "ECE SimCity") ;
+    al_set_window_title(display, "ECE SimCity");
 
     ///COULEUR
     ALLEGRO_COLOR black = al_map_rgb(0, 0, 0);
@@ -36,27 +36,31 @@ int main() {
     int isFin = 0, draw = 0, compteur = 0;
     times = al_create_timer(0.02);
     Menu menu;
-    Jeu jeu ;
+    Jeu jeu;
 
     ///CHARGEMENT DES IMAGES
 
-    ALLEGRO_BITMAP* background = al_load_bitmap("../Bitmap/Menu/backgroundMenu.jpg") ;
-    menu.deco[0].image = al_load_bitmap("../Bitmap/Menu/bat3.png") ;
-    menu.deco[1].image = al_load_bitmap("../Bitmap/Menu/bat4.png") ;
-    menu.deco[2].image = al_load_bitmap("../Bitmap/Photo/fares.png") ;
-    menu.deco[3].image = al_load_bitmap("../Bitmap/Photo/valentin.png") ;
-    menu.deco[4].image = al_load_bitmap("../Bitmap/map.png") ;
+    ALLEGRO_BITMAP *background = al_load_bitmap("../Bitmap/Menu/backgroundMenu.jpg");
+    menu.deco[0].image = al_load_bitmap("../Bitmap/Menu/bat3.png");
+    menu.deco[1].image = al_load_bitmap("../Bitmap/Menu/bat4.png");
+    menu.deco[2].image = al_load_bitmap("../Bitmap/Photo/fares.png");
+    menu.deco[3].image = al_load_bitmap("../Bitmap/Photo/valentin.png");
+    menu.deco[4].image = al_load_bitmap("../Bitmap/map.png");
 
 
-    jeu.icone[0].image = al_load_bitmap("../Bitmap/Icone/habitant.png") ;
-    jeu.icone[1].image = al_load_bitmap("../Bitmap/Icone/outil.png") ;
-    jeu.icone[2].image = al_load_bitmap("../Bitmap/Icone/route.png") ;
+    jeu.icone[0].image = al_load_bitmap("../Bitmap/Icone/habitant.png");
+    jeu.icone[1].image = al_load_bitmap("../Bitmap/Icone/outil.png");
+    jeu.icone[2].image = al_load_bitmap("../Bitmap/Icone/route.png");
+    jeu.icone[3].image = al_load_bitmap("../Bitmap/Icone/maison.png");
+
+
+
 
 
 
     ///CREATION DE L'ECRITURE
-    ALLEGRO_FONT* font = al_load_ttf_font("../Blomberg-8MKKZ.otf", 50, ALLEGRO_ALIGN_LEFT) ;
-    ALLEGRO_FONT* smallfont = al_load_ttf_font("../Blomberg-8MKKZ.otf", 25, ALLEGRO_ALIGN_LEFT) ;
+    ALLEGRO_FONT *font = al_load_ttf_font("../Blomberg-8MKKZ.otf", 70, ALLEGRO_ALIGN_LEFT);
+    ALLEGRO_FONT *smallfont = al_load_ttf_font("../Blomberg-8MKKZ.otf", 35, ALLEGRO_ALIGN_LEFT);
 
 
     ///CREATION DE LA QUEUE D'EVENEMENT
@@ -68,12 +72,14 @@ int main() {
     al_start_timer(times);
 
     ///INITIALISATION DU JEU
-    menu.mode_de_jeu = MENU    ;
-    initJeu(&jeu) ;
-    initBitmapDeco(&menu) ;
+    menu.mode_de_jeu = MENU;
+    initJeu(&jeu);
+    initBitmapDeco(&menu);
 
 
     while (!isFin) {
+
+        ///MENU
         while (menu.mode_de_jeu != JOUER && menu.mode_de_jeu != FIN) {
             al_wait_for_event(queue, &event);
             switch (event.type) {
@@ -96,25 +102,25 @@ int main() {
                     if ((event.mouse.button & 1) == 1) {
                         switch (menu.mode_de_jeu) {
                             case MENU : {
-                                if (jeu.mouse_x > 357 && jeu.mouse_x < 662 && jeu.mouse_y > 300 && jeu.mouse_y < 380) {
+                                if (jeu.mouse_x > 650 && jeu.mouse_x < 1050 && jeu.mouse_y > 400 && jeu.mouse_y < 520) {
                                     menu.mode_de_jeu = JOUER;
                                 }
-                                if (jeu.mouse_x > 357 && jeu.mouse_x < 662 && jeu.mouse_y > 430 && jeu.mouse_y < 510) {
+                                if (jeu.mouse_x > 650 && jeu.mouse_x < 1050 && jeu.mouse_y > 580 && jeu.mouse_y < 700) {
                                     menu.mode_de_jeu = REGLES;
                                 }
-                                if (jeu.mouse_x > 357 && jeu.mouse_x < 662 && jeu.mouse_y > 560 && jeu.mouse_y < 640) {
+                                if (jeu.mouse_x > 650 && jeu.mouse_x < 1050 && jeu.mouse_y > 760 && jeu.mouse_y < 880) {
                                     menu.mode_de_jeu = EQUIPE;
                                 }
                                 break;
                             }
                             case EQUIPE : {
-                                if (jeu.mouse_x < 170 && jeu.mouse_x > 10 && jeu.mouse_y < 70 && jeu.mouse_y > 10) {
+                                if (jeu.mouse_x < 300 && jeu.mouse_x > 20 && jeu.mouse_y < 90 && jeu.mouse_y > 20) {
                                     menu.mode_de_jeu = MENU;
                                 }
                                 break;
                             }
                             case REGLES : {
-                                if (jeu.mouse_x < 170 && jeu.mouse_x > 10 && jeu.mouse_y < 70 && jeu.mouse_y > 10) {
+                                if (jeu.mouse_x < 300 && jeu.mouse_x > 20 && jeu.mouse_y < 90 && jeu.mouse_y > 20) {
                                     menu.mode_de_jeu = MENU;
                                 }
                                 break;
@@ -125,7 +131,7 @@ int main() {
                 }
                 case ALLEGRO_EVENT_TIMER : {
                     draw = 1;
-                    break ;
+                    break;
                 }
             }
             if (draw) {
@@ -136,11 +142,12 @@ int main() {
                         break;
                     }
                     case EQUIPE : {
-                        dessinerEquipe(&menu, font, (float)width, (float)height, (float)jeu.mouse_x, (float)jeu.mouse_y) ;
+                        dessinerEquipe(&menu, font, (float) width, (float) height, (float) jeu.mouse_x,
+                                       (float) jeu.mouse_y);
                         break;
                     }
                     case REGLES : {
-                        al_draw_filled_rectangle(0, 0, width, height, al_map_rgba(150, 150, 150, 150)) ;
+                        al_draw_filled_rectangle(0, 0, width, height, al_map_rgba(150, 150, 150, 150));
                     }
                 }
                 al_flip_display();
@@ -148,7 +155,9 @@ int main() {
                 draw = 0;
             }
         }
-        while(menu.mode_de_jeu == JOUER) {
+
+        ///JOUER
+        while (menu.mode_de_jeu == JOUER) {
             al_wait_for_event(queue, &event);
             switch (event.type) {
                 case ALLEGRO_EVENT_KEY_DOWN : {
@@ -159,17 +168,17 @@ int main() {
                             break;
                         }
                     }
-                    break ;
+                    break;
                 }
                 case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN : {
                     if ((event.mouse.button & 1) == 1) {
-                        jeu.mouseIsPressed = true ;
+                        jeu.mouseIsPressed = true;
                     }
-                    break ;
+                    break;
                 }
                 case ALLEGRO_EVENT_MOUSE_BUTTON_UP: {
                     if ((event.mouse.button & 1) == 1) {
-                        jeu.mouseIsPressed = false ;
+                        jeu.mouseIsPressed = false;
                     }
                     break;
                 }
@@ -179,15 +188,15 @@ int main() {
                     break;
                 }
                 case ALLEGRO_EVENT_TIMER : {
-                        draw = 1;
-                        compteur++ ;
-                        temps(&jeu.time, compteur) ;
-                        break ;
+                    draw = 1;
+                    compteur++;
+                    temps(&jeu.time, compteur);
+                    break;
                 }
             }
             if (draw) {
-                al_draw_bitmap(menu.deco[4].image, -20, -55, 0) ;
-                dessinerJeu(smallfont, font, &jeu) ;
+                al_draw_bitmap(menu.deco[4].image, 0, 0, 0);
+                dessinerJeu(smallfont, font, &jeu);
                 al_flip_display();
                 al_clear_to_color(black);
                 draw = 0;
