@@ -2,9 +2,11 @@
 #define MAPX 310
 #define MAPY 100
 #define CASEX_X 24
+#define ARGENTDEP 500000
 
 
 void initJeu(Jeu* jeu) {
+
     jeu->icone[0].width = 1024 ;
     jeu->icone[0].height = 985 ;
 
@@ -17,8 +19,11 @@ void initJeu(Jeu* jeu) {
     jeu->icone[3].width = 321 ;
     jeu->icone[3].height = 307 ;
 
+    jeu->icone[4].width = 309 ;
+    jeu->icone[4].height = 305 ;
+
     jeu->time.secondes =  jeu->time.minutes = jeu->nbHabitants = jeu->mouse_x = jeu->mouse_y = jeu->nbcentrale = jeu->nbchateau = 0;
-    jeu->argent= 500000;
+    jeu->argent= ARGENTDEP;
     jeu->niveauAfficher = ROUTIER ;
     jeu->mouseIsPressed = false ;
 
@@ -65,11 +70,13 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     if (jeu->time.secondes < 10) {
         al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 990, 725, ALLEGRO_ALIGN_CENTER, "%d : 0%d",
                       jeu->time.minutes, jeu->time.secondes);
-    } else
-        al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 990, 7, ALLEGRO_ALIGN_CENTER, "%d : %d", jeu->time.minutes,
-                      jeu->time.secondes);
+    } else al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 990, 7, ALLEGRO_ALIGN_CENTER, "%d : %d", jeu->time.minutes,jeu->time.secondes);
+    ///DESSINER NB HABIT
     al_draw_scaled_bitmap(jeu->icone[0].image, 0, 0, 1024, 985, 900, 3, 40, 30, 0);
     al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 880, 7, ALLEGRO_ALIGN_CENTER, "%d", jeu->nbHabitants);
+    ///DESSINER ARGENT
+    al_draw_textf(smallFont, al_map_rgb(47, 58, 124), 700, 7, ALLEGRO_ALIGN_CENTER, "TIMER : %d", jeu->argent);
+
 
     ///TOOLBOX
     al_draw_filled_rounded_rectangle(-10, 100, 205, 815, 10, 10, al_map_rgba(150, 150, 150, 150));
@@ -118,7 +125,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
         al_draw_text(font, al_map_rgb(232, 23, 30), 103, 325, ALLEGRO_ALIGN_CENTER, "1");
     }
 
-    ///NIVEAU 2 SI PRESSEe
+    /// NIVEAU 2 SI PRESSEe
     if (jeu->mouse_x > 40 && jeu->mouse_x < 165 && jeu->mouse_y > 440 && jeu->mouse_y < 565) {
         if (jeu->mouseIsPressed == true) {
             jeu->niveauAfficher = ELECTRICITE;
@@ -148,58 +155,60 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     al_draw_rounded_rectangle(1500, 100, 1720, 815, 10, 10, al_map_rgb(0, 0, 0), 3);
     al_draw_rounded_rectangle(1500, 99, 1720, 816, 10, 10, al_map_rgb(255, 255, 255), 1);
 
-
     if (jeu->niveauAfficher == ROUTIER) {
-        al_draw_scaled_bitmap(jeu->icone[1].image, 0, 0, jeu->icone[1].width, jeu->icone[1].height, 1565, 125, 85, 85,
-                              0);
+        al_draw_scaled_bitmap(jeu->icone[1].image, 0, 0, jeu->icone[1].width, jeu->icone[1].height, 1565, 125, 85, 85,0);
+        al_draw_scaled_bitmap(jeu->icone[2].image, 0, 0, jeu->icone[2].width, jeu->icone[2].height, 1558, 235, 100, 100,0);
+        al_draw_scaled_bitmap(jeu->icone[3].image, 0, 0, jeu->icone[3].width, jeu->icone[3].height, 1558, 345, 100, 100,0);
 
-        al_draw_scaled_bitmap(jeu->icone[2].image, 0, 0, jeu->icone[2].width, jeu->icone[2].height, 1558, 235, 100, 100,
-                              0);
-        al_draw_circle(1607, 285, 49, al_map_rgb(0, 0, 0), 4);
 
-        al_draw_scaled_bitmap(jeu->icone[3].image, 0, 0, jeu->icone[3].width, jeu->icone[3].height, 1558, 345, 100, 100,
-                              0);
+        al_draw_circle(1607 , 285, 49, al_map_rgb(0, 0, 0), 4);
+        al_draw_scaled_bitmap(jeu->icone[3].image, 0, 0, jeu->icone[3].width, jeu->icone[3].height, 1558, 345, 100, 100,0);
         al_draw_circle(1607, 395, 49, al_map_rgb(0, 0, 0), 4);
 
         if (jeu->mouseIsPressed) {
+            int caseX = determinerCaseX(jeu->mouse_x) ;
+            int caseY = determinerCaseY(jeu->mouse_y) ;
+
             if ((jeu->mouse_x - 1607) * (jeu->mouse_x - 1607) + (jeu->mouse_y - 285) * (jeu->mouse_y - 285) < 49 * 49) {
                 jeu->objetSelectionne = ROUTE;
-            } else if ((jeu->mouse_x - 1607) * (jeu->mouse_x - 1607) + (jeu->mouse_y - 395) * (jeu->mouse_y - 395) <
-                       49 * 49) {
+            } else if ((jeu->mouse_x - 1607) * (jeu->mouse_x - 1607) + (jeu->mouse_y - 395) * (jeu->mouse_y - 395) <49 * 49) {
                 jeu->objetSelectionne = TERRAIN;
-            } else if (!(jeu->mouse_x > MAPX && jeu->mouse_x < MAPX + 45 * CASEX_X && jeu->mouse_y > MAPY &&
-                         jeu->mouse_y < MAPY + 35 * CASEX_X)) {
+            } else if ((jeu->mouse_x - 1607) * (jeu->mouse_x - 1607) + (jeu->mouse_y - 395) * (jeu->mouse_y - 395) <49 * 49) {
+                jeu->objetSelectionne = CENTRALE;
+            } else if (!(jeu->mouse_x > MAPX && jeu->mouse_x < MAPX + 45 * CASEX_X && jeu->mouse_y > MAPY &&jeu->mouse_y < MAPY + 35 * CASEX_X)) {
                 jeu->objetSelectionne = RIEN;
             } else if (jeu->objetSelectionne == ROUTE) {
-                if (jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].type == RIEN) {
-                    jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].type = ROUTE;
+                if (jeu->map[caseX][caseY].type == RIEN && jeu->argent >= 10;) {
+                    jeu->map[caseX][caseY].type = ROUTE;
+                    jeu->argent -= 10;
                 }
             } else if (jeu->objetSelectionne == TERRAIN) {
-                if (verifierTerrain3_3v2(&jeu, determinerCaseX(jeu->mouse_x), determinerCaseY(jeu->mouse_y)) == false) {
-                    al_draw_rectangle(
-                            jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].x - 3 * CASEX_X / 2,
-                            jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].y - 3 * CASEX_X / 2,
-                            jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].x + 3 * CASEX_X / 2,
-                            jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].y + 3 * CASEX_X / 2,
-                            al_map_rgb(255, 0, 0), 4);
+                if(verifierTerrain3_3v2(&jeu, caseX, caseY) == false) {
+                    al_draw_rectangle(jeu->map[caseX][caseY].x -3 * CASEX_X / 2,jeu->map[caseX][caseY].y -3*CASEX_X / 2,jeu->map[caseX][caseY].x +3 * CASEX_X / 2,jeu->map[caseX][caseY].y +3 * CASEX_X / 2,al_map_rgb(255, 0, 0), 4) ;
+                    ///Surbrillance DU TERRAIN
 
-                } else if (routeProximite(&jeu, determinerCaseX(jeu->mouse_x), determinerCaseY(jeu->mouse_y)) == true) {
-                    int caseX = determinerCaseX(jeu->mouse_x);
-                    int caseY = determinerCaseY(jeu->mouse_y);
-                    for (int i = 0; i < 3; i++) {
-                        jeu->map[caseX - 1][caseY + 1 - i].type = TERRAIN;
-                        jeu->map[caseX][caseY + 1 - i].type = TERRAIN;
-                        jeu->map[caseX + 1][caseY + 1 - i].type = TERRAIN;
+                }
+                else if (routeProximite(&jeu, caseX,caseY) == true && jeu->argent >= 1000){
+                    jeu->argent -= 1000;
+                    for(int i = 0 ; i < 3 ; i++) {
+                        jeu->map[caseX-1][caseY+1-i].type = TERRAIN ;
+                        jeu->map[caseX][caseY+1-i].type = TERRAIN;
+                        jeu->map[caseX+1][caseY+1-i].type = TERRAIN;
                     }
-                    jeu->tabhabitation[jeu->nbMaisons].caseX = caseX;
-                    jeu->tabhabitation[jeu->nbMaisons].caseY = caseY;
-                    jeu->tabhabitation[jeu->nbMaisons].evolutionBat = 15;
-                    jeu->nbMaisons++;
+                    jeu->tabhabitation[jeu->nbMaisons].x = caseX ;
+                    jeu->tabhabitation[jeu->nbMaisons].y = caseY ;
+                    jeu->nbMaisons ++ ;
+                    ///POSE DU TERRAIN + CREATION DANS LE TAB
+
+                }
+            }
+            else if(jeu->objetSelectionne == CENTRALE) {
+                if(verifierTerrain4_6(&jeu, caseX, caseY) == false) {
+                    al_draw_rectangle(jeu->map[caseX][caseY].x -7 * CASEX_X / 2,jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].y -3*CASEX_X / 2,jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].x +3 * CASEX_X / 2,jeu->map[determinerCaseX(jeu->mouse_x)][determinerCaseY(jeu->mouse_y)].y +3 * CASEX_X / 2,al_map_rgb(255, 0, 0), 4) ;
 
                 }
             }
         }
-
 
         switch (jeu->objetSelectionne) {
             case ROUTE : {
@@ -316,6 +325,11 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                                   jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,
                                   al_map_rgb(34, 139, 34), 1);
             }
+            if (jeu->map[i][j].type == CENTRALE) {
+                al_draw_filled_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,al_map_rgb(240,230, 140));
+                al_draw_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,al_map_rgb(200,200,140),1);
+
+            }
         }
     }
     if (jeu->time.secondes % 15 == 0) {
@@ -366,29 +380,7 @@ int determinerCaseY(int mouse_x) {
     return (int)caseY ;
 }
 
-bool verifierTerrain3_3(Jeu** jeu, int caseSourisX, int caseSourisY) {
-    int caseLibre = 0 ;
-    for(int i = 0 ; i < 3 ; i++) {
-        if ((*jeu)->map[caseSourisX-1][caseSourisY+1-i].type == RIEN) {
-            caseLibre++ ;
-        }
-        if ((*jeu)->map[caseSourisX][caseSourisY+1-i].type == RIEN) {
-            caseLibre++ ;
-        }
-        if ((*jeu)->map[caseSourisX+1][caseSourisY+1-i].type == RIEN) {
-            caseLibre++ ;
-        }
-    }
-    if(caseLibre == 9) {
-        for(int i = 0 ; i < 3 ; i++) {
-            (*jeu)->map[caseSourisX-1][caseSourisY+1-i].type = TERRAIN ;
-            (*jeu)->map[caseSourisX][caseSourisY+1-i].type = TERRAIN ;
-            (*jeu)->map[caseSourisX+1][caseSourisY+1-i].type = TERRAIN ;
-        }
-        return true ;
-    }
-    else return false ;
-}
+
 bool routeProximite(Jeu** jeu, int caseSourisX, int caseSourisY){
     int routeProxi = 0 ;
     for(int i=0 ; i <3; i++){
@@ -418,6 +410,28 @@ bool verifierTerrain3_3v2(Jeu** jeu, int caseSourisX, int caseSourisY) {
             caseLibre++ ;
         }
         if ((*jeu)->map[caseSourisX+1][caseSourisY+1-i].type == RIEN) {
+            caseLibre++ ;
+        }
+    }
+    if(caseLibre == 9) {
+        return true ;
+    }
+    else return false ;
+}
+
+bool verifierTerrain4_6(Jeu** jeu, int caseSourisX, int caseSourisY) {
+    int caseLibre = 0 ;
+    for(int i = 0 ; i < 6 ; i++) {
+        if ((*jeu)->map[caseSourisX-2][caseSourisY+2-i].type == RIEN) {
+            caseLibre++ ;
+        }
+        if ((*jeu)->map[caseSourisX-1][caseSourisY+2-i].type == RIEN) {
+            caseLibre++ ;
+        }
+        if ((*jeu)->map[caseSourisX][caseSourisY+2-i].type == RIEN) {
+            caseLibre++ ;
+        }
+        if ((*jeu)->map[caseSourisX+1][caseSourisY+2-i].type == RIEN) {
             caseLibre++ ;
         }
     }
