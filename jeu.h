@@ -32,8 +32,9 @@ typedef struct {
 }Centralelectrique;
 
 typedef struct{
-    int x,y,type;
+    int caseX,caseY,type;
     Bitmap habitation;
+    int evolutionBat;
 }Habitation;
 
 
