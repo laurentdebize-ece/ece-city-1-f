@@ -1,7 +1,7 @@
 #include "jeu.h"
 #define MAPX 310
 #define MAPY 100
-#define CASEX_X 24
+#define CASEX_X 50
 
 
 void initJeu(Jeu* jeu) {
