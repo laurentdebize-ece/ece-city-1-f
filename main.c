@@ -42,7 +42,7 @@ int main() {
 
     ALLEGRO_BITMAP *background = al_load_bitmap("../Bitmap/Menu/backgroundMenu.jpg");
     menu.deco[0].image = al_load_bitmap("../Bitmap/Menu/bat3.png");
-    menu.deco[1].image = al_load_bitmap("../Bitmap/Menu/bat4.png");
+    menu.deco[1].image = al_load_bitmap("../Bitmap/Menu/bat4.png")  ;
     menu.deco[2].image = al_load_bitmap("../Bitmap/Photo/fares.png");
     menu.deco[3].image = al_load_bitmap("../Bitmap/Photo/valentin.png");
     menu.deco[4].image = al_load_bitmap("../Bitmap/map.png");
@@ -52,6 +52,8 @@ int main() {
     jeu.icone[1].image = al_load_bitmap("../Bitmap/Icone/outil.png");
     jeu.icone[2].image = al_load_bitmap("../Bitmap/Icone/route.png");
     jeu.icone[3].image = al_load_bitmap("../Bitmap/Icone/maison.png");
+    jeu.icone[4].image = al_load_bitmap("../Bitmap/Icone/chateau_eau.png");
+
 
 
 

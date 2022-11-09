@@ -49,7 +49,7 @@ typedef struct {
     int niveauAfficher, objetSelectionne ;
     Case map[COLONNE][LIGNE] ;
     Temps time ;
-    Bitmap icone[NBICONE] ;
+    Bitmap icone[NBICONE]  ;
 } Jeu ;
 
 void initJeu(Jeu* jeu) ;
@@ -58,8 +58,9 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) ;
 
 int determinerCaseX(int mouse_x) ;
 int determinerCaseY(int mouse_y) ;
-bool verifierTerrain3_3(Jeu** jeu, int caseSourisX, int caseSourisY) ;
+
 bool verifierTerrain3_3v2(Jeu** jeu, int caseSourisX, int caseSourisY) ;
+bool verifierTerrain4_6(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 bool routeProximite(Jeu **jeu, int caseSourisx, int caseSourisy);
 
 void dessinerTerrain() ;
