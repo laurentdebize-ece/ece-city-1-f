@@ -1,6 +1,8 @@
 #include "menu.h"
 #include "jeu.h"
 #include "time.h"
+#include "eva.h"
+
 
 int main() {
     ///INITIALISATION DU DISPLAY ET DU TIMER
