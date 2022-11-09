@@ -4,6 +4,7 @@
 #define NBICONE 10
 #define COLONNE 45
 #define LIGNE 35
+#define MAX 150
 #define CAPACITE 5000
 
 enum BATIMENTS{RIEN, ROUTE, CENTRALE, CHATEAU, TERRAIN, CABANE, MAISON, IMMEUBLE, GRATTE_CIEL};
@@ -39,11 +40,11 @@ typedef struct{
 typedef struct {
     int nbHabitants, width, height, mouse_x, mouse_y ;
     int argent;
-    int nbcentrale;
+    int nbcentrale, nbMaisons ;
     Centralelectrique tabcentrale;
     int nbchateau;
     Chateau tabchat;
-    Habitation tabhabitation;
+    Habitation tabhabitation[MAX];
     bool mouseIsPressed;
     int niveauAfficher, objetSelectionne ;
     Case map[COLONNE][LIGNE] ;
@@ -53,14 +54,13 @@ typedef struct {
 
 void initJeu(Jeu* jeu) ;
 void temps(Temps* time, int compteur) ;
-
 void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) ;
 
 int determinerCaseX(int mouse_x) ;
 int determinerCaseY(int mouse_y) ;
 bool verifierTerrain3_3(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 bool verifierTerrain3_3v2(Jeu** jeu, int caseSourisX, int caseSourisY) ;
-
+bool routeProximite(Jeu **jeu, int caseSourisx, int caseSourisy);
 
 void dessinerTerrain() ;
 void mettreCentrale();
