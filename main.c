@@ -55,10 +55,7 @@ int main() {
     jeu.icone[2].image = al_load_bitmap("../Bitmap/Icone/route.png");
     jeu.icone[3].image = al_load_bitmap("../Bitmap/Icone/maison.png");
     jeu.icone[4].image = al_load_bitmap("../Bitmap/Icone/chateau_eau.png");
-
-
-
-
+    jeu.icone[5].image = al_load_bitmap("../Bitmap/Icone/centrale.png");
 
 
     ///CREATION DE L'ECRITURE
