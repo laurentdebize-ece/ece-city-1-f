@@ -193,7 +193,8 @@ int main() {
                 case ALLEGRO_EVENT_TIMER : {
                     draw = 1;
                     compteur++;
-                    temps(&jeu.time, compteur);
+                    temps(&jeu.time[0], compteur, 0);
+                    temps(&jeu.time[1], compteur, 1);
                     break;
                 }
             }

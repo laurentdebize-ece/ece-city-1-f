@@ -35,7 +35,7 @@ typedef struct {
 typedef struct{
     int caseX,caseY,type;
     Bitmap habitation;
-    int evolutionBat;
+    int tempsEvolution, evolution ;
 }Habitation;
 
 
@@ -49,12 +49,12 @@ typedef struct {
     Chateau tabChateau;
     Habitation tabHabitations[MAX];
     Case map[COLONNE][LIGNE] ;
-    Temps time ;
+    Temps time[2];
     Bitmap icone[NBICONE]  ;
 } Jeu ;
 
 void initJeu(Jeu* jeu) ;
-void temps(Temps* time, int compteur) ;
+void temps(Temps* time, int compteur, int numTimer) ;
 void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) ;
 
 int determinerCaseX(int mouse_x) ;

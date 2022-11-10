@@ -23,7 +23,7 @@ void initJeu(Jeu* jeu) {
     jeu->icone[4].width = 309 ;
     jeu->icone[4].height = 305 ;
 
-    jeu->time.secondes =  jeu->time.minutes = jeu->nbHabitants = jeu->mouse_x = jeu->mouse_y = jeu->nbCentrale = jeu->nbChateau = 0;
+    jeu->time[0].secondes =  jeu->time[0].minutes = jeu->nbHabitants = jeu->mouse_x = jeu->mouse_y = jeu->nbCentrale = jeu->nbChateau = 0;
     jeu->argent= ARGENTDEP;
     jeu->niveauAfficher = ROUTIER ;
     jeu->mouseIsPressed = false ;
@@ -36,7 +36,9 @@ void initJeu(Jeu* jeu) {
             jeu->map[i][j].y = MAPY + CASEX_X*j + CASEX_X/2  ;
         }
     }
-
+    for(int i = 0 ; i < MAX ; i++){
+        jeu->tabHabitations[i].evolution = 0 ;
+    }
 }
 
 void dessinerTerrain() {
@@ -49,11 +51,11 @@ void dessinerTerrain() {
     }
 }
 
-void temps(Temps* time, int compteur) {
+void temps(Temps* time, int compteur, int numTimer) {
     if(compteur%50 == 0){
         time->secondes++ ;
     }
-    if(time->secondes == 60) {
+    if(time->secondes == 60 && numTimer == 0) {
         time->minutes++ ;
         time->secondes = 0 ;
     }
@@ -72,12 +74,12 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     dessinerTerrain();
 
     ///TIMER
-    if (jeu->time.secondes < 10) {
+    if (jeu->time[0].secondes < 10) {
         al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 990, 725, ALLEGRO_ALIGN_CENTER, "%d : 0%d",
-                      jeu->time.minutes, jeu->time.secondes);
+                      jeu->time[0].minutes, jeu->time[0].secondes);
     } else
-        al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 990, 7, ALLEGRO_ALIGN_CENTER, "%d : %d", jeu->time.minutes,
-                      jeu->time.secondes);
+        al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 990, 7, ALLEGRO_ALIGN_CENTER, "%d : %d", jeu->time[0].minutes,
+                      jeu->time[0].secondes);
     ///DESSINER NB HABITANT
     al_draw_scaled_bitmap(jeu->icone[0].image, 0, 0, 1024, 985, 900, 3, 40, 30, 0);
     al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 880, 7, ALLEGRO_ALIGN_CENTER, "%d", jeu->nbHabitants);
@@ -294,7 +296,9 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                     //On note la Case dans le tab des Habitations
                     jeu->tabHabitations[jeu->nbMaisons].caseX = caseX;
                     jeu->tabHabitations[jeu->nbMaisons].caseY = caseY;
+                    jeu->tabHabitations[jeu->nbMaisons].tempsEvolution = jeu->time[1].secondes;
                     jeu->nbMaisons++;
+
                     ///POSE DU TERRAIN + CREATION DANS LE TAB
 
                 }
@@ -351,6 +355,22 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                                   jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,
                                   al_map_rgb(34, 139, 34), 1);
             }
+            if (jeu->map[i][j].type == IMMEUBLE) {
+                al_draw_filled_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,
+                                         jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,
+                                         al_map_rgb(155, 38, 182));
+                al_draw_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,
+                                  jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,
+                                  al_map_rgb(155, 38, 182), 1);
+            }
+            if (jeu->map[i][j].type == GRATTE_CIEL) {
+                al_draw_filled_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,
+                                         jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,
+                                         al_map_rgb(98, 34, 0));
+                al_draw_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,
+                                  jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,
+                                  al_map_rgb(98, 34, 0), 1);
+            }
             if (jeu->map[i][j].type == CENTRALE) {
                 al_draw_filled_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,
                                          jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,
@@ -362,17 +382,29 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
             }
         }
     }
-    if (jeu->time.secondes % 15 == 0) {
-        for (int i = 0; i < jeu->nbMaisons; i++) {
-            jeu->tabHabitations[i].type ++;
-            for (int i = 0; i < 3; i++) {
-                jeu->map[caseX - 1][caseY + 1 - i].type++;
-                jeu->map[caseX][caseY + 1 - i].type++;
-                jeu->map[caseX + 1][caseY + 1 - i].type++;
-                al_draw_rectangle(jeu->map[caseX][caseY].x - CASEX_X / 2, jeu->map[caseX][caseY].y - CASEX_X / 2,jeu->map[caseX][caseY].x + CASEX_X / 2, jeu->map[caseX][caseY].y + CASEX_X / 2,al_map_rgb(135, 206, 235), 1);
+    for (int i = 0; i < jeu->nbMaisons; i++) {
+        if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 15) {
+            if (jeu->tabHabitations[i].evolution == 0) {
+                if (jeu->tabHabitations[i].type != GRATTE_CIEL) {
+                    jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
+                    jeu->tabHabitations[i].type++;
+                    jeu->tabHabitations[i].evolution = 1;
+                    int caseBatx = jeu->tabHabitations[i].caseX;
+                    int caseBaty = jeu->tabHabitations[i].caseY;
+                    for (int j = 0; j < 3; j++) {
+                        jeu->map[caseBatx - 1][caseBaty + 1 - j].type++;
+                        jeu->map[caseBatx][caseBaty + 1 - j].type++;
+                        jeu->map[caseBatx + 1][caseBaty + 1 - j].type++;
+                    }
+                }
+                else if(jeu->tabHabitations[i].type == GRATTE_CIEL) {
+                    jeu->tabHabitations[i].evolution = 1;
+                    jeu->tabHabitations[i].type = GRATTE_CIEL;
+                }
             }
         }
-    }
+        else jeu->tabHabitations[i].evolution = 0;
+        }
 }
 
 ///ON DETERMINE SUR QUELLE CASE SE SITUE LA SOURIS
