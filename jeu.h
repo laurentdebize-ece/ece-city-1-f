@@ -62,7 +62,8 @@ int determinerCaseY(int mouse_y) ;
 
 bool verifierTerrain3_3v2(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 bool verifierTerrain4_6(Jeu** jeu, int caseSourisX, int caseSourisY) ;
-bool routeProximite(Jeu **jeu, int caseSourisx, int caseSourisy);
+bool routeProximiteMaison(Jeu **jeu, int caseSourisX, int caseSourisY);
+bool routeProximiteCentrale(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 
 void dessinerTerrain() ;
 void mettreCentrale();
