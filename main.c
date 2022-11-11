@@ -58,6 +58,9 @@ int main() {
     jeu.icone[5].image = al_load_bitmap("../Bitmap/Icone/centrale.png");
 
 
+    jeu.habitations[MAISON].image = al_load_bitmap("../Bitmap/cabane.png") ;
+
+
     ///CREATION DE L'ECRITURE
     ALLEGRO_FONT *font = al_load_ttf_font("../Blomberg-8MKKZ.otf", 70, ALLEGRO_ALIGN_LEFT);
     ALLEGRO_FONT *smallfont = al_load_ttf_font("../Blomberg-8MKKZ.otf", 35, ALLEGRO_ALIGN_LEFT);

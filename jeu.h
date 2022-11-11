@@ -2,12 +2,14 @@
 #define ECE_CITY_1_F_JEU_H
 #include "menu.h"
 #define NBICONE 10
+#define NBHABITATIONS 5
 #define COLONNE 45
 #define LIGNE 35
 #define MAX 150
 #define CAPACITE 5000
 
-enum BATIMENTS{RIEN, ROUTE, CENTRALE, CHATEAU, TERRAIN, CABANE, MAISON, IMMEUBLE, GRATTE_CIEL};
+enum Batiments{NUL, NUL1, NUL2, NUL3, NUL4, RIEN, ROUTE, CENTRALE, CHATEAU};
+enum Habitations {TERRAIN, CABANE, MAISON, IMMEUBLE, GRATTE_CIEL};
 enum Niveau{ROUTIER, EAU, ELECTRICITE};
 
 
@@ -33,9 +35,8 @@ typedef struct {
 }Centralelectrique;
 
 typedef struct{
-    int caseX,caseY,type;
+    int caseX, caseY, type, tempsEvolution, evolution ;
     Bitmap habitation;
-    int tempsEvolution, evolution ;
 }Habitation;
 
 
@@ -51,6 +52,7 @@ typedef struct {
     Case map[COLONNE][LIGNE] ;
     Temps time[2];
     Bitmap icone[NBICONE]  ;
+    Bitmap habitations[NBHABITATIONS] ;
 } Jeu ;
 
 void initJeu(Jeu* jeu) ;
