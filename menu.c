@@ -10,7 +10,6 @@ void initBitmapDeco(Menu* menu) {
 
     menu->deco[2].width = 307 ;
     menu->deco[2].height = 305 ;
-
     menu->deco[3].width = 330 ;
     menu->deco[3].height = 322 ;
 

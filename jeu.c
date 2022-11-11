@@ -81,7 +81,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
 
     ///TIMER
     if (jeu->time[0].secondes < 10) {
-        al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 990, 725, ALLEGRO_ALIGN_CENTER, "%d : 0%d",
+        al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 990, 7, ALLEGRO_ALIGN_CENTER, "%d : 0%d",
                       jeu->time[0].minutes, jeu->time[0].secondes);
     } else
         al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 990, 7, ALLEGRO_ALIGN_CENTER, "%d : %d", jeu->time[0].minutes,
@@ -89,6 +89,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     ///DESSINER NB HABITANT
     al_draw_scaled_bitmap(jeu->icone[0].image, 0, 0, 1024, 985, 900, 3, 40, 30, 0);
     al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 880, 7, ALLEGRO_ALIGN_CENTER, "%d", jeu->nbHabitants);
+    al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 100, 7, ALLEGRO_ALIGN_CENTER, "ELEC : %d", jeu->capaciteElec);
     ///DESSINER ARGENT
     al_draw_textf(smallFont, al_map_rgb(47, 58, 124), 700, 7, ALLEGRO_ALIGN_CENTER, "TIMER : %d", jeu->argent);
 
@@ -312,6 +313,10 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                                 jeu->map[caseX][caseY + 2 - i].type = CHATEAU;
                                 jeu->map[caseX + 1][caseY + 2 - i].type = CHATEAU;
                             }
+                            jeu->tabChateau[jeu->nbChateau].x = caseX;
+                            jeu->tabChateau[jeu->nbChateau].y = caseY;
+                            jeu->nbChateau++;
+                            jeu->capaciteEau += 5000;
                         }
                         break ;
                     }
@@ -328,6 +333,10 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                                 jeu->map[caseX][caseY + 2 - i].type = CENTRALE;
                                 jeu->map[caseX + 1][caseY + 2 - i].type = CENTRALE;
                             }
+                            jeu->tabCentrale[jeu->nbCentrale].x = caseX;
+                            jeu->tabCentrale[jeu->nbCentrale].y = caseY;
+                            jeu->nbCentrale++;
+                            jeu->capaciteElec += 5000;
                         }
                         break ;
                     }
@@ -342,9 +351,11 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
             if (jeu->map[i][j].type == ROUTE) {
                 al_draw_filled_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,al_map_rgb(50, 50, 50));
             }
+
             if (jeu->map[i][j].type == TERRAIN) {
                 al_draw_filled_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,al_map_rgb(139, 69, 19));
                 al_draw_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,al_map_rgb(200, 69, 19), 1);
+
             }
             if (jeu->map[i][j].type == CABANE) {
                 al_draw_filled_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,al_map_rgb(0, 191, 255));
@@ -373,18 +384,34 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
         }
     }
 
-    al_draw_scaled_bitmap(jeu->habitations[MAISON].image, 0, 0,jeu->habitations[MAISON].width, jeu->habitations[MAISON].height, jeu->map[2][2].x - CASEX_X/2, jeu->map[2][2].y - CASEX_X/2, 3*CASEX_X, 4*CASEX_X, 0) ;
-    al_draw_scaled_bitmap(jeu->habitations[MAISON].image, 0, 0,jeu->habitations[MAISON].width, jeu->habitations[MAISON].height, jeu->map[2][5].x - CASEX_X/2, jeu->map[2][5].y - CASEX_X/2, 3*CASEX_X, 4*CASEX_X, 0) ;
-
 
     ///EVOLUTION DES BATIMENTS (Il n'y a que la vérification du temps la)
     for (int i = 0; i < jeu->nbMaisons; i++) {
         if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 15) {
-            if (jeu->tabHabitations[i].evolution == 0) {
+            jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
+            if (jeu->tabHabitations[i].evolution == 0 && jeu->capaciteElec > jeu->nbHabitants) {
                 if (jeu->tabHabitations[i].type != GRATTE_CIEL) {
                     jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
                     jeu->tabHabitations[i].type++;
-                    jeu->tabHabitations[i].evolution = 1;
+                    switch(jeu->tabHabitations[i].type){
+                        case CABANE :{
+                            jeu->nbHabitants +=10;
+                            break;
+                            }
+                            case MAISON : {
+                                jeu->nbHabitants += 40;
+                                break;
+                            }
+                            case IMMEUBLE : {
+                                jeu->nbHabitants += 50;
+                                break;
+                            }
+                            case GRATTE_CIEL : {
+                                jeu->nbHabitants += 900;
+                                break;
+                            }
+                    }
+                    jeu->capaciteElec -= jeu->nbHabitants;
                     int caseBatx = jeu->tabHabitations[i].caseX;
                     int caseBaty = jeu->tabHabitations[i].caseY;
                     for (int j = 0; j < 3; j++) {
@@ -393,12 +420,12 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                         jeu->map[caseBatx + 1][caseBaty + 1 - j].type++;
                     }
                 }
-            }
-            else {
-                if (jeu->tabHabitations[i].type == GRATTE_CIEL) {
+                else if (jeu->tabHabitations[i].type == GRATTE_CIEL) {
                     jeu->tabHabitations[i].evolution = 1;
                 }
-                else jeu->tabHabitations[i].evolution = 0;
+            }
+            else{
+                jeu->tabHabitations[i].evolution = 0;
             }
         }
     }

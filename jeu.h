@@ -23,13 +23,13 @@ typedef struct{
 }Case;
 
 typedef struct {
-    int quantitedistri,type;
+    int quantitedistri,type, tempsChateau;
     float x, y;
     Bitmap bitmapeau;
 }Chateau;
 
 typedef struct {
-    int quantitedistri,type;
+    int quantitedistri,type, tempsCentrale;
     float x, y;
     Bitmap bitmapcen;
 }Centralelectrique;
@@ -43,11 +43,12 @@ typedef struct{
 typedef struct {
     float width, height ;       // Info écran
     int mouse_x, mouse_y ;
+    int capaciteElec, capaciteEau;
     int niveauAfficher, objetSelectionne ;   //Selection
     int nbCentrale, nbMaisons, nbChateau, nbHabitants, argent ; //Info du jeu
     bool mouseIsPressed;
-    Centralelectrique tabCentrale;  //Différentes structures du jeu
-    Chateau tabChateau;
+    Centralelectrique tabCentrale[MAX];  //Différentes structures du jeu
+    Chateau tabChateau[MAX];
     Habitation tabHabitations[MAX];
     Case map[COLONNE][LIGNE] ;
     Temps time[2];
