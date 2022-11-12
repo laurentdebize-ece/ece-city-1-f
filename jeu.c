@@ -1,7 +1,7 @@
 #include "jeu.h"
 #define MAPX 290
 #define MAPY 75
-#define CASEX_X (float)45
+#define CASEX_X (float)25
 #define ARGENTDEP 500000
 
 
