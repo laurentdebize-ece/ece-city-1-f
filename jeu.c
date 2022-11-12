@@ -1,12 +1,15 @@
 #include "jeu.h"
-#define MAPX 310
-#define MAPY 100
-#define CASEX_X (float)24
-
+#define MAPX 290
+#define MAPY 75
+#define CASEX_X (float)25
 #define ARGENTDEP 500000
 
 
 void initJeu(Jeu* jeu) {
+    for(int i = 0 ; i<4 ;i++) {
+        jeu->route[i].width = 25 ;
+        jeu->route[i].height = 25 ;
+    }
 
     jeu->habitations[MAISON].width = 284 ;
     jeu->habitations[MAISON].height = 264 ;
@@ -33,6 +36,8 @@ void initJeu(Jeu* jeu) {
     jeu->argent= ARGENTDEP;
     jeu->niveauAfficher = ROUTIER ;
     jeu->mouseIsPressed = false ;
+    jeu->objetSelectionne = RIEN ;
+
 
 
     for(int i = 0 ; i < COLONNE ; i++) {
@@ -40,6 +45,10 @@ void initJeu(Jeu* jeu) {
             jeu->map[i][j].type = RIEN ;
             jeu->map[i][j].x = MAPX + CASEX_X*i + CASEX_X/2  ;
             jeu->map[i][j].y = MAPY + CASEX_X*j + CASEX_X/2  ;
+            for(int k = 0 ; k < 4 ; k++) {
+                jeu->map[i][j].route[k] = 0 ;
+            }
+            jeu->map[i][j].rotation = 0 ;
         }
     }
     for(int i = 0 ; i < MAX ; i++){
@@ -76,6 +85,8 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     float x_CaseXY = jeu->map[caseX][caseY].x;
     float y_CaseXY = jeu->map[caseX][caseY].y;
 
+    ///RAPPORT TAILLE CASE ACTUELLE ET TAILLE ORIGINAL (pour zoomer si on le fait plus tard)
+    float scale = CASEX_X/25 ;
 
     dessinerTerrain();
 
@@ -349,7 +360,9 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     for (int i = 0; i < COLONNE; i++) {
         for (int j = 0; j < LIGNE; j++) {
             if (jeu->map[i][j].type == ROUTE) {
-                al_draw_filled_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,al_map_rgb(50, 50, 50));
+                verifierAffichageRoute(&jeu, i, j) ;
+                int quelRoute = combinaison(*jeu, i, j, &jeu->map[i][j].rotation) ;
+                al_draw_scaled_rotated_bitmap(jeu->route[quelRoute].image, CASEX_X/2, CASEX_X/2, jeu->map[i][j].x, jeu->map[i][j].y, scale, scale, jeu->map[i][j].rotation*PI/2, 0) ;
             }
 
             if (jeu->map[i][j].type == TERRAIN) {
@@ -383,6 +396,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
             }
         }
     }
+
 
 
     ///EVOLUTION DES BATIMENTS (Il n'y a que la vérification du temps la)
@@ -431,6 +445,8 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     }
 }
 
+
+
 ///ON DETERMINE SUR QUELLE CASE SE SITUE LA SOURIS
 int determinerCaseX(int mouse_x) {
     int caseX;
@@ -449,6 +465,7 @@ int determinerCaseY(int mouse_x) {
     if(caseY > 35 || caseY < 0) {
         return 0 ;
     }
+
     else return (int) caseY;
 
 }
@@ -533,3 +550,81 @@ bool verifierTerrain4_6(Jeu** jeu, int caseSourisX, int caseSourisY) {
     }
     else return false ;
 }
+
+///POUR L'AFFICHAGE DES ROUTES
+void verifierAffichageRoute(Jeu** jeu, int caseSourisX, int caseSourisY) {
+    if ((*jeu)->map[caseSourisX + 1][caseSourisY].type == ROUTE) {
+        (*jeu)->map[caseSourisX][caseSourisY].route[DROITE] = 1 ;
+    }
+    if ((*jeu)->map[caseSourisX - 1][caseSourisY].type == ROUTE) {
+        (*jeu)->map[caseSourisX][caseSourisY].route[GAUCHE] = 1 ;
+    }
+    if ((*jeu)->map[caseSourisX][caseSourisY + 1].type == ROUTE) {
+        (*jeu)->map[caseSourisX][caseSourisY].route[BAS] = 1 ;
+
+    }
+    if ((*jeu)->map[caseSourisX][caseSourisY - 1].type == ROUTE) {
+        (*jeu)->map[caseSourisX][caseSourisY].route[HAUT] = 1 ;
+    }
+}
+
+int combinaison(Jeu jeu, int caseSourisX, int caseSourisY, int* rotation) {
+    ///En gros, c'est une combinaison en binaire (ducoup ya 16 possibilités de routes au total)
+    int combinaison = jeu.map[caseSourisX][caseSourisY].route[BAS] + jeu.map[caseSourisX][caseSourisY].route[HAUT]*2 + jeu.map[caseSourisX][caseSourisY].route[GAUCHE] * 4 + jeu.map[caseSourisX][caseSourisY].route[DROITE]*8 ;
+    if(combinaison == 0) {
+        return 0 ;
+    }
+
+    ///ROUTE 1 (1 direction seulement)
+    else if(combinaison > 0 && combinaison < 4) {
+        *rotation = 4 ;
+        return 1;
+    }
+    else if(combinaison == 4 || combinaison == 8 || combinaison == 12) {
+        *rotation = 1 ;
+        return 1;
+    }
+
+    ///ROUTE 2 (2 directions)
+    else if(combinaison == 5) {
+        *rotation = 2 ;
+        return 2;
+    }
+    else if(combinaison == 6) {
+        *rotation = 3 ;
+        return 2;
+    }
+    else if(combinaison == 9) {
+        *rotation = 1 ;
+        return 2;
+    }
+    else if(combinaison == 10) {
+        *rotation = 0;
+        return 2;
+    }
+
+    ///ROUTE 3 (3 directions)
+    else if(combinaison == 7) {
+        *rotation = 3 ;
+        return 3;
+    }
+    else if(combinaison == 11) {
+        *rotation = 1 ;
+        return 3;
+    }
+    else if(combinaison == 13) {
+        *rotation = 2 ;
+        return 3;
+    }
+    else if(combinaison == 14) {
+        *rotation = 0 ;
+        return 3;
+    }
+
+    ///ROUTE 4 (4 directions)
+    else {
+        *rotation = 2 ;
+        return 4 ;
+    }
+}
+

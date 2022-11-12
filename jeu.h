@@ -3,14 +3,18 @@
 #include "menu.h"
 #define NBICONE 10
 #define NBHABITATIONS 5
+#define NBROUTE 5
 #define COLONNE 45
 #define LIGNE 35
 #define MAX 150
+#define PI 3.14159265358979323846
 #define CAPACITE 5000
+
 
 enum Batiments{NUL, NUL1, NUL2, NUL3, NUL4, RIEN, ROUTE, CENTRALE, CHATEAU};
 enum Habitations {TERRAIN, CABANE, MAISON, IMMEUBLE, GRATTE_CIEL};
 enum Niveau{ROUTIER, EAU, ELECTRICITE};
+enum DirectionRoute{HAUT, BAS, DROITE, GAUCHE};
 
 
 typedef struct{
@@ -19,7 +23,7 @@ typedef struct{
 
 typedef struct{
     float x, y ;
-    int type ;
+    int type, route[4], rotation ;
 }Case;
 
 typedef struct {
@@ -41,19 +45,29 @@ typedef struct{
 
 
 typedef struct {
+    //ENTIER
     float width, height ;       // Info écran
     int mouse_x, mouse_y ;
     int capaciteElec, capaciteEau;
     int niveauAfficher, objetSelectionne ;   //Selection
     int nbCentrale, nbMaisons, nbChateau, nbHabitants, argent ; //Info du jeu
     bool mouseIsPressed;
+
+    //STRUCTURE
     Centralelectrique tabCentrale[MAX];  //Différentes structures du jeu
     Chateau tabChateau[MAX];
     Habitation tabHabitations[MAX];
+
+    //GRILLE
     Case map[COLONNE][LIGNE] ;
+
+    //TEMPS
     Temps time[2];
+
+    //BITMAP
     Bitmap icone[NBICONE]  ;
     Bitmap habitations[NBHABITATIONS] ;
+    Bitmap route[NBROUTE] ;
 } Jeu ;
 
 void initJeu(Jeu* jeu) ;
@@ -67,6 +81,10 @@ bool verifierTerrain3_3v2(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 bool verifierTerrain4_6(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 bool routeProximiteMaison(Jeu **jeu, int caseSourisX, int caseSourisY);
 bool routeProximiteCentrale(Jeu** jeu, int caseSourisX, int caseSourisY) ;
+
+//Affichage de la route
+void verifierAffichageRoute(Jeu** jeu, int caseSourisX, int caseSourisY) ;
+int combinaison(Jeu jeu, int caseSourisX, int caseSourisY, int* rotation) ;
 
 void dessinerTerrain() ;
 void mettreCentrale();
