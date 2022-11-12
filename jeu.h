@@ -1,8 +1,9 @@
 #ifndef ECE_CITY_1_F_JEU_H
 #define ECE_CITY_1_F_JEU_H
 #include "menu.h"
+#include <stdio.h>
 #define NBICONE 10
-#define NBHABITATIONS 5
+#define NBHABITATIONS 6
 #define NBROUTE 5
 #define COLONNE 45
 #define LIGNE 35
@@ -12,7 +13,7 @@
 
 
 enum Batiments{NUL, NUL1, NUL2, NUL3, NUL4, RIEN, ROUTE, CENTRALE, CHATEAU};
-enum Habitations {TERRAIN, CABANE, MAISON, IMMEUBLE, GRATTE_CIEL};
+enum Habitations {TERRAIN, CABANE, MAISON, IMMEUBLE, GRATTE_CIEL, CONSTRUCTION};
 enum Niveau{ROUTIER, EAU, ELECTRICITE};
 enum DirectionRoute{HAUT, BAS, DROITE, GAUCHE};
 
@@ -59,7 +60,7 @@ typedef struct {
     Habitation tabHabitations[MAX];
 
     //GRILLE
-    Case map[COLONNE][LIGNE] ;
+    Case map[MAX][MAX] ;
 
     //TEMPS
     Temps time[2];
@@ -81,12 +82,13 @@ bool verifierTerrain3_3v2(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 bool verifierTerrain4_6(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 bool routeProximiteMaison(Jeu **jeu, int caseSourisX, int caseSourisY);
 bool routeProximiteCentrale(Jeu** jeu, int caseSourisX, int caseSourisY) ;
+bool verifierPlacementTerrain(Jeu* jeu, int caseX, int caseY) ;
+
 
 //Affichage de la route
 void verifierAffichageRoute(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 int combinaison(Jeu jeu, int caseSourisX, int caseSourisY, int* rotation) ;
 
 void dessinerTerrain() ;
-void mettreCentrale();
 
 #endif //ECE_CITY_1_F_JEU_H

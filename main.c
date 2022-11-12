@@ -62,7 +62,14 @@ int main() {
     jeu.route[3].image =  al_load_bitmap("../Bitmap/Batiments/Route3.png");
     jeu.route[4].image =  al_load_bitmap("../Bitmap/Batiments/Route4.png");
 
-    jeu.habitations[MAISON].image = al_load_bitmap("../Bitmap/cabane.png") ;
+    jeu.habitations[TERRAIN].image = al_load_bitmap("../Bitmap/Batiments/terrain.png") ;
+    jeu.habitations[CABANE].image = al_load_bitmap("../Bitmap/Batiments/cabane.png") ;
+    jeu.habitations[MAISON].image = al_load_bitmap("../Bitmap/Batiments/maison.png") ;
+    jeu.habitations[IMMEUBLE].image = al_load_bitmap("../Bitmap/Batiments/immeuble.png") ;
+    jeu.habitations[GRATTE_CIEL].image = al_load_bitmap("../Bitmap/Batiments/gratte_ciel.png") ;
+    jeu.habitations[CONSTRUCTION].image = al_load_bitmap("../Bitmap/Batiments/construction.png") ;
+
+
 
 
     ///CREATION DE L'ECRITURE
