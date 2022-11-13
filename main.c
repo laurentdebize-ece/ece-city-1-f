@@ -14,7 +14,7 @@ int main() {
 
     ///INITIALISATION D'ALLEGRO
     assert(al_init());
-    al_install_keyboard();
+    al_install_keyboard() ;
     al_install_mouse();
     al_init_image_addon();
     al_init_font_addon();
