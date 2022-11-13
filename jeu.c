@@ -1,6 +1,6 @@
 #include "jeu.h"
 #define MAPX 290
-#define MAPY 75
+#define MAPY 60
 #define CASEX_X (float)25
 #define ARGENTDEP 500000
 
@@ -53,14 +53,16 @@ void initJeu(Jeu* jeu) {
     jeu->niveauAfficher = ROUTIER ;
     jeu->mouseIsPressed = false ;
     jeu->objetSelectionne = RIEN ;
-
-
+    jeu->zoom.z = 0 ;
+    jeu->zoom.CaseX_X = jeu->zoom.oldCaseX_X = CASEX_X ;
+    jeu->zoom.mapX = jeu->zoom.oldMapX = MAPX ;
+    jeu->zoom.mapY = jeu->zoom.oldMapY = MAPY ;
 
     for(int i = 0 ; i < COLONNE ; i++) {
         for(int j = 0 ; j < LIGNE ; j++) {
             jeu->map[i][j].type = RIEN ;
-            jeu->map[i][j].x = MAPX + CASEX_X*i + CASEX_X/2  ;
-            jeu->map[i][j].y = MAPY + CASEX_X*j + CASEX_X/2  ;
+            jeu->map[i][j].x = MAPX + CASEX_X * i + CASEX_X / 2  ;
+            jeu->map[i][j].y = MAPY + CASEX_X * j + CASEX_X / 2  ;
             for(int k = 0 ; k < 4 ; k++) {
                 jeu->map[i][j].route[k] = 0 ;
             }
@@ -72,13 +74,52 @@ void initJeu(Jeu* jeu) {
     }
 }
 
-void dessinerTerrain() {
-    al_draw_rectangle(MAPX, MAPY, MAPX + 45 * CASEX_X, MAPY + 35 * CASEX_X, al_map_rgb(235, 235, 235), 1) ;
+void zoom(Jeu* jeu, int caseX, int caseY) {
+    if(jeu->zoom.CaseX_X != CASEX_X) {
+        jeu->zoom.mapX = jeu->zoom.oldMapX + caseX * jeu->zoom.oldCaseX_X - caseX * jeu->zoom.CaseX_X;
+        jeu->zoom.mapY = jeu->zoom.oldMapY + caseY * jeu->zoom.oldCaseX_X - caseY * jeu->zoom.CaseX_X;
+    }
+    else {
+        jeu->zoom.mapX = MAPX ;
+        jeu->zoom.mapY = MAPY ;
+    }
+    jeu->zoom.oldMapX = jeu->zoom.mapX ;
+    jeu->zoom.oldMapY = jeu->zoom.mapY ;
+    jeu->zoom.oldCaseX_X = jeu->zoom.CaseX_X ;
+}
+
+void deplacerMap(Jeu* jeu) {
+    jeu->zoom.oldMapX = jeu->zoom.mapX ;
+    jeu->zoom.oldMapY = jeu->zoom.mapY ;
+    if(jeu->zoom.direction[HAUT] == 1) {
+        if(jeu->zoom.mapY + 20 < MAPY) {
+            jeu->zoom.mapY += 20 ;
+        }
+    }
+    if(jeu->zoom.direction[BAS] == 1) {
+        if(jeu->zoom.mapY + 35 * jeu->zoom.CaseX_X - 20 > MAPY + 35 * CASEX_X ) {
+            jeu->zoom.mapY -= 20 ;
+        }
+    }
+    if(jeu->zoom.direction[DROITE] == 1) {
+        if(jeu->zoom.mapX + 45 * jeu->zoom.CaseX_X - 20 > MAPX + 45 * CASEX_X ) {
+            jeu->zoom.mapX -= 20 ;
+        }
+    }
+    if(jeu->zoom.direction[GAUCHE] == 1) {
+        if(jeu->zoom.mapX + 20 < MAPX) {
+            jeu->zoom.mapX += 20 ;
+        }
+    }
+}
+
+void dessinerTerrain(Jeu* jeu) {
+    al_draw_rectangle(jeu->zoom.mapX, jeu->zoom.mapY, jeu->zoom.mapX + 45 * jeu->zoom.CaseX_X, jeu->zoom.mapY + 35 * jeu->zoom.CaseX_X, al_map_rgb(235, 235, 235), 1) ;
     for (int i = 0; i < 35; i++) {
-        al_draw_line(MAPX, MAPY + CASEX_X * i, MAPX + 45 * CASEX_X, MAPY + CASEX_X * i, al_map_rgb(235, 235, 235), 1);
+        al_draw_line(jeu->zoom.mapX, jeu->zoom.mapY + jeu->zoom.CaseX_X * i, jeu->zoom.mapX + 45 * jeu->zoom.CaseX_X, jeu->zoom.mapY + jeu->zoom.CaseX_X * i, al_map_rgb(235, 235, 235), 1);
     }
     for (int i = 0; i < 45; i++) {
-        al_draw_line(MAPX + CASEX_X*i, MAPY, MAPX + CASEX_X*i, MAPY + 35 * CASEX_X, al_map_rgb(235, 235, 235), 1);
+        al_draw_line(jeu->zoom.mapX + jeu->zoom.CaseX_X * i, jeu->zoom.mapY, jeu->zoom.mapX + jeu->zoom.CaseX_X * i, jeu->zoom.mapY + 35 * jeu->zoom.CaseX_X, al_map_rgb(235, 235, 235), 1);
     }
 }
 
@@ -94,32 +135,294 @@ void temps(Temps* time, int compteur, int numTimer) {
 
 void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     ///CASE SUR LAQUELLE SE TROUVE LA SOURIS
-    int caseX = determinerCaseX(jeu->mouse_x);
-    int caseY = determinerCaseY(jeu->mouse_y);
+    int caseX = determinerCaseX(jeu->mouse_x, jeu->zoom.mapX, jeu->zoom.CaseX_X);
+    int caseY = determinerCaseY(jeu->mouse_y, jeu->zoom.mapY, jeu->zoom.CaseX_X);
 
     /// CORDONNEES (x,y) DE LA CASE (X,Y)
     float x_CaseXY = jeu->map[caseX][caseY].x;
     float y_CaseXY = jeu->map[caseX][caseY].y;
 
     ///RAPPORT TAILLE CASE ACTUELLE ET TAILLE ORIGINAL (pour zoomer si on le fait plus tard)
-    float scale = CASEX_X/25 ;
+    float scale = jeu->zoom.CaseX_X/25 ;
+    int mapX = jeu->zoom.mapX ;
+    int mapY = jeu->zoom.mapY ;
+    int caseX_X = jeu->zoom.CaseX_X ;
 
-    dessinerTerrain();
+    for(int i = 0 ; i < COLONNE ; i++) {
+        for(int j = 0 ; j < LIGNE ; j++) {
+            jeu->map[i][j].x = mapX + caseX_X * i + caseX_X / 2  ;
+            jeu->map[i][j].y = mapY + caseX_X * j + caseX_X / 2  ;
+        }
+    }
+
+
+    dessinerTerrain(jeu);
 
     ///TIMER
     if (jeu->time[0].secondes < 10) {
-        al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 990, 7, ALLEGRO_ALIGN_CENTER, "%d : 0%d",
-                      jeu->time[0].minutes, jeu->time[0].secondes);
+        al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 990, 7, ALLEGRO_ALIGN_CENTER, "%d : 0%d",jeu->time[0].minutes, jeu->time[0].secondes);
     } else
-        al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 990, 7, ALLEGRO_ALIGN_CENTER, "%d : %d", jeu->time[0].minutes,
-                      jeu->time[0].secondes);
+        al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 990, 7, ALLEGRO_ALIGN_CENTER, "%d : %d", jeu->time[0].minutes,jeu->time[0].secondes);
     ///DESSINER NB HABITANT
     al_draw_scaled_bitmap(jeu->icone[0].image, 0, 0, 1024, 985, 900, 3, 40, 30, 0);
+
+
     al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 880, 7, ALLEGRO_ALIGN_CENTER, "%d", jeu->nbHabitants);
     al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 100, 7, ALLEGRO_ALIGN_CENTER, "ELEC : %d", jeu->capaciteElec);
     ///DESSINER ARGENT
     al_draw_textf(smallFont, al_map_rgb(47, 58, 124), 700, 7, ALLEGRO_ALIGN_CENTER, "TIMER : %d", jeu->argent);
 
+
+
+    ///////////AFFICHAGE DU NIVEAU O ///////////////
+
+    if (jeu->niveauAfficher == ROUTIER) {
+        ///ON SELECTIONNE UN OBJET
+        switch (jeu->objetSelectionne) {
+            case ROUTE : {
+                al_draw_circle(1607, 285, 49, al_map_rgb(255, 0, 0), 4);
+                //Si on est dans la grille du jeu, il dessine le carré dans la bonne case
+                if (jeu->mouse_x > mapX && jeu->mouse_x < mapX + 45 * caseX_X && jeu->mouse_y > mapY &&
+                    jeu->mouse_y < mapY + 35 * caseX_X) {
+                    al_draw_filled_rectangle(x_CaseXY - caseX_X/2, y_CaseXY - caseX_X/2, x_CaseXY + caseX_X/2, y_CaseXY + caseX_X/2,al_map_rgb(50, 50, 50));
+                } else
+                    al_draw_filled_rectangle(jeu->mouse_x - caseX_X / 2, jeu->mouse_y - caseX_X / 2,jeu->mouse_x + caseX_X / 2, jeu->mouse_y + caseX_X / 2,al_map_rgb(50, 50, 50));
+                break;
+            }
+            case TERRAIN : {
+                al_draw_circle(1607, 395, 49, al_map_rgb(255, 0, 0), 4);
+                //Si on est dans la grille du jeu, il dessine le carré dans les bonnes cases
+                if (jeu->mouse_x > mapX && jeu->mouse_x < mapX + 45 * caseX_X && jeu->mouse_y > mapY && jeu->mouse_y < mapY + 35 * caseX_X) {
+                    al_draw_scaled_bitmap(jeu->habitations[TERRAIN].image, 0, 0, jeu->habitations[TERRAIN].width, jeu->habitations[TERRAIN].height, x_CaseXY - 3 * caseX_X / 2, y_CaseXY - 3 * caseX_X / 2, 3 * caseX_X, 3 * caseX_X, 0) ;
+                    // Si les conditions ne sont pas vérifiés, on affiche le batiments en rouge
+                    if (verifierTerrain3_3v2(&jeu, caseX, caseY) == false ||routeProximiteMaison(&jeu, caseX, caseY) == false) {
+                        al_draw_filled_rectangle(x_CaseXY - 3 * caseX_X / 2, y_CaseXY - 3 * caseX_X / 2, x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 3 * caseX_X / 2, al_map_rgba(255, 0, 0, 50));
+                    }
+                }
+                break;
+            }
+            case CHATEAU : {
+                al_draw_circle(1607, 505, 49, al_map_rgb(255, 0, 0), 4);
+                if (jeu->mouse_x > mapX && jeu->mouse_x < mapX + 45 * caseX_X && jeu->mouse_y > mapY && jeu->mouse_y < mapY + 35 * caseX_X) {
+                    al_draw_filled_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2, x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 5 * caseX_X / 2, al_map_rgb(240, 230, 140));
+                    if (verifierTerrain4_6(&jeu, caseX, caseY) == false ||routeProximiteCentrale(&jeu, caseX, caseY) == false) {
+                        al_draw_filled_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2, x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 5 * caseX_X / 2, al_map_rgba(255, 0, 0, 150));
+                    }
+
+                }
+                break;
+            }
+            case CENTRALE : {
+                al_draw_circle(1607, 615, 49, al_map_rgb(255, 0, 0), 4);
+                if (jeu->mouse_x > mapX && jeu->mouse_x < mapX + 45 * caseX_X && jeu->mouse_y > mapY && jeu->mouse_y < mapY + 35 * caseX_X) {
+                    al_draw_filled_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2, x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 5 * caseX_X / 2, al_map_rgb(255, 140, 0));
+                    if (verifierTerrain4_6(&jeu, caseX, caseY) == false ||routeProximiteCentrale(&jeu, caseX, caseY) == false) {
+                        al_draw_filled_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2, x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 5 * caseX_X / 2, al_map_rgba(255, 0, 0, 150));
+                    }
+
+                }
+                break;
+            }
+        }
+
+
+        ///QUAND ON APPUIE SUR LE BOUTON DE LA SOURIS
+        if (jeu->mouseIsPressed) {
+            //Quand on appuie sur les icones des batiments, on selectionne un objet
+            if ((jeu->mouse_x - 1607) * (jeu->mouse_x - 1607) + (jeu->mouse_y - 285) * (jeu->mouse_y - 285) < 49 * 49) {
+                jeu->objetSelectionne = ROUTE;
+            } else if ((jeu->mouse_x - 1607) * (jeu->mouse_x - 1607) + (jeu->mouse_y - 395) * (jeu->mouse_y - 395) <49 * 49) {
+                jeu->objetSelectionne = TERRAIN;
+            } else if ((jeu->mouse_x - 1607) * (jeu->mouse_x - 1607) + (jeu->mouse_y - 505) * (jeu->mouse_y - 505) <49 * 49) {
+                jeu->objetSelectionne = CHATEAU;
+            } else if ((jeu->mouse_x - 1607) * (jeu->mouse_x - 1607) + (jeu->mouse_y - 615) * (jeu->mouse_y - 615) <49 * 49) {
+                jeu->objetSelectionne = CENTRALE;
+            }
+            //Si on n'appuie ni sur les icones, ni sur la grille, on enleve la sélection
+            else if (!(jeu->mouse_x > mapX && jeu->mouse_x < mapX + 45 * caseX_X && jeu->mouse_y > mapY && jeu->mouse_y < mapY + 35 * caseX_X)) {
+                jeu->objetSelectionne = RIEN;
+            }
+            //A ce stade la de la condition, on est forcement dans la grille, donc on est logiquement en train de poser les batiments
+            //Ducoup on vérifie chaque batiments tour à tour
+            else {
+                switch (jeu->objetSelectionne) {
+                    case ROUTE : {
+                        if (jeu->map[caseX][caseY].type == RIEN && jeu->argent >= 10) {
+                            jeu->map[caseX][caseY].type = ROUTE;
+                            jeu->argent -= 10;
+                        }
+                        break;
+                    }
+                    case TERRAIN : {
+                        //On peut pas poser le terrain, on le surbrille en rouge
+                        if (verifierTerrain3_3v2(&jeu, caseX, caseY) == false) {
+                            al_draw_rectangle(x_CaseXY - 3 * caseX_X / 2, y_CaseXY - 3 * caseX_X / 2, x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 3 * caseX_X / 2, al_map_rgb(255, 0, 0), 4);
+
+                        }
+                        //On peut poser le terrain (pas de batiments déjà posé ici), on vérifie maintenant la proximité à une route
+                        else if (routeProximiteMaison(&jeu, caseX, caseY) == true && jeu->argent >= 1000) {
+                            jeu->argent -= 1000;
+                            //On change les données de notre tab 2D
+                            for (int i = 0; i < 3; i++) {
+                                jeu->map[caseX - 1][caseY + 1 - i].type = TERRAIN;
+                                jeu->map[caseX][caseY + 1 - i].type = TERRAIN;
+                                jeu->map[caseX + 1][caseY + 1 - i].type = TERRAIN;
+                            }
+                            //On note la Case dans le tab des Habitations
+                            jeu->tabHabitations[jeu->nbMaisons].caseX = caseX;
+                            jeu->tabHabitations[jeu->nbMaisons].caseY = caseY;
+                            jeu->tabHabitations[jeu->nbMaisons].tempsEvolution = jeu->time[1].secondes;
+                            jeu->nbMaisons++;
+                            ///POSE DU TERRAIN + CREATION DANS LE TAB
+
+                        }
+                        break;
+                    }
+                    case CHATEAU : {
+                        //Si on peut pas poser le terrain, on le surbrille en rouge
+                        if (verifierTerrain4_6(&jeu, caseX, caseY) == false) {
+                            al_draw_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2, x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 5 * caseX_X / 2, al_map_rgb(255, 0, 0), 4);
+                        }
+                            //Sinon on peut le poser, on verifie donc les routes à cotés
+                        else if (routeProximiteCentrale(&jeu, caseX, caseY) == true && jeu->argent >= 100000) {
+                            jeu->argent -= 100000;
+                            for (int i = 0; i < 6; i++) {
+                                jeu->map[caseX - 2][caseY + 2 - i].type = CHATEAU;
+                                jeu->map[caseX - 1][caseY + 2 - i].type = CHATEAU;
+                                jeu->map[caseX][caseY + 2 - i].type = CHATEAU;
+                                jeu->map[caseX + 1][caseY + 2 - i].type = CHATEAU;
+                            }
+                            jeu->tabChateau[jeu->nbChateau].x = caseX;
+                            jeu->tabChateau[jeu->nbChateau].y = caseY;
+                            jeu->nbChateau++;
+                            jeu->capaciteEau += 5000;
+                        }
+                        break;
+                    }
+                    case CENTRALE : {
+                        //PAREIL QUE LE CHATEAU D'EAU
+                        if (verifierTerrain4_6(&jeu, caseX, caseY) == false) {
+                            al_draw_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2, x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 5 * caseX_X / 2, al_map_rgb(255, 0, 0), 4);
+                        }
+                        else if (routeProximiteCentrale(&jeu, caseX, caseY) == true && jeu->argent >= 100000) {
+                            jeu->argent -= 100000;
+                            for (int i = 0; i < 6; i++) {
+                                jeu->map[caseX - 2][caseY + 2 - i].type = CENTRALE;
+                                jeu->map[caseX - 1][caseY + 2 - i].type = CENTRALE;
+                                jeu->map[caseX][caseY + 2 - i].type = CENTRALE;
+                                jeu->map[caseX + 1][caseY + 2 - i].type = CENTRALE;
+                            }
+                            jeu->tabCentrale[jeu->nbCentrale].x = caseX;
+                            jeu->tabCentrale[jeu->nbCentrale].y = caseY;
+                            jeu->nbCentrale++;
+                            jeu->capaciteElec += 5000;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        ///DESSIN DES ELEMENTS DE LA MAP
+        for (int j = 0; j < LIGNE; j++) {
+            for (int i = 0; i < COLONNE; i++) {
+                //placement des routes
+                if (jeu->map[i][j].type == ROUTE) {
+                    verifierAffichageRoute(&jeu, i, j) ;
+                    int quelRoute = combinaison(*jeu, i, j, &jeu->map[i][j].rotation) ;
+                    al_draw_scaled_rotated_bitmap(jeu->route[quelRoute].image, 12.5, 12.5, jeu->map[i][j].x, jeu->map[i][j].y, scale, scale, jeu->map[i][j].rotation*PI/2, 0) ;
+                }
+                //placement des terrains
+                if(verifierPlacementTerrain(jeu, i, j) == true) {
+                    int type = jeu->map[i][j].type ;
+                    if(type == TERRAIN) {
+                        al_draw_scaled_bitmap(jeu->habitations[TERRAIN].image, 0, 0, jeu->habitations[TERRAIN].width, jeu->habitations[TERRAIN].height, jeu->map[i][j].x - 5 * caseX_X / 2, jeu->map[i][j].y - 5 * caseX_X / 2, 3 * caseX_X, 3 * caseX_X, 0) ;
+                        al_draw_scaled_bitmap(jeu->habitations[CONSTRUCTION].image, 0, 0, jeu->habitations[CONSTRUCTION].width, jeu->habitations[CONSTRUCTION].height, jeu->map[i][j].x - 5 * caseX_X / 2, jeu->map[i][j].y - 5 * caseX_X / 2, 3 * caseX_X, 3 * caseX_X, 0) ;
+                    }
+                    else if(type == IMMEUBLE) {
+                        al_draw_scaled_bitmap(jeu->habitations[IMMEUBLE].image, 0, 0, jeu->habitations[IMMEUBLE].width, jeu->habitations[IMMEUBLE].height, jeu->map[i][j].x - 5 * caseX_X / 2, jeu->map[i][j].y - 9 * caseX_X / 2, caseX_X * 3, caseX_X * 5, 0);
+                    }
+                    else if(type == GRATTE_CIEL) {
+                        al_draw_scaled_bitmap(jeu->habitations[GRATTE_CIEL].image, 0, 0, jeu->habitations[GRATTE_CIEL].width, jeu->habitations[GRATTE_CIEL].height, jeu->map[i][j].x - 5 * caseX_X / 2, jeu->map[i][j].y - 11 * caseX_X / 2, caseX_X * 3, caseX_X * 6, 0);
+                    }
+                    else al_draw_scaled_bitmap(jeu->habitations[type].image, 0, 0, jeu->habitations[type].width, jeu->habitations[type].height, jeu->map[i][j].x - 5 * caseX_X / 2, jeu->map[i][j].y - 7 * caseX_X / 2, caseX_X * 3, caseX_X * 4, 0);
+                }
+                if (jeu->map[i][j].type == CENTRALE) {
+                    al_draw_filled_rectangle(jeu->map[i][j].x - caseX_X / 2, jeu->map[i][j].y - caseX_X / 2, jeu->map[i][j].x + caseX_X / 2, jeu->map[i][j].y + caseX_X / 2, al_map_rgb(255, 140, 0));
+                    al_draw_rectangle(jeu->map[i][j].x - caseX_X / 2, jeu->map[i][j].y - caseX_X / 2, jeu->map[i][j].x + caseX_X / 2, jeu->map[i][j].y + caseX_X / 2, al_map_rgb(200, 200, 140), 1);
+                }
+                if (jeu->map[i][j].type == CHATEAU) {
+                    al_draw_filled_rectangle(jeu->map[i][j].x - caseX_X / 2, jeu->map[i][j].y - caseX_X / 2, jeu->map[i][j].x + caseX_X / 2, jeu->map[i][j].y + caseX_X / 2, al_map_rgb(240, 230, 140));
+                    al_draw_rectangle(jeu->map[i][j].x - caseX_X / 2, jeu->map[i][j].y - caseX_X / 2, jeu->map[i][j].x + caseX_X / 2, jeu->map[i][j].y + caseX_X / 2, al_map_rgb(200, 200, 140), 1);
+                }
+            }
+        }
+
+
+        ///EVOLUTION DES BATIMENTS (Il n'y a que la vérification du temps la)
+        for (int i = 0; i < jeu->nbMaisons; i++) {
+            if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 5) {
+                jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
+                if (jeu->tabHabitations[i].evolution == 0 && jeu->capaciteElec > jeu->nbHabitants) {
+                    if (jeu->tabHabitations[i].type != GRATTE_CIEL) {
+                        jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
+                        jeu->tabHabitations[i].type++;
+                        switch(jeu->tabHabitations[i].type){
+                            case CABANE :{
+                                jeu->nbHabitants +=10;
+                                break;
+                            }
+                            case MAISON : {
+                                jeu->nbHabitants += 40;
+                                break;
+                            }
+                            case IMMEUBLE : {
+                                jeu->nbHabitants += 50;
+                                break;
+                            }
+                            case GRATTE_CIEL : {
+                                jeu->nbHabitants += 900;
+                                break;
+                            }
+                        }
+                        jeu->capaciteElec -= jeu->nbHabitants;
+                        int caseBatx = jeu->tabHabitations[i].caseX;
+                        int caseBaty = jeu->tabHabitations[i].caseY;
+                        for (int j = 0; j < 3; j++) {
+                            jeu->map[caseBatx - 1][caseBaty - 1 + j].type++;
+                            jeu->map[caseBatx][caseBaty - 1 + j].type++;
+                            jeu->map[caseBatx + 1][caseBaty - 1 + j].type++;
+                        }
+                    }
+                    else if (jeu->tabHabitations[i].type == GRATTE_CIEL) {
+                        jeu->tabHabitations[i].evolution = 1;
+                    }
+                }
+                else{
+                    jeu->tabHabitations[i].evolution = 0;
+                }
+            }
+        }
+        ///DESSINER PARTIE CONSTRUCTION
+        al_draw_filled_rounded_rectangle(1500, 100, 1720, 815, 10, 10, al_map_rgba(150, 150, 150, 150));
+        al_draw_rounded_rectangle(1500, 100, 1720, 815, 10, 10, al_map_rgb(0, 0, 0), 3);
+        al_draw_rounded_rectangle(1500, 99, 1720, 816, 10, 10, al_map_rgb(255, 255, 255), 1);
+
+        //Dessiner les icones des batiments
+        al_draw_scaled_bitmap(jeu->icone[1].image, 0, 0, jeu->icone[1].width, jeu->icone[1].height, 1565, 125, 85, 85,0);
+
+        al_draw_scaled_bitmap(jeu->icone[2].image, 0, 0, jeu->icone[2].width, jeu->icone[2].height, 1558, 235, 100, 100,0);
+        al_draw_circle(1607, 285, 49, al_map_rgb(0, 0, 0), 4);
+
+        al_draw_scaled_bitmap(jeu->icone[3].image, 0, 0, jeu->icone[3].width, jeu->icone[3].height, 1558, 345, 100, 100,0);
+        al_draw_circle(1607, 395, 49, al_map_rgb(0, 0, 0), 4);
+
+        al_draw_scaled_bitmap(jeu->icone[4].image, 0, 0, jeu->icone[4].width, jeu->icone[4].height, 1558, 455, 100, 100,0);
+        al_draw_circle(1607, 505, 49, al_map_rgb(0, 0, 0), 4);
+
+        al_draw_scaled_bitmap(jeu->icone[5].image, 0, 0, jeu->icone[5].width, jeu->icone[5].height, 1558, 565, 100, 100,0);
+        al_draw_circle(1607, 615, 49, al_map_rgb(0, 0, 0), 4);
+    }
 
     ///TOOLBOX
     al_draw_filled_rounded_rectangle(-10, 100, 205, 815, 10, 10, al_map_rgba(150, 150, 150, 150));
@@ -191,291 +494,24 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
 
     al_draw_textf(smallFont, al_map_rgb(0, 0, 0), 100, 700, ALLEGRO_ALIGN_CENTER, "Niveau %d", jeu->niveauAfficher);
 
-
-    ///DESSINER PARTIE CONSTRUCTION
-    al_draw_filled_rounded_rectangle(1500, 100, 1720, 815, 10, 10, al_map_rgba(150, 150, 150, 150));
-    al_draw_rounded_rectangle(1500, 100, 1720, 815, 10, 10, al_map_rgb(0, 0, 0), 3);
-    al_draw_rounded_rectangle(1500, 99, 1720, 816, 10, 10, al_map_rgb(255, 255, 255), 1);
-
-
-    ///////////AFFICHAGE DU NIVEAU O ///////////////
-
-    if (jeu->niveauAfficher == ROUTIER) {
-        //Dessiner les icones des batiments
-        al_draw_scaled_bitmap(jeu->icone[1].image, 0, 0, jeu->icone[1].width, jeu->icone[1].height, 1565, 125, 85, 85,
-                              0);
-
-        al_draw_scaled_bitmap(jeu->icone[2].image, 0, 0, jeu->icone[2].width, jeu->icone[2].height, 1558, 235, 100, 100,
-                              0);
-        al_draw_circle(1607, 285, 49, al_map_rgb(0, 0, 0), 4);
-
-        al_draw_scaled_bitmap(jeu->icone[3].image, 0, 0, jeu->icone[3].width, jeu->icone[3].height, 1558, 345, 100, 100,
-                              0);
-        al_draw_circle(1607, 395, 49, al_map_rgb(0, 0, 0), 4);
-
-        al_draw_scaled_bitmap(jeu->icone[4].image, 0, 0, jeu->icone[4].width, jeu->icone[4].height, 1558, 455, 100, 100,
-                              0);
-        al_draw_circle(1607, 505, 49, al_map_rgb(0, 0, 0), 4);
-
-        al_draw_scaled_bitmap(jeu->icone[5].image, 0, 0, jeu->icone[5].width, jeu->icone[5].height, 1558, 565, 100, 100,
-                              0);
-        al_draw_circle(1607, 615, 49, al_map_rgb(0, 0, 0), 4);
-
-
-        ///ON SELECTIONNE UN OBJET
-        switch (jeu->objetSelectionne) {
-            case ROUTE : {
-                al_draw_circle(1607, 285, 49, al_map_rgb(255, 0, 0), 4);
-                //Si on est dans la grille du jeu, il dessine le carré dans la bonne case
-                if (jeu->mouse_x > MAPX && jeu->mouse_x < MAPX + 45 * CASEX_X && jeu->mouse_y > MAPY &&
-                    jeu->mouse_y < MAPY + 35 * CASEX_X) {
-                    al_draw_filled_rectangle(x_CaseXY - 10, y_CaseXY - 10, x_CaseXY + 10, y_CaseXY + 10,
-                                             al_map_rgb(50, 50, 50));
-                } else
-                    al_draw_filled_rectangle(jeu->mouse_x - CASEX_X / 2, jeu->mouse_y - CASEX_X / 2,
-                                             jeu->mouse_x + CASEX_X / 2, jeu->mouse_y + CASEX_X / 2,
-                                             al_map_rgb(50, 50, 50));
-                break;
-            }
-            case TERRAIN : {
-                al_draw_circle(1607, 395, 49, al_map_rgb(255, 0, 0), 4);
-                //Si on est dans la grille du jeu, il dessine le carré dans les bonnes cases
-                if (jeu->mouse_x > MAPX && jeu->mouse_x < MAPX + 45 * CASEX_X && jeu->mouse_y > MAPY &&jeu->mouse_y < MAPY + 35 * CASEX_X) {
-                    al_draw_scaled_bitmap(jeu->habitations[TERRAIN].image, 0, 0, jeu->habitations[TERRAIN].width, jeu->habitations[TERRAIN].height, x_CaseXY - 3*CASEX_X/2, y_CaseXY - 3*CASEX_X/2, 3*CASEX_X, 3*CASEX_X, 0) ;
-                    // Si les conditions ne sont pas vérifiés, on affiche le batiments en rouge
-                    if (verifierTerrain3_3v2(&jeu, caseX, caseY) == false ||routeProximiteMaison(&jeu, caseX, caseY) == false) {
-                        al_draw_filled_rectangle(x_CaseXY - 3 * CASEX_X / 2, y_CaseXY - 3 * CASEX_X / 2,x_CaseXY + 3 * CASEX_X / 2, y_CaseXY + 3 * CASEX_X / 2,al_map_rgba(255, 0, 0, 50));
-                    }
-                }
-                break;
-            }
-            case CHATEAU : {
-                al_draw_circle(1607, 505, 49, al_map_rgb(255, 0, 0), 4);
-                if (jeu->mouse_x > MAPX && jeu->mouse_x < MAPX + 45 * CASEX_X && jeu->mouse_y > MAPY &&jeu->mouse_y < MAPY + 35 * CASEX_X) {
-                    al_draw_filled_rectangle(x_CaseXY - 5 * CASEX_X / 2, y_CaseXY - 7 * CASEX_X / 2,x_CaseXY + 3 * CASEX_X / 2, y_CaseXY + 5 * CASEX_X / 2,al_map_rgb(240, 230, 140));
-                    if (verifierTerrain4_6(&jeu, caseX, caseY) == false ||routeProximiteCentrale(&jeu, caseX, caseY) == false) {
-                        al_draw_filled_rectangle(x_CaseXY - 5 * CASEX_X / 2, y_CaseXY - 7 * CASEX_X / 2,x_CaseXY + 3 * CASEX_X / 2, y_CaseXY + 5 * CASEX_X / 2,al_map_rgba(255, 0, 0, 150));
-                    }
-
-                }
-                break;
-            }
-            case CENTRALE : {
-                al_draw_circle(1607, 615, 49, al_map_rgb(255, 0, 0), 4);
-                if (jeu->mouse_x > MAPX && jeu->mouse_x < MAPX + 45 * CASEX_X && jeu->mouse_y > MAPY &&jeu->mouse_y < MAPY + 35 * CASEX_X) {
-                    al_draw_filled_rectangle(x_CaseXY - 5 * CASEX_X / 2, y_CaseXY - 7 * CASEX_X / 2,x_CaseXY + 3 * CASEX_X / 2, y_CaseXY + 5 * CASEX_X / 2,al_map_rgb(255, 140, 0));
-                    if (verifierTerrain4_6(&jeu, caseX, caseY) == false ||routeProximiteCentrale(&jeu, caseX, caseY) == false) {
-                        al_draw_filled_rectangle(x_CaseXY - 5 * CASEX_X / 2, y_CaseXY - 7 * CASEX_X / 2,x_CaseXY + 3 * CASEX_X / 2, y_CaseXY + 5 * CASEX_X / 2,al_map_rgba(255, 0, 0, 150));
-                    }
-
-                }
-                break;
-            }
-        }
-
-
-        ///QUAND ON APPUIE SUR LE BOUTON DE LA SOURIS
-        if (jeu->mouseIsPressed) {
-            //Quand on appuie sur les icones des batiments, on selectionne un objet
-            if ((jeu->mouse_x - 1607) * (jeu->mouse_x - 1607) + (jeu->mouse_y - 285) * (jeu->mouse_y - 285) < 49 * 49) {
-                jeu->objetSelectionne = ROUTE;
-            } else if ((jeu->mouse_x - 1607) * (jeu->mouse_x - 1607) + (jeu->mouse_y - 395) * (jeu->mouse_y - 395) <
-                       49 * 49) {
-                jeu->objetSelectionne = TERRAIN;
-            } else if ((jeu->mouse_x - 1607) * (jeu->mouse_x - 1607) + (jeu->mouse_y - 505) * (jeu->mouse_y - 505) <
-                       49 * 49) {
-                jeu->objetSelectionne = CHATEAU;
-            } else if ((jeu->mouse_x - 1607) * (jeu->mouse_x - 1607) + (jeu->mouse_y - 615) * (jeu->mouse_y - 615) <
-                       49 * 49) {
-                jeu->objetSelectionne = CENTRALE;
-            }
-                //Si on n'appuie ni sur les icones, ni sur la grille, on enleve la sélection
-            else if (!(jeu->mouse_x > MAPX && jeu->mouse_x < MAPX + 45 * CASEX_X && jeu->mouse_y > MAPY &&jeu->mouse_y < MAPY + 35 * CASEX_X)) {
-                jeu->objetSelectionne = RIEN;
-            }
-                //A ce stade la de la condition, on est forcement dans la grille, donc on est logiquement en train de poser les batiments
-                //Ducoup on vérifie chaque batiments tour à tour
-            else {
-                switch (jeu->objetSelectionne) {
-                    case ROUTE : {
-                        if (jeu->map[caseX][caseY].type == RIEN && jeu->argent >= 10) {
-                            jeu->map[caseX][caseY].type = ROUTE;
-                            jeu->argent -= 10;
-                        }
-                        break;
-                    }
-                    case TERRAIN : {
-                        //On peut pas poser le terrain, on le surbrille en rouge
-                        if (verifierTerrain3_3v2(&jeu, caseX, caseY) == false) {
-                            al_draw_rectangle(x_CaseXY - 3 * CASEX_X / 2, y_CaseXY - 3 * CASEX_X / 2,x_CaseXY + 3 * CASEX_X / 2, y_CaseXY + 3 * CASEX_X / 2,al_map_rgb(255, 0, 0), 4);
-
-                        }
-                        //On peut poser le terrain (pas de batiments déjà posé ici), on vérifie maintenant la proximité à une route
-                        else if (routeProximiteMaison(&jeu, caseX, caseY) == true && jeu->argent >= 1000) {
-                            jeu->argent -= 1000;
-                            //On change les données de notre tab 2D
-                            for (int i = 0; i < 3; i++) {
-                                jeu->map[caseX - 1][caseY + 1 - i].type = TERRAIN;
-                                jeu->map[caseX][caseY + 1 - i].type = TERRAIN;
-                                jeu->map[caseX + 1][caseY + 1 - i].type = TERRAIN;
-                            }
-                            //On note la Case dans le tab des Habitations
-                            jeu->tabHabitations[jeu->nbMaisons].caseX = caseX;
-                            jeu->tabHabitations[jeu->nbMaisons].caseY = caseY;
-                            jeu->tabHabitations[jeu->nbMaisons].tempsEvolution = jeu->time[1].secondes;
-                            jeu->nbMaisons++;
-                            ///POSE DU TERRAIN + CREATION DANS LE TAB
-
-                        }
-                        break;
-                    }
-                    case CHATEAU : {
-                        //Si on peut pas poser le terrain, on le surbrille en rouge
-                        if (verifierTerrain4_6(&jeu, caseX, caseY) == false) {
-                            al_draw_rectangle(x_CaseXY - 5 * CASEX_X / 2, y_CaseXY - 7 * CASEX_X / 2,x_CaseXY + 3 * CASEX_X / 2, y_CaseXY + 5 * CASEX_X / 2,al_map_rgb(255, 0, 0), 4);
-                        }
-                            //Sinon on peut le poser, on verifie donc les routes à cotés
-                        else if (routeProximiteCentrale(&jeu, caseX, caseY) == true && jeu->argent >= 100000) {
-                            jeu->argent -= 100000;
-                            for (int i = 0; i < 6; i++) {
-                                jeu->map[caseX - 2][caseY + 2 - i].type = CHATEAU;
-                                jeu->map[caseX - 1][caseY + 2 - i].type = CHATEAU;
-                                jeu->map[caseX][caseY + 2 - i].type = CHATEAU;
-                                jeu->map[caseX + 1][caseY + 2 - i].type = CHATEAU;
-                            }
-                            jeu->tabChateau[jeu->nbChateau].x = caseX;
-                            jeu->tabChateau[jeu->nbChateau].y = caseY;
-                            jeu->nbChateau++;
-                            jeu->capaciteEau += 5000;
-                        }
-                        break;
-                    }
-                    case CENTRALE : {
-                        //PAREIL QUE LE CHATEAU D'EAU
-                        if (verifierTerrain4_6(&jeu, caseX, caseY) == false) {
-                            al_draw_rectangle(x_CaseXY - 5 * CASEX_X / 2, y_CaseXY - 7 * CASEX_X / 2,x_CaseXY + 3 * CASEX_X / 2, y_CaseXY + 5 * CASEX_X / 2,al_map_rgb(255, 0, 0), 4);
-                        }
-                        else if (routeProximiteCentrale(&jeu, caseX, caseY) == true && jeu->argent >= 100000) {
-                            jeu->argent -= 100000;
-                            for (int i = 0; i < 6; i++) {
-                                jeu->map[caseX - 2][caseY + 2 - i].type = CENTRALE;
-                                jeu->map[caseX - 1][caseY + 2 - i].type = CENTRALE;
-                                jeu->map[caseX][caseY + 2 - i].type = CENTRALE;
-                                jeu->map[caseX + 1][caseY + 2 - i].type = CENTRALE;
-                            }
-                            jeu->tabCentrale[jeu->nbCentrale].x = caseX;
-                            jeu->tabCentrale[jeu->nbCentrale].y = caseY;
-                            jeu->nbCentrale++;
-                            jeu->capaciteElec += 5000;
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-
-
-    ///DESSIN DES ELEMENTS DE LA MAP
-    for (int j = 0; j < LIGNE; j++) {
-        for (int i = 0; i < COLONNE; i++) {
-            //placement des routes
-            if (jeu->map[i][j].type == ROUTE) {
-                verifierAffichageRoute(&jeu, i, j) ;
-                int quelRoute = combinaison(*jeu, i, j, &jeu->map[i][j].rotation) ;
-                al_draw_scaled_rotated_bitmap(jeu->route[quelRoute].image, 12.5, 12.5, jeu->map[i][j].x, jeu->map[i][j].y, scale, scale, jeu->map[i][j].rotation*PI/2, 0) ;
-            }
-            //placement des terrains
-            if(verifierPlacementTerrain(jeu, i, j) == true) {
-                int type = jeu->map[i][j].type ;
-                if(type == TERRAIN) {
-                    al_draw_scaled_bitmap(jeu->habitations[TERRAIN].image, 0, 0, jeu->habitations[TERRAIN].width, jeu->habitations[TERRAIN].height, jeu->map[i][j].x - 5*CASEX_X/2, jeu->map[i][j].y - 5*CASEX_X/2, 3*CASEX_X, 3*CASEX_X, 0) ;
-                    al_draw_scaled_bitmap(jeu->habitations[CONSTRUCTION].image, 0, 0, jeu->habitations[CONSTRUCTION].width, jeu->habitations[CONSTRUCTION].height, jeu->map[i][j].x - 5*CASEX_X/2, jeu->map[i][j].y - 5*CASEX_X/2, 3*CASEX_X, 3*CASEX_X, 0) ;
-                }
-                else if(type == IMMEUBLE) {
-                    al_draw_scaled_bitmap(jeu->habitations[IMMEUBLE].image, 0, 0, jeu->habitations[IMMEUBLE].width, jeu->habitations[IMMEUBLE].height, jeu->map[i][j].x - 5*CASEX_X/2, jeu->map[i][j].y - 9*CASEX_X/2, CASEX_X*3, CASEX_X*5, 0);
-                }
-                else if(type == GRATTE_CIEL) {
-                    al_draw_scaled_bitmap(jeu->habitations[GRATTE_CIEL].image, 0, 0, jeu->habitations[GRATTE_CIEL].width, jeu->habitations[GRATTE_CIEL].height, jeu->map[i][j].x - 5*CASEX_X/2, jeu->map[i][j].y - 11*CASEX_X/2, CASEX_X*3, CASEX_X*6, 0);
-                }
-                else al_draw_scaled_bitmap(jeu->habitations[type].image, 0, 0, jeu->habitations[type].width, jeu->habitations[type].height, jeu->map[i][j].x - 5*CASEX_X/2, jeu->map[i][j].y - 7*CASEX_X/2, CASEX_X*3, CASEX_X*4, 0);
-            }
-            if (jeu->map[i][j].type == CENTRALE) {
-                al_draw_filled_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,al_map_rgb(255, 140, 0));
-                al_draw_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,al_map_rgb(200, 200, 140), 1);
-            }
-            if (jeu->map[i][j].type == CHATEAU) {
-                al_draw_filled_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,al_map_rgb(240, 230, 140));
-                al_draw_rectangle(jeu->map[i][j].x - CASEX_X / 2, jeu->map[i][j].y - CASEX_X / 2,jeu->map[i][j].x + CASEX_X / 2, jeu->map[i][j].y + CASEX_X / 2,al_map_rgb(200, 200, 140), 1);
-            }
-        }
-    }
-
-
-    ///EVOLUTION DES BATIMENTS (Il n'y a que la vérification du temps la)
-    for (int i = 0; i < jeu->nbMaisons; i++) {
-        if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 5) {
-            jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
-            if (jeu->tabHabitations[i].evolution == 0 && jeu->capaciteElec > jeu->nbHabitants) {
-                if (jeu->tabHabitations[i].type != GRATTE_CIEL) {
-                    jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
-                    jeu->tabHabitations[i].type++;
-                    switch(jeu->tabHabitations[i].type){
-                        case CABANE :{
-                            jeu->nbHabitants +=10;
-                            break;
-                            }
-                            case MAISON : {
-                                jeu->nbHabitants += 40;
-                                break;
-                            }
-                            case IMMEUBLE : {
-                                jeu->nbHabitants += 50;
-                                break;
-                            }
-                            case GRATTE_CIEL : {
-                                jeu->nbHabitants += 900;
-                                break;
-                            }
-                    }
-                    jeu->capaciteElec -= jeu->nbHabitants;
-                    int caseBatx = jeu->tabHabitations[i].caseX;
-                    int caseBaty = jeu->tabHabitations[i].caseY;
-                    for (int j = 0; j < 3; j++) {
-                        jeu->map[caseBatx - 1][caseBaty - 1 + j].type++;
-                        jeu->map[caseBatx][caseBaty - 1 + j].type++;
-                        jeu->map[caseBatx + 1][caseBaty - 1 + j].type++;
-                    }
-                }
-                else if (jeu->tabHabitations[i].type == GRATTE_CIEL) {
-                    jeu->tabHabitations[i].evolution = 1;
-                }
-            }
-            else{
-                jeu->tabHabitations[i].evolution = 0;
-            }
-        }
-    }
 }
 
 
-
 ///ON DETERMINE SUR QUELLE CASE SE SITUE LA SOURIS
-int determinerCaseX(int mouse_x) {
+int determinerCaseX(int mouse_x, int mapX, int caseX_X) {
     int caseX;
-    caseX = mouse_x - MAPX;
-    caseX = caseX / CASEX_X;
+    caseX = mouse_x - mapX;
+    caseX = caseX / caseX_X;
     if (caseX > 45 || caseX < 0) {
         return 0;
     }
     else return (int) caseX;
 }
 
-int determinerCaseY(int mouse_x) {
+int determinerCaseY(int mouse_x, int mapY, int caseX_X) {
     int caseY ;
-    caseY = mouse_x - MAPY ;
-    caseY = caseY/CASEX_X ;
+    caseY = mouse_x - mapY ;
+    caseY = caseY/caseX_X ;
     if(caseY > 35 || caseY < 0) {
         return 0 ;
     }
@@ -565,7 +601,13 @@ bool verifierTerrain4_6(Jeu** jeu, int caseSourisX, int caseSourisY) {
     else return false ;
 }
 
+
+
 ///POUR L'AFFICHAGE DES ROUTES
+// On verifie s'il y a une route dans chaque direction, si oui, alors on écrit 1 dans la case associée
+// Ces 4 numéros vont former une combinaison en binaire.
+// Par exemple, 0000 veut dire que c'est une route toute seule (route0.png)
+// 0001 veut dire qu'il y a une route en bas, donc c'est route1.png, on fait ça fait pour toutes les 16 possibilites
 void verifierAffichageRoute(Jeu** jeu, int caseSourisX, int caseSourisY) {
     if ((*jeu)->map[caseSourisX + 1][caseSourisY].type == ROUTE) {
         (*jeu)->map[caseSourisX][caseSourisY].route[DROITE] = 1 ;

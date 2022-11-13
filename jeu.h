@@ -24,7 +24,7 @@ typedef struct{
 
 typedef struct{
     float x, y ;
-    int type, route[4], rotation ;
+    int type, route[4], rotation, distanceX, distanceY ;
 }Case;
 
 typedef struct {
@@ -44,6 +44,11 @@ typedef struct{
     Bitmap habitation;
 }Habitation;
 
+typedef struct{
+    int z, direction[4] ;
+    float mapX, oldMapX, mapY, oldMapY ;
+    float CaseX_X, oldCaseX_X ;
+}Zoom;
 
 typedef struct {
     //ENTIER
@@ -65,6 +70,9 @@ typedef struct {
     //TEMPS
     Temps time[2];
 
+    //ZOOM
+    Zoom zoom ;
+
     //BITMAP
     Bitmap icone[NBICONE]  ;
     Bitmap habitations[NBHABITATIONS] ;
@@ -75,8 +83,8 @@ void initJeu(Jeu* jeu) ;
 void temps(Temps* time, int compteur, int numTimer) ;
 void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) ;
 
-int determinerCaseX(int mouse_x) ;
-int determinerCaseY(int mouse_y) ;
+int determinerCaseX(int mouse_x, int mapX, int caseX_X) ;
+int determinerCaseY(int mouse_y, int mapY, int caseX_X) ;
 
 bool verifierTerrain3_3v2(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 bool verifierTerrain4_6(Jeu** jeu, int caseSourisX, int caseSourisY) ;
@@ -89,6 +97,11 @@ bool verifierPlacementTerrain(Jeu* jeu, int caseX, int caseY) ;
 void verifierAffichageRoute(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 int combinaison(Jeu jeu, int caseSourisX, int caseSourisY, int* rotation) ;
 
-void dessinerTerrain() ;
+
+//Affichage du terrain (la grille)
+void dessinerTerrain(Jeu* jeu) ;
+void zoom(Jeu* jeu, int caseX, int caseY) ;
+void deplacerMap(Jeu* jeu) ;
+
 
 #endif //ECE_CITY_1_F_JEU_H

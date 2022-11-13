@@ -1,0 +1,7 @@
+#ifndef ECE_CITY_1_F_CONSTRUCTION_H
+#define ECE_CITY_1_F_CONSTRUCTION_H
+#include "menu.h"
+
+
+
+#endif //ECE_CITY_1_F_CONSTRUCTION_H

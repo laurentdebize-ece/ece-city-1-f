@@ -1,7 +1,6 @@
 #include "menu.h"
 #include "jeu.h"
 #include "time.h"
-#include "eva.h"
 
 
 int main() {
@@ -39,6 +38,9 @@ int main() {
     times = al_create_timer(0.02);
     Menu menu;
     Jeu jeu;
+    jeu.width = width ;
+    jeu.height = height ;
+
 
     ///CHARGEMENT DES IMAGES
 
@@ -181,8 +183,30 @@ int main() {
                             isFin = 1;
                             break;
                         }
+                        case ALLEGRO_KEY_Z : {
+                            jeu.zoom.direction[HAUT] = 1 ;
+                            break;
+                        }
+                        case ALLEGRO_KEY_S : {
+                            jeu.zoom.direction[BAS] = 1 ;
+                            break;
+                        }
+                        case ALLEGRO_KEY_D : {
+                            jeu.zoom.direction[DROITE] = 1 ;
+                            break;
+                        }
+                        case ALLEGRO_KEY_Q: {
+                            jeu.zoom.direction[GAUCHE] = 1 ;
+                            break;
+                        }
                     }
                     break;
+                }
+                case ALLEGRO_EVENT_KEY_UP : {
+                    for(int i = 0 ; i < 4 ; i++) {
+                        jeu.zoom.direction[i] = 0 ;
+                    }
+                    break ;
                 }
                 case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN : {
                     if ((event.mouse.button & 1) == 1) {
@@ -199,9 +223,17 @@ int main() {
                 case ALLEGRO_EVENT_MOUSE_AXES : {
                     jeu.mouse_x = event.mouse.x;
                     jeu.mouse_y = event.mouse.y;
+                    if(event.mouse.dz != 0 && jeu.zoom.CaseX_X + event.mouse.dz >= 25 && jeu.zoom.CaseX_X + event.mouse.dz < 80){
+                        jeu.zoom.CaseX_X += 2 * event.mouse.dz ;
+                        printf("%d\n", jeu.zoom.mapX) ;
+                        zoom(&jeu, determinerCaseX(jeu.mouse_x, jeu.zoom.mapX, jeu.zoom.CaseX_X), determinerCaseY(jeu.mouse_y, jeu.zoom.mapX, jeu.zoom.CaseX_X)) ;
+                    }
                     break;
                 }
+
                 case ALLEGRO_EVENT_TIMER : {
+                    deplacerMap(&jeu) ;
+
                     draw = 1;
                     compteur++;
                     temps(&jeu.time[0], compteur, 0);
