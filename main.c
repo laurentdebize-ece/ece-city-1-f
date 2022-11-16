@@ -2,6 +2,7 @@
 #include "jeu.h"
 #include "time.h"
 
+#include <stdio.h>
 
 int main() {
     ///INITIALISATION DU DISPLAY ET DU TIMER
@@ -252,6 +253,6 @@ int main() {
         }
     }
 
-    ///DESTRUCTION DES ELEMENTS DU JEU
+//    ///DESTRUCTION DES ELEMENTS DU JEU
     return 0;
 }
