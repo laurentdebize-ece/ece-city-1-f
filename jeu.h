@@ -7,10 +7,9 @@
 #define NBROUTE 5
 #define COLONNE 45
 #define LIGNE 35
-#define MAX 150
+#define MAX 30
 #define PI 3.14159265358979323846
 #define CAPACITE 5000
-
 
 enum Batiments{NUL, NUL1, NUL2, NUL3, NUL4, RIEN, ROUTE, CENTRALE, CHATEAU};
 enum Habitations {TERRAIN, CABANE, MAISON, IMMEUBLE, GRATTE_CIEL, CONSTRUCTION};
@@ -40,7 +39,7 @@ typedef struct {
 }Centralelectrique;
 
 typedef struct{
-    int caseX, caseY, type, tempsEvolution, evolution ;
+    int caseX, caseY, type, tempsEvolution, evolution, provenanceElec, provenanceEau;
     Bitmap habitation;
 }Habitation;
 
@@ -65,7 +64,7 @@ typedef struct {
     Habitation tabHabitations[MAX];
 
     //GRILLE
-    Case map[MAX][MAX] ;
+    Case map[COLONNE][LIGNE] ;
 
     //TEMPS
     Temps time[2];
