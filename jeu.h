@@ -11,6 +11,7 @@
 #define PI 3.14159265358979323846
 #define CAPACITE 5000
 
+
 enum Batiments{NUL, NUL1, NUL2, NUL3, NUL4, RIEN, ROUTE, CENTRALE, CHATEAU};
 enum Habitations {TERRAIN, CABANE, MAISON, IMMEUBLE, GRATTE_CIEL, CONSTRUCTION};
 enum Niveau{ROUTIER, EAU, ELECTRICITE};
@@ -41,6 +42,7 @@ typedef struct {
 
 typedef struct{
     int caseX, caseY, type, tempsEvolution, evolution, provenanceElec, provenanceEau;
+    int nbHabitant;
     Bitmap habitation;
 }Habitation;
 
