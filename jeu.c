@@ -124,8 +124,10 @@ void dessinerTerrain(Jeu* jeu) {
 }
 
 void temps(Temps* time, int compteur, int numTimer) {
+    time->dixieme += 2 ;
     if(compteur%50 == 0){
         time->secondes++ ;
+        time->dixieme = 0.00f ;
     }
     if(time->secondes == 60 && numTimer == 0) {
         time->minutes++ ;
@@ -157,6 +159,8 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
 
 
     dessinerTerrain(jeu);
+
+    al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 500, 500, ALLEGRO_ALIGN_CENTER, "%d, %d",jeu->time[0].secondes, (int)jeu->time[0].dixieme);
 
     ///TIMER
     if (jeu->time[0].secondes < 10) {
@@ -265,8 +269,8 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             //On change les données de notre tab 2D
                             for (int i = 0; i < 3; i++) {
                                 jeu->map[caseX - 1][caseY + 1 - i].type = TERRAIN;
-                                jeu->map[caseX][caseY + 1 - i].type = TERRAIN;
-                                jeu->map[caseX + 1][caseY + 1 - i].type = TERRAIN;
+                                jeu->map[caseX][caseY + 1 - i].type = TERRAIN ;
+                                jeu->map[caseX + 1][caseY + 1 - i].type = TERRAIN ;
                             }
                             //On note la Case dans le tab des Habitations
                             jeu->tabHabitations[jeu->nbMaisons].caseX = caseX;
@@ -403,6 +407,8 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                 }
             }
         }
+
+
         ///DESSINER PARTIE CONSTRUCTION
         al_draw_filled_rounded_rectangle(1500, 100, 1720, 815, 10, 10, al_map_rgba(150, 150, 150, 150));
         al_draw_rounded_rectangle(1500, 100, 1720, 815, 10, 10, al_map_rgb(0, 0, 0), 3);
