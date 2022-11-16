@@ -518,28 +518,32 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     for (int i = 0; i < jeu->nbMaisons; i++) {
         if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 5) {
             jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
-            if (jeu->tabHabitations[i].evolution == 0 && jeu->capaciteElec > jeu->nbHabitants) {
+            if (jeu->tabHabitations[i].evolution == 0 && jeu->capaciteElec >jeu->tabHabitations[i].nbHabitant && jeu->capaciteElec - jeu->tabHabitations[i].nbHabitant > 0) {
                 if (jeu->tabHabitations[i].type != GRATTE_CIEL) {
                     jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
                     jeu->tabHabitations[i].type++;
                     switch (jeu->tabHabitations[i].type) {
                         case CABANE : {
                             jeu->nbHabitants += 10;
+                            jeu->tabHabitations[i].nbHabitant = 10;
                             jeu->capaciteElec -= 10;
                             break;
                         }
                         case MAISON : {
                             jeu->capaciteElec -= 40;
+                            jeu->tabHabitations[i].nbHabitant = 50;
                             jeu->nbHabitants += 40;
                             break;
                         }
                         case IMMEUBLE : {
                             jeu->nbHabitants += 50;
+                            jeu->tabHabitations[i].nbHabitant = 100;
                             jeu->capaciteElec -= 50;
                             break;
                         }
                         case GRATTE_CIEL : {
                             jeu->nbHabitants += 900;
+                            jeu->tabHabitations[i].nbHabitant = 1000;
                             jeu->capaciteElec -= 900;
                             break;
                         }

@@ -40,7 +40,7 @@ typedef struct {
 }Centralelectrique;
 
 typedef struct{
-    int caseX, caseY, type, tempsEvolution, evolution, provenanceElec, provenanceEau;
+    int caseX, caseY, type, tempsEvolution, evolution, provenanceElec, provenanceEau, nbHabitant;
     Bitmap habitation;
 }Habitation;
 
