@@ -18,6 +18,7 @@ enum DirectionRoute{HAUT, BAS, DROITE, GAUCHE};
 
 
 typedef struct{
+    float dixieme ;
     int secondes, minutes ;
 } Temps ;
 

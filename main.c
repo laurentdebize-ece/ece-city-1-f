@@ -70,6 +70,8 @@ int main() {
     jeu.habitations[IMMEUBLE].image = al_load_bitmap("../Bitmap/Batiments/immeuble.png") ;
     jeu.habitations[GRATTE_CIEL].image = al_load_bitmap("../Bitmap/Batiments/gratte_ciel.png") ;
     jeu.habitations[CONSTRUCTION].image = al_load_bitmap("../Bitmap/Batiments/construction.png") ;
+    ALLEGRO_BITMAP* chateau = al_load_bitmap("../Bitmap/Batiments/chateau_eau.png") ;
+
 
 
 
@@ -223,9 +225,8 @@ int main() {
                 case ALLEGRO_EVENT_MOUSE_AXES : {
                     jeu.mouse_x = event.mouse.x;
                     jeu.mouse_y = event.mouse.y;
-                    if(event.mouse.dz != 0 && jeu.zoom.CaseX_X + event.mouse.dz >= 25 && jeu.zoom.CaseX_X + event.mouse.dz < 80){
+                    if(event.mouse.dz != 0 && jeu.zoom.CaseX_X + event.mouse.dz >= 25 && jeu.zoom.CaseX_X + event.mouse.dz < 150){
                         jeu.zoom.CaseX_X += 2 * event.mouse.dz ;
-                        printf("%d\n", jeu.zoom.mapX) ;
                         zoom(&jeu, determinerCaseX(jeu.mouse_x, jeu.zoom.mapX, jeu.zoom.CaseX_X), determinerCaseY(jeu.mouse_y, jeu.zoom.mapX, jeu.zoom.CaseX_X)) ;
                     }
                     break;

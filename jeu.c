@@ -124,8 +124,10 @@ void dessinerTerrain(Jeu* jeu) {
 }
 
 void temps(Temps* time, int compteur, int numTimer) {
+    time->dixieme += 2 ;
     if(compteur%50 == 0){
         time->secondes++ ;
+        time->dixieme = 0.00f ;
     }
     if(time->secondes == 60 && numTimer == 0) {
         time->minutes++ ;
@@ -158,6 +160,8 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
 
     dessinerTerrain(jeu);
 
+    al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 500, 500, ALLEGRO_ALIGN_CENTER, "%d, %d",jeu->time[0].secondes, (int)jeu->time[0].dixieme);
+
     ///TIMER
     if (jeu->time[0].secondes < 10) {
         al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 990, 7, ALLEGRO_ALIGN_CENTER, "%d : 0%d",
@@ -167,6 +171,8 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                       jeu->time[0].minutes, jeu->time[0].secondes);
     ///DESSINER NB HABITANT
     al_draw_scaled_bitmap(jeu->icone[0].image, 0, 0, 1024, 985, 900, 3, 40, 30, 0);
+
+
     al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 880, 7, ALLEGRO_ALIGN_CENTER, "%d", jeu->nbHabitants);
     al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 100, 7, ALLEGRO_ALIGN_CENTER, "ELEC : %d", jeu->capaciteElec);
     ///DESSINER ARGENT
@@ -389,8 +395,8 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             //On change les données de notre tab 2D
                             for (int i = 0; i < 3; i++) {
                                 jeu->map[caseX - 1][caseY + 1 - i].type = TERRAIN;
-                                jeu->map[caseX][caseY + 1 - i].type = TERRAIN;
-                                jeu->map[caseX + 1][caseY + 1 - i].type = TERRAIN;
+                                jeu->map[caseX][caseY + 1 - i].type = TERRAIN ;
+                                jeu->map[caseX + 1][caseY + 1 - i].type = TERRAIN ;
                             }
                             //On note la Case dans le tab des Habitations
                             jeu->tabHabitations[jeu->nbMaisons].caseX = caseX;
@@ -444,6 +450,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             jeu->nbCentrale++;
                             jeu->capaciteElec += CAPACITE;
                         }
+                        break;
                     }
                 }
             }
@@ -644,6 +651,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     al_draw_textf(smallFont, al_map_rgb(0, 0, 0), 100, 700, ALLEGRO_ALIGN_CENTER, "Niveau %d", jeu->niveauAfficher);
 
 }
+
 
 ///ON DETERMINE SUR QUELLE CASE SE SITUE LA SOURIS
 int determinerCaseX(int mouse_x, int mapX, int caseX_X) {
