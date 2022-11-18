@@ -518,7 +518,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     for (int i = 0; i < jeu->nbMaisons; i++) {
         if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 5) {
             jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
-            if (jeu->tabHabitations[i].evolution == 0 && jeu->capaciteElec >jeu->tabHabitations[i].nbHabitant && jeu->capaciteElec - jeu->tabHabitations[i].nbHabitant > 0) {
+            if (jeu->tabHabitations[i].evolution == 0 && jeu->capaciteElec >jeu->tabHabitations[i].nbHabitant && jeu->capaciteElec - verifCentrale(jeu, jeu->tabHabitations, i) > 0) {
                 if (jeu->tabHabitations[i].type != GRATTE_CIEL) {
                     jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
                     jeu->tabHabitations[i].type++;
@@ -533,21 +533,18 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             jeu->capaciteElec -= 40;
                             jeu->tabHabitations[i].nbHabitant = 50;
                             jeu->nbHabitants += 40;
-                            jeu->tabHabitations[i].nbHabitant = 40;
                             break;
                         }
                         case IMMEUBLE : {
                             jeu->nbHabitants += 50;
                             jeu->tabHabitations[i].nbHabitant = 100;
                             jeu->capaciteElec -= 50;
-                            jeu->tabHabitations[i].nbHabitant = 50;
                             break;
                         }
                         case GRATTE_CIEL : {
                             jeu->nbHabitants += 900;
                             jeu->tabHabitations[i].nbHabitant = 1000;
                             jeu->capaciteElec -= 900;
-                            jeu->tabHabitations[i].nbHabitant = 900;
                             break;
                         }
                     }
@@ -854,4 +851,20 @@ bool verifierPlacementTerrain(Jeu* jeu, int caseX, int caseY) {
         }
     }
     return false ;
+}
+int verifCentrale(Jeu* jeu, Habitation tabHabitations[jeu->nbHabitants],int i){
+    switch(tabHabitations[i].type){
+        case TERRAIN: {
+            return 10;
+        }
+        case CABANE: {
+            return 50;
+        }
+        case MAISON: {
+            return 100;
+        }
+        case IMMEUBLE: {
+            return 1000;
+        }
+    }
 }
