@@ -149,6 +149,12 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     int mapX = jeu->zoom.mapX;
     int mapY = jeu->zoom.mapY;
     int caseX_X = jeu->zoom.CaseX_X;
+  barreicone(font, jeu);
+
+
+
+
+
 
     for (int i = 0; i < COLONNE; i++) {
         for (int j = 0; j < LIGNE; j++) {
@@ -454,6 +460,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                     }
                 }
             }
+
         }
     }
 
@@ -851,4 +858,15 @@ bool verifierPlacementTerrain(Jeu* jeu, int caseX, int caseY) {
         }
     }
     return false ;
+}
+void barreicone(ALLEGRO_FONT*font ,Jeu*jeu){
+    al_draw_filled_rounded_rectangle(3, 10, 400, 80, 5, 5, al_map_rgb(73, 132, 171));
+    al_draw_rounded_rectangle( 3, 10, 400, 80, 5, 5, al_map_rgb(73, 132, 171), 4);
+    al_draw_scaled_bitmap(jeu->icone[5].image, 0,0, 475,336, 30, 15, 90, 60, 0);
+    al_draw_scaled_bitmap(jeu->icone[6].image, 0, 0, 474, 269, 170, 15, 90, 60, 0 );
+    al_draw_scaled_bitmap(jeu->icone[7].image, 0, 0, 512, 512, 300, 15, 90, 60, 0);
+
+
+
+
 }

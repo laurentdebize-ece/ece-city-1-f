@@ -84,6 +84,9 @@ typedef struct {
 void initJeu(Jeu* jeu) ;
 void temps(Temps* time, int compteur, int numTimer) ;
 void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) ;
+void barreicone(ALLEGRO_FONT*font ,Jeu*jeu) ;
+
+
 
 int determinerCaseX(int mouse_x, int mapX, int caseX_X) ;
 int determinerCaseY(int mouse_y, int mapY, int caseX_X) ;

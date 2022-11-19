@@ -52,12 +52,15 @@ int main() {
     menu.deco[3].image = al_load_bitmap("../Bitmap/Photo/valentin.png");
     menu.deco[4].image = al_load_bitmap("../Bitmap/map.png");
 
+
     jeu.icone[0].image = al_load_bitmap("../Bitmap/Icone/habitant.png");
     jeu.icone[1].image = al_load_bitmap("../Bitmap/Icone/outil.png");
     jeu.icone[2].image = al_load_bitmap("../Bitmap/Icone/route.png");
     jeu.icone[3].image = al_load_bitmap("../Bitmap/Icone/maison.png");
     jeu.icone[4].image = al_load_bitmap("../Bitmap/Icone/chateau_eau.png");
-    jeu.icone[5].image = al_load_bitmap("../Bitmap/Icone/centrale.png");
+    jeu.icone[5].image = al_load_bitmap("../Bitmap/Icone/EclairOk.jpg");
+    jeu.icone[6].image = al_load_bitmap("../Bitmap/Icone/EauOk.jpg");
+    jeu.icone[7].image = al_load_bitmap("../Bitmap/Icone/coins.png");
 
     jeu.route[0].image =  al_load_bitmap("../Bitmap/Batiments/Route0.png");
     jeu.route[1].image =  al_load_bitmap("../Bitmap/Batiments/Route1.png");
