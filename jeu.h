@@ -7,7 +7,7 @@
 #define NBROUTE 5
 #define COLONNE 45
 #define LIGNE 35
-#define MAX 30
+#define MAX 15
 #define PI 3.14159265358979323846
 #define CAPACITE 5000
 
@@ -41,8 +41,7 @@ typedef struct {
 }Centralelectrique;
 
 typedef struct{
-    int caseX, caseY, type, tempsEvolution, evolution, provenanceElec, provenanceEau;
-    int nbHabitant;
+    int caseX, caseY, type, tempsEvolution, evolution, provenanceElec, provenanceEau, nbHabitant;
     Bitmap habitation;
 }Habitation;
 
@@ -107,6 +106,7 @@ int combinaison(Jeu jeu, int caseSourisX, int caseSourisY, int* rotation) ;
 void dessinerTerrain(Jeu* jeu) ;
 void zoom(Jeu* jeu, int caseX, int caseY) ;
 void deplacerMap(Jeu* jeu) ;
+int verifCentrale(Jeu* jeu, Habitation tabHabitations[jeu->nbHabitants],int i);
 
 
 #endif //ECE_CITY_1_F_JEU_H
