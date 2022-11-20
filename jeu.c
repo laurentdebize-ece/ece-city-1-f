@@ -176,7 +176,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
         al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 990, 7, ALLEGRO_ALIGN_CENTER, "%d : %d",
                       jeu->time[0].minutes, jeu->time[0].secondes);
     ///DESSINER NB HABITANT
-    al_draw_scaled_bitmap(jeu->icone[0].image, 0, 0, 1024, 985, 900, 3, 40, 30, 0);
+    al_draw_scaled_bitmap(jeu->icone[0].image, 0, 0, 1024, 985, 900, 5, 40, 30, 0);
 
 
     al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 880, 7, ALLEGRO_ALIGN_CENTER, "%d", jeu->nbHabitants);
@@ -861,11 +861,11 @@ bool verifierPlacementTerrain(Jeu* jeu, int caseX, int caseY) {
 void barreicone(ALLEGRO_FONT*smallFont ,Jeu*jeu){
    // al_draw_filled_rounded_rectangle(3, 10, 400, 80, 5, 5, al_map_rgb(73, 132, 171));
    // al_draw_rounded_rectangle( 3, 10, 400, 80, 5, 5, al_map_rgb(73, 132, 171), 4);
-    al_draw_scaled_bitmap(jeu->icone[5].image, 0,0, 475,336, 100, 3, 75, 42, 0);
+    al_draw_scaled_bitmap(jeu->icone[5].image, 0,0, 475,336, 108, 3, 75, 42, 0);
     al_draw_scaled_bitmap(jeu->icone[6].image, 0, 0, 559, 447, 90, 20, 110, 80, 0 );
     al_draw_scaled_bitmap(jeu->icone[7].image, 0, 0, 512, 512, 1475, 22, 75, 45, 0);
     //al_draw_scaled_bitmap(jeu->icone[0].image, 0, 0, 1024, 985, 300, 31, 75, 45, 0);
-    al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 1500, 25, ALLEGRO_ALIGN_CENTER, "%d : %d", jeu->argent);
+    al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 1480, 25, ALLEGRO_ALIGN_CENTER, "%d : %d", jeu->argent);
     al_draw_textf(smallFont, al_map_rgb(235,235,235), 15, 9, ALLEGRO_ALIGN_CENTER, "%d : %d",jeu->capaciteElec);
     al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 15, 50, ALLEGRO_ALIGN_CENTER, "%d : %d", jeu->capaciteEau);
 
