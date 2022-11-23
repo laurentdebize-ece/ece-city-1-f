@@ -2,7 +2,7 @@
 #define ECE_CITY_1_F_JEU_H
 #include "menu.h"
 #include <stdio.h>
-#define NBICONE 10
+#define NBICONE 15
 #define NBHABITATIONS 6
 #define NBROUTE 5
 #define COLONNE 45
