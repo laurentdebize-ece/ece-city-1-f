@@ -59,6 +59,7 @@ int main() {
     jeu.icone[3].image = al_load_bitmap("../Bitmap/Icone/maison.png");
     jeu.icone[4].image = al_load_bitmap("../Bitmap/Icone/chateau_eau.png");
     jeu.icone[5].image = al_load_bitmap("../Bitmap/Icone/centrale.png");
+
     jeu.icone[6].image = al_load_bitmap("../Bitmap/Icone/EclairOk-removebg-preview.png");
     jeu.icone[7].image = al_load_bitmap("../Bitmap/Icone/IconeEau-removebg-preview.png");
     jeu.icone[8].image = al_load_bitmap("../Bitmap/Icone/coins.png");
