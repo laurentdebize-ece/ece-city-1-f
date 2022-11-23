@@ -58,12 +58,14 @@ int main() {
     jeu.icone[2].image = al_load_bitmap("../Bitmap/Icone/route.png");
     jeu.icone[3].image = al_load_bitmap("../Bitmap/Icone/maison.png");
     jeu.icone[4].image = al_load_bitmap("../Bitmap/Icone/chateau_eau.png");
-    jeu.icone[5].image = al_load_bitmap("../Bitmap/Icone/EclairOk-removebg-preview.png");
-    jeu.icone[6].image = al_load_bitmap("../Bitmap/Icone/IconeEau-removebg-preview.png");
-    jeu.icone[7].image = al_load_bitmap("../Bitmap/Icone/coins.png");
-    jeu.icone[8].image = al_load_bitmap("../Bitmap/Icone/SIMCITYECE.png");
-    jeu.icone[9].image = al_load_bitmap("../Bitmap/Icone/CaptureIconeEcole-removebg-preview.png");
-    jeu.icone[10].image = al_load_bitmap("../Bitmap/Icone/PetitEcolier3-removebg-preview.png");
+    jeu.icone[5].image = al_load_bitmap("../Bitmap/Icone/centrale.png");
+
+    jeu.icone[6].image = al_load_bitmap("../Bitmap/Icone/EclairOk-removebg-preview.png");
+    jeu.icone[7].image = al_load_bitmap("../Bitmap/Icone/IconeEau-removebg-preview.png");
+    jeu.icone[8].image = al_load_bitmap("../Bitmap/Icone/coins.png");
+    jeu.icone[9].image = al_load_bitmap("../Bitmap/Icone/SIMCITYECE.png");
+    jeu.icone[10].image = al_load_bitmap("../Bitmap/Icone/CaptureIconeEcole-removebg-preview.png");
+    jeu.icone[11].image = al_load_bitmap("../Bitmap/Icone/PetitEcolier3-removebg-preview.png");
 
 
 
@@ -79,7 +81,10 @@ int main() {
     jeu.habitations[IMMEUBLE].image = al_load_bitmap("../Bitmap/Batiments/immeuble.png") ;
     jeu.habitations[GRATTE_CIEL].image = al_load_bitmap("../Bitmap/Batiments/gratte_ciel.png") ;
     jeu.habitations[CONSTRUCTION].image = al_load_bitmap("../Bitmap/Batiments/construction.png") ;
-    ALLEGRO_BITMAP* chateau = al_load_bitmap("../Bitmap/Batiments/chateau_eau.png") ;
+    jeu.centrale[0].image = al_load_bitmap("../Bitmap/Batiments/chateau_eau.png") ;
+    jeu.centrale[1].image = al_load_bitmap("../Bitmap/Batiments/centrale.png") ;
+    jeu.centrale[2].image = al_load_bitmap("../Bitmap/Batiments/terrainRoute.png") ;
+
 
 
 
@@ -162,7 +167,7 @@ int main() {
                 }
             }
             if (draw) {
-                al_draw_bitmap(background, 0, 0, 0);
+                al_draw_scaled_bitmap(background, 0, 0, 1704, 960, 0, 0, width, height, 0);
                 switch (menu.mode_de_jeu) {
                     case MENU : {
                         dessinerMenu(font, jeu.mouse_x, jeu.mouse_y);
@@ -234,7 +239,7 @@ int main() {
                 case ALLEGRO_EVENT_MOUSE_AXES : {
                     jeu.mouse_x = event.mouse.x;
                     jeu.mouse_y = event.mouse.y;
-                    if(event.mouse.dz != 0 && jeu.zoom.CaseX_X + event.mouse.dz >= 25 && jeu.zoom.CaseX_X + event.mouse.dz < 150){
+                    if(event.mouse.dz != 0 && jeu.zoom.CaseX_X + event.mouse.dz >= CASEX_X && jeu.zoom.CaseX_X + event.mouse.dz < 150){
                         jeu.zoom.CaseX_X += 2 * event.mouse.dz ;
                         zoom(&jeu, determinerCaseX(jeu.mouse_x, jeu.zoom.mapX, jeu.zoom.CaseX_X), determinerCaseY(jeu.mouse_y, jeu.zoom.mapX, jeu.zoom.CaseX_X)) ;
                     }
@@ -252,7 +257,7 @@ int main() {
                 }
             }
             if (draw) {
-                al_draw_bitmap(menu.deco[4].image, 0, 0, 0);
+                al_draw_scaled_bitmap(menu.deco[4].image, 0, 0, 1704, 960, 0, 0, width, height, 0);
                 dessinerJeu(smallfont, font, &jeu);
                 al_flip_display();
                 al_clear_to_color(black);

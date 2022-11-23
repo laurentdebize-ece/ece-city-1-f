@@ -7,8 +7,12 @@
 #define NBROUTE 5
 #define COLONNE 45
 #define LIGNE 35
-#define MAX 15
+#define MAX 20
 #define PI 3.14159265358979323846
+#define MAPX 290
+#define MAPY 60
+#define CASEX_X (float)26
+#define ARGENTDEP 500000000
 #define CAPACITE 5000
 
 
@@ -25,24 +29,22 @@ typedef struct{
 
 typedef struct{
     float x, y ;
-    int type, route[4], rotation, distanceX, distanceY ;
+    int type, route[4], rotation, distanceX, distanceY, numConstruction ;
+    int electricite, eau ;
 }Case;
 
 typedef struct {
     int quantitedistri,type, tempsChateau;
-    float x, y;
-    Bitmap bitmapeau;
+    int caseX, caseY;
 }Chateau;
 
 typedef struct {
-    int quantitedistri,type, tempsCentrale;
-    float x, y;
-    Bitmap bitmapcen;
+    int quantitedistri,type, tempsCentrale, electricite;
+    int caseX, caseY;
 }Centralelectrique;
 
 typedef struct{
-    int caseX, caseY, type, tempsEvolution, evolution, provenanceElec, provenanceEau, nbHabitant;
-    Bitmap habitation;
+    int caseX, caseY, type, tempsEvolution, evolution, provenanceElec, distance, nbHabitant;
 }Habitation;
 
 typedef struct{
@@ -52,12 +54,11 @@ typedef struct{
 }Zoom;
 
 typedef struct {
-    //ENTIER
-    float width, height ;       // Info écran
+    float width, height,toolboxX ;       // Info écran
     int mouse_x, mouse_y ;
-    int capaciteElec, capaciteEau;
     int niveauAfficher, objetSelectionne ;   //Selection
     int nbCentrale, nbMaisons, nbChateau, nbHabitants, argent ; //Info du jeu
+    int capaciteElec, capaciteEau;
     bool mouseIsPressed;
 
     //STRUCTURE
@@ -66,7 +67,9 @@ typedef struct {
     Habitation tabHabitations[MAX];
 
     //GRILLE
-    Case map[COLONNE][LIGNE] ;
+    Case map[COLONNE+1][LIGNE+1] ;
+
+    int matriceChateau_Maison[COLONNE][LIGNE] ;
 
     //TEMPS
     Temps time[2];
@@ -78,14 +81,19 @@ typedef struct {
     Bitmap icone[NBICONE]  ;
     Bitmap habitations[NBHABITATIONS] ;
     Bitmap route[NBROUTE] ;
+    Bitmap centrale[3] ;
 } Jeu ;
 
 void initJeu(Jeu* jeu) ;
+void initImage(Jeu** jeu) ;
 void temps(Temps* time, int compteur, int numTimer) ;
 void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) ;
+void dessinerNiveau(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu** jeu) ;
+void dessinerToolbox(Jeu* jeu) ;
+
 void barreicone(ALLEGRO_FONT*smallFont ,Jeu*jeu) ;
 
-
+void determinerDistanceCentrale(Jeu** jeu, int quelChateau) ;
 
 int determinerCaseX(int mouse_x, int mapX, int caseX_X) ;
 int determinerCaseY(int mouse_y, int mapY, int caseX_X) ;
@@ -95,6 +103,8 @@ bool verifierTerrain4_6(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 bool routeProximiteMaison(Jeu **jeu, int caseSourisX, int caseSourisY);
 bool routeProximiteCentrale(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 bool verifierPlacementTerrain(Jeu* jeu, int caseX, int caseY) ;
+bool verifierPlacementCentrale(Jeu* jeu, int caseX, int caseY, int type) ;
+void determinerDistanceMaison(Jeu** jeu,int quelleMaison) ;
 
 
 //Affichage de la route
