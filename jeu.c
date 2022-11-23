@@ -868,6 +868,9 @@ void barreicone(ALLEGRO_FONT*smallFont ,Jeu*jeu){
     al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 1575, 25, ALLEGRO_ALIGN_CENTER, "%d", jeu->argent);
     al_draw_textf(smallFont, al_map_rgb(235,235,235), 180, 9, ALLEGRO_ALIGN_CENTER, ": %d ",jeu->capaciteElec);
     al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 180, 50, ALLEGRO_ALIGN_CENTER, ": %d", jeu->capaciteEau);
+    al_draw_scaled_bitmap(jeu->icone[8].image, 0, 0, 978, 371, 0, 877, 130, 80, 0 );
+    al_draw_scaled_bitmap(jeu->icone[9].image, 0, 0, 273, 204, 1440, 830, 150, 110, 0);
+    al_draw_scaled_bitmap(jeu->icone[10].image, 0, 0, 360, 362, 1562, 880, 90, 60, 0);
 
 }
 

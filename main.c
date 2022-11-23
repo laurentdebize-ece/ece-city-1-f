@@ -61,6 +61,11 @@ int main() {
     jeu.icone[5].image = al_load_bitmap("../Bitmap/Icone/EclairOk-removebg-preview.png");
     jeu.icone[6].image = al_load_bitmap("../Bitmap/Icone/IconeEau-removebg-preview.png");
     jeu.icone[7].image = al_load_bitmap("../Bitmap/Icone/coins.png");
+    jeu.icone[8].image = al_load_bitmap("../Bitmap/Icone/SIMCITYECE.png");
+    jeu.icone[9].image = al_load_bitmap("../Bitmap/Icone/CaptureIconeEcole-removebg-preview.png");
+    jeu.icone[10].image = al_load_bitmap("../Bitmap/Icone/PetitEcolier3-removebg-preview.png");
+
+
 
     jeu.route[0].image =  al_load_bitmap("../Bitmap/Batiments/Route0.png");
     jeu.route[1].image =  al_load_bitmap("../Bitmap/Batiments/Route1.png");
