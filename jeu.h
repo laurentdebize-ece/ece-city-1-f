@@ -104,7 +104,7 @@ bool routeProximiteMaison(Jeu **jeu, int caseSourisX, int caseSourisY);
 bool routeProximiteCentrale(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 bool verifierPlacementTerrain(Jeu* jeu, int caseX, int caseY) ;
 bool verifierPlacementCentrale(Jeu* jeu, int caseX, int caseY, int type) ;
-void determinerDistanceMaison(Jeu** jeu,int quelleMaison) ;
+int determinerDistanceMaison(Jeu** jeu,int quelleMaison) ;
 
 
 //Affichage de la route

@@ -392,21 +392,25 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                 } else if (verifierPlacementCentrale(jeu, i, j, 1) == true && jeu->map[i][j].type == CHATEAU) {
                     al_draw_scaled_bitmap(jeu->centrale[2].image, 0, 0, 64, 96, jeu->map[i][j].x - 5 * caseX_X / 2,jeu->map[i][j].y - 7 * caseX_X / 2, caseX_X * 4, caseX_X * 6, 0);
                     al_draw_scaled_bitmap(jeu->centrale[0].image, 0, 0, jeu->centrale[0].width, jeu->centrale[0].height,jeu->map[i][j].x - 2*  caseX_X, jeu->map[i][j].y - 5 * caseX_X,caseX_X * 3, caseX_X * 6, 0);
-                    for(int c = 0; c< jeu->nbCentrale; c++){
-                        al_draw_textf(smallFont, al_map_rgb(255, 255, 255),jeu->map[jeu->tabCentrale[c].caseX][jeu->tabCentrale[c].caseY].x,jeu->map[jeu->tabCentrale[c].caseX][jeu->tabCentrale[c].caseY].y, ALLEGRO_ALIGN_CENTER, "%d/%d", jeu->tabCentrale[c].quantitedistri,jeu->tabCentrale[c].electricite);
-                    }
+
                 } else if (verifierPlacementCentrale(jeu, i, j, 0) == true) {
                     al_draw_scaled_bitmap(jeu->centrale[2].image, 0, 0, 64, 96, jeu->map[i][j].x - 5 * caseX_X / 2,jeu->map[i][j].y - 7 * caseX_X / 2, caseX_X * 4, caseX_X * 6, 0);
                     al_draw_scaled_bitmap(jeu->centrale[1].image, 0, 0, jeu->centrale[1].width, jeu->centrale[1].height,jeu->map[i][j].x - 5 * caseX_X / 2 + caseX_X/8,jeu->map[i][j].y - 9 * caseX_X / 2, caseX_X * 4, caseX_X * 6, 0);
+                    for(int c = 0; c< jeu->nbCentrale; c++){
+                        al_draw_textf(smallFont, al_map_rgb(255, 255, 255),jeu->map[jeu->tabCentrale[c].caseX][jeu->tabCentrale[c].caseY].x,jeu->map[jeu->tabCentrale[c].caseX][jeu->tabCentrale[c].caseY].y, ALLEGRO_ALIGN_CENTER, "%d/%d", jeu->tabCentrale[c].quantitedistri,jeu->tabCentrale[c].electricite);
+                    }
                 }
             }
         }
     }
+    for (int i = 0; i<jeu->nbCentrale; i++){
+        jeu->tabHabitations[i].provenanceElec = determinerDistanceMaison(&jeu, i);
 
+    }
     ///EVOLUTION DES BATIMENTS (Il n'caseY a que la vérification du temps la)
     for (int i = 0; i < jeu->nbMaisons; i++) {
-
-        if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 10) {
+        int evolution = determinerDistanceMaison(&jeu, i) ;
+        if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 10 && evolution != 0) {
             jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
             if (jeu->tabHabitations[i].evolution == 0 && jeu->capaciteElec >jeu->tabHabitations[i].nbHabitant && jeu->capaciteElec - verifCentrale(jeu, jeu->tabHabitations, i) > 0) {
                 if (jeu->tabHabitations[i].type != GRATTE_CIEL) {
@@ -826,99 +830,89 @@ int verifCentrale(Jeu* jeu, Habitation tabHabitations[jeu->nbHabitants],int i){
     return p;
 
 }
-void elecDistribue(Jeu *jeu, Centralelectrique tabCentrale[jeu->nbCentrale], int i ){
-    for(int p=0; p<jeu->nbCentrale; p++){
-        if(jeu->tabHabitations[i].type ++){
-            tabCentrale[p].quantitedistri += jeu->nbHabitants;
 
-        }
-    }
-}
-
-void determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
-    int caseX = (*jeu)->tabHabitations[quelleMaison].caseX ;
-    int caseY = (*jeu)->tabHabitations[quelleMaison].caseY ;
-    int bfsFini = 0 ;
+int determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
+    int caseX = (*jeu)->tabHabitations[quelleMaison].caseX;
+    int caseY = (*jeu)->tabHabitations[quelleMaison].caseY;
+    int bfsFini = 0;
+    int relie = 0 ;
     int distance = 0;
+    int numHab = 0 ;
 
-    for(int i=0 ; i <3; i++){
-        if((*jeu)->map[caseX - 2][caseY + 1 - i].type == ROUTE){
-            caseX = caseX - 2 ;
+    for (int i = 0; i < 3; i++) {
+        if ((*jeu)->map[caseX - 2][caseY + 1 - i].type == ROUTE) {
+            caseX = caseX - 2;
             caseY = caseY + 1 - i;
-            break ;
-        }
-        else if((*jeu)->map[caseX + 2][caseY + 1 - i].type == ROUTE) {
-            caseX = caseX + 2 ;
+            break;
+        } else if ((*jeu)->map[caseX + 2][caseY + 1 - i].type == ROUTE) {
+            caseX = caseX + 2;
             caseY = caseY + 1 - i;
-            break ;
-        }
-        else if((*jeu)->map[caseX + 1 - i][caseY - 2].type == ROUTE) {
+            break;
+        } else if ((*jeu)->map[caseX + 1 - i][caseY - 2].type == ROUTE) {
             caseX = caseX + 1 - i;
             caseY = caseY - 2;
-            break ;
-        }
-        else if((*jeu)->map[caseX + 1 - i][caseY + 2].type == ROUTE) {
-            caseX = caseX + 1 - i ;
+            break;
+        } else if ((*jeu)->map[caseX + 1 - i][caseY + 2].type == ROUTE) {
+            caseX = caseX + 1 - i;
             caseY = caseY + 2;
-            break ;
+            break;
         }
     }
     typedef struct {
-        int caseX, caseY, distance ;
-    }File;
+        int caseX, caseY, distance;
+    } File;
 
 
     File file[10] = {0};
-    int bfsMarque[COLONNE][LIGNE] = {0}, longueurFile = 1 ;
-    file[0].caseX = caseX ;
-    file[0].caseY = caseY ;
+    int bfsMarque[COLONNE][LIGNE] = {0}, longueurFile = 1;
+    file[0].caseX = caseX;
+    file[0].caseY = caseY;
 
 
-    bfsMarque[caseX][caseY] = 1 ;
-    while(!bfsFini) {
-        caseX = file->caseX ;
-        caseY = file->caseY ;
-        distance = file->distance ;
-        longueurFile-- ;
-        for(int i = 0 ; i < longueurFile ; i++){
-            file[i].caseX = file[i+1].caseX ;
-            file[i].caseY = file[i+1].caseY ;
-            file[i].distance = file[i+1].distance ;
+    bfsMarque[caseX][caseY] = 1;
+    while (!bfsFini) {
+        caseX = file->caseX;
+        caseY = file->caseY;
+        distance = file->distance;
+        longueurFile--;
+        for (int i = 0; i < longueurFile; i++) {
+            file[i].caseX = file[i + 1].caseX;
+            file[i].caseY = file[i + 1].caseY;
+            file[i].distance = file[i + 1].distance;
         }
-        if((*jeu)->map[caseX][caseY+1].type == ROUTE && bfsMarque[caseX][caseY+1]==0) {
-            file[longueurFile].caseX = caseX ;
+        if ((*jeu)->map[caseX][caseY + 1].type == ROUTE && bfsMarque[caseX][caseY + 1] == 0) {
+            file[longueurFile].caseX = caseX;
             file[longueurFile].caseY = caseY + 1;
-            file[longueurFile].distance = distance + 1 ;
-            longueurFile++ ;
-            bfsMarque[caseX][caseY+1] = 1 ;
+            file[longueurFile].distance = distance + 1;
+            longueurFile++;
+            bfsMarque[caseX][caseY + 1] = 1;
 
         }
-        if((*jeu)->map[caseX - 1][caseY].type == ROUTE && bfsMarque[caseX - 1][caseY]==0) {
-            file[longueurFile].caseX = caseX - 1 ;
-            file[longueurFile].caseY = caseY ;
-            file[longueurFile].distance = distance + 1 ;
-            longueurFile++ ;
-            bfsMarque[caseX - 1][caseY] = 1 ;
+        if ((*jeu)->map[caseX - 1][caseY].type == ROUTE && bfsMarque[caseX - 1][caseY] == 0) {
+            file[longueurFile].caseX = caseX - 1;
+            file[longueurFile].caseY = caseY;
+            file[longueurFile].distance = distance + 1;
+            longueurFile++;
+            bfsMarque[caseX - 1][caseY] = 1;
 
         }
-        if((*jeu)->map[caseX][caseY - 1].type == ROUTE && bfsMarque[caseX][caseY - 1] == 0) {
-            file[longueurFile].caseX = caseX ;
+        if ((*jeu)->map[caseX][caseY - 1].type == ROUTE && bfsMarque[caseX][caseY - 1] == 0) {
+            file[longueurFile].caseX = caseX;
             file[longueurFile].caseY = caseY - 1;
-            file[longueurFile].distance = distance + 1 ;
-            longueurFile++ ;
-            bfsMarque[caseX][caseY - 1] = 1 ;
+            file[longueurFile].distance = distance + 1;
+            longueurFile++;
+            bfsMarque[caseX][caseY - 1] = 1;
 
         }
-        if((*jeu)->map[caseX + 1][caseY].type == ROUTE && bfsMarque[caseX + 1][caseY]==0) {
-            file[longueurFile].caseX = caseX + 1 ;
-            file[longueurFile].caseY = caseY ;
-            file[longueurFile].distance = distance + 1 ;
-            longueurFile++ ;
-            bfsMarque[caseX + 1][caseY] = 1 ;
+        if ((*jeu)->map[caseX + 1][caseY].type == ROUTE && bfsMarque[caseX + 1][caseY] == 0) {
+            file[longueurFile].caseX = caseX + 1;
+            file[longueurFile].caseY = caseY;
+            file[longueurFile].distance = distance + 1;
+            longueurFile++;
+            bfsMarque[caseX + 1][caseY] = 1;
         }
-        //CENTRALE
-        if((*jeu)->map[caseX][caseY+1].type == CHATEAU) {
-            int numHab = (*jeu)->map[caseX][caseY+1].numConstruction;
+        if ((*jeu)->map[caseX][caseY + 1].type == CHATEAU) {
+            numHab = (*jeu)->map[caseX][caseY + 1].numConstruction;
             if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
                 (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
             } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
@@ -926,8 +920,8 @@ void determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
             }
 
         }
-        if((*jeu)->map[caseX+1][caseY].type == CHATEAU) {
-            int numHab = (*jeu)->map[caseX+1][caseY].numConstruction;
+        if ((*jeu)->map[caseX + 1][caseY].type == CHATEAU) {
+            numHab = (*jeu)->map[caseX + 1][caseY].numConstruction;
             if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
                 (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
             } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
@@ -935,16 +929,69 @@ void determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
 
             }
         }
-        if((*jeu)->map[caseX-1][caseY].type == CHATEAU) {
-            int numHab = (*jeu)->map[caseX - 1][caseY].numConstruction;
+        if ((*jeu)->map[caseX - 1][caseY].type == CHATEAU) {
+            numHab = (*jeu)->map[caseX - 1][caseY].numConstruction;
             if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
                 (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
             } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
                 (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
             }
         }
-        if(longueurFile == 0) {
+        if ((*jeu)->map[caseX][caseY - 1].type == CHATEAU) {
+            numHab = (*jeu)->map[caseX - 1][caseY].numConstruction;
+            if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
+                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+            } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
+                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+            }
+        }
+        if ((*jeu)->map[caseX][caseY + 1].type == CENTRALE) {
+            numHab = (*jeu)->map[caseX][caseY + 1].numConstruction;
+            if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
+                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+            } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
+                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+            }
+            relie++;
+        }
+        if ((*jeu)->map[caseX + 1][caseY].type == CENTRALE) {
+            numHab = (*jeu)->map[caseX + 1][caseY].numConstruction;
+            if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
+                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+            } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
+                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+
+            }
+            relie++;
+        }
+        if ((*jeu)->map[caseX][caseY - 1].type == CENTRALE) {
+            numHab = (*jeu)->map[caseX - 1][caseY].numConstruction;
+            if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
+                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+            } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
+                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+            }
+            relie++ ;
+        }
+        if ((*jeu)->map[caseX - 1][caseY].type == CENTRALE) {
+            numHab = (*jeu)->map[caseX - 1][caseY].numConstruction;
+            if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
+                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+            } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
+                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+            }
+            relie++;
+        }
+        if (longueurFile == 0) {
             bfsFini = 1;
         }
     }
+    if(relie == 0) {
+        return 0;
+    }
+    else {
+        (*jeu)->tabHabitations[quelleMaison].provenanceElec = numHab;
+        return distance ;
+    }
+
 }
