@@ -39,7 +39,7 @@ typedef struct {
 }Chateau;
 
 typedef struct {
-    int quantitedistri,type, tempsCentrale;
+    int quantitedistri,type, tempsCentrale, electricite;
     int caseX, caseY;
 }Centralelectrique;
 

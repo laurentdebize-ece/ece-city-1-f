@@ -1,4 +1,7 @@
 #include "jeu.h"
+#define MAPX 290
+#define MAPY 60
+
 
 void initImage(Jeu** jeu) {
     for(int i = 0 ; i<4 ;i++) {
@@ -169,7 +172,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
 
     dessinerTerrain(jeu);
 
-    al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 500, 500, ALLEGRO_ALIGN_CENTER, "%d, %d",jeu->time[0].secondes, (int)jeu->time[0].dixieme);
+   // al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 500, 500, ALLEGRO_ALIGN_CENTER, "%d, %d",jeu->time[0].secondes, (int)jeu->time[0].dixieme);
 
     ///TIMER
     if (jeu->time[0].secondes < 10) {
@@ -355,6 +358,8 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             }
                             jeu->tabCentrale[jeu->nbCentrale].caseX = caseX;
                             jeu->tabCentrale[jeu->nbCentrale].caseY = caseY;
+                            jeu->tabCentrale[jeu->nbCentrale].electricite += CAPACITE;
+                            jeu->tabCentrale[jeu->nbCentrale].quantitedistri = 0;
                             jeu->nbCentrale++;
                             jeu->capaciteElec += CAPACITE;
                         }
@@ -387,7 +392,9 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                 } else if (verifierPlacementCentrale(jeu, i, j, 1) == true && jeu->map[i][j].type == CHATEAU) {
                     al_draw_scaled_bitmap(jeu->centrale[2].image, 0, 0, 64, 96, jeu->map[i][j].x - 5 * caseX_X / 2,jeu->map[i][j].y - 7 * caseX_X / 2, caseX_X * 4, caseX_X * 6, 0);
                     al_draw_scaled_bitmap(jeu->centrale[0].image, 0, 0, jeu->centrale[0].width, jeu->centrale[0].height,jeu->map[i][j].x - 2*  caseX_X, jeu->map[i][j].y - 5 * caseX_X,caseX_X * 3, caseX_X * 6, 0);
-
+                    for(int c = 0; c< jeu->nbCentrale; c++){
+                        al_draw_textf(smallFont, al_map_rgb(255, 255, 255),jeu->map[jeu->tabCentrale[c].caseX][jeu->tabCentrale[c].caseY].x,jeu->map[jeu->tabCentrale[c].caseX][jeu->tabCentrale[c].caseY].y, ALLEGRO_ALIGN_CENTER, "%d/%d", jeu->tabCentrale[c].quantitedistri,jeu->tabCentrale[c].electricite);
+                    }
                 } else if (verifierPlacementCentrale(jeu, i, j, 0) == true) {
                     al_draw_scaled_bitmap(jeu->centrale[2].image, 0, 0, 64, 96, jeu->map[i][j].x - 5 * caseX_X / 2,jeu->map[i][j].y - 7 * caseX_X / 2, caseX_X * 4, caseX_X * 6, 0);
                     al_draw_scaled_bitmap(jeu->centrale[1].image, 0, 0, jeu->centrale[1].width, jeu->centrale[1].height,jeu->map[i][j].x - 5 * caseX_X / 2 + caseX_X/8,jeu->map[i][j].y - 9 * caseX_X / 2, caseX_X * 4, caseX_X * 6, 0);
@@ -398,7 +405,8 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
 
     ///EVOLUTION DES BATIMENTS (Il n'caseY a que la vérification du temps la)
     for (int i = 0; i < jeu->nbMaisons; i++) {
-        if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 5) {
+
+        if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 10) {
             jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
             if (jeu->tabHabitations[i].evolution == 0 && jeu->capaciteElec >jeu->tabHabitations[i].nbHabitant && jeu->capaciteElec - verifCentrale(jeu, jeu->tabHabitations, i) > 0) {
                 if (jeu->tabHabitations[i].type != GRATTE_CIEL) {
@@ -787,7 +795,8 @@ bool verifierPlacementCentrale(Jeu* jeu, int caseX, int caseY, int type) {
             }
         }
         return false;
-    } else {
+    }
+    else {
         for (int i = 0; i < jeu->nbCentrale; i++) {
             if (jeu->tabCentrale[i].caseX == caseX && jeu->tabCentrale[i].caseY == caseY) {
                 return true;
@@ -799,18 +808,29 @@ bool verifierPlacementCentrale(Jeu* jeu, int caseX, int caseY, int type) {
 
 
 int verifCentrale(Jeu* jeu, Habitation tabHabitations[jeu->nbHabitants],int i){
+    int p=0;
     switch(tabHabitations[i].type){
         case TERRAIN: {
-            return 10;
+            p= 10;
         }
         case CABANE: {
-            return 50;
+            p= 50;
         }
         case MAISON: {
-            return 100;
+            p= 100;
         }
         case IMMEUBLE: {
-            return 1000;
+            p= 1000;
+        }
+    }
+    return p;
+
+}
+void elecDistribue(Jeu *jeu, Centralelectrique tabCentrale[jeu->nbCentrale], int i ){
+    for(int p=0; p<jeu->nbCentrale; p++){
+        if(jeu->tabHabitations[i].type ++){
+            tabCentrale[p].quantitedistri += jeu->nbHabitants;
+
         }
     }
 }
