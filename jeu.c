@@ -161,7 +161,6 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     int mapX = jeu->zoom.mapX;
     int mapY = jeu->zoom.mapY;
     int caseX_X = jeu->zoom.CaseX_X;
-    barreicone(smallFont, jeu);
 
     for (int i = 0; i < COLONNE; i++) {
         for (int j = 0; j < LIGNE; j++) {
@@ -456,8 +455,9 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     for(int i = 0 ; i < jeu->nbMaisons ; i++) {
         determinerDistanceMaison(&jeu, i) ;
     }
-    dessinerNiveau(smallFont, font, &jeu) ;
     dessinerToolbox(jeu);
+
+    dessinerNiveau(smallFont, font, &jeu) ;
 
     for(int i = 0 ; i < jeu->nbMaisons ; i++) {
         al_draw_textf(smallFont, al_map_rgb(255, 0, 0), jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].x - 50, jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].y - 50, 0, "%d", jeu->tabHabitations[i].distance) ;
@@ -534,6 +534,7 @@ void dessinerNiveau(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu** jeu) {
         al_draw_text(font, al_map_rgb(232, 23, 30), 103, 475, ALLEGRO_ALIGN_CENTER, "2");
     }
     al_draw_textf(smallFont, al_map_rgb(0, 0, 0), 100, 700, ALLEGRO_ALIGN_CENTER, "Niveau %d", (*jeu)->niveauAfficher);
+    barreicone(smallFont, *jeu);
 
     if((*jeu)->niveauAfficher == ROUTIER) {
         if((*jeu)->toolboxX >= 1500) {
@@ -588,13 +589,16 @@ void dessinerToolbox(Jeu* jeu) {
 void barreicone(ALLEGRO_FONT*smallFont ,Jeu*jeu){
     // al_draw_filled_rounded_rectangle(3, 10, 400, 80, 5, 5, al_map_rgb(73, 132, 171));
     // al_draw_rounded_rectangle( 3, 10, 400, 80, 5, 5, al_map_rgb(73, 132, 171), 4);
-    al_draw_scaled_bitmap(jeu->icone[6].image, 0,0, 475,336, 100, 3, 75, 42, 0);
-    al_draw_scaled_bitmap(jeu->icone[7].image, 0, 0, 559, 447, 90, 20, 110, 80, 0 );
-    al_draw_scaled_bitmap(jeu->icone[8].image, 0, 0, 512, 512, 1475, 22, 75, 45, 0);
+    al_draw_scaled_bitmap(jeu->icone[6].image, 0,0, 475,336, 10, 3, 75, 42, 0);
+    al_draw_scaled_bitmap(jeu->icone[7].image, 0, 0, 559, 447, 10, 20, 110, 80, 0 );
+    al_draw_scaled_bitmap(jeu->icone[8].image, 0, 0, 512, 512, 1430, 22, 75, 45, 0);
     //al_draw_scaled_bitmap(jeu->icone[0].image, 0, 0, 1024, 985, 300, 31, 75, 45, 0);
-    al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 1500, 25, ALLEGRO_ALIGN_CENTER, "%d : %d", jeu->argent);
-    al_draw_textf(smallFont, al_map_rgb(235,235,235), 15, 9, ALLEGRO_ALIGN_CENTER, "%d : %d",jeu->capaciteElec);
-    al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 15, 50, ALLEGRO_ALIGN_CENTER, "%d : %d", jeu->capaciteEau);
+    al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 1575, 25, ALLEGRO_ALIGN_CENTER, "%d", jeu->argent);
+    al_draw_textf(smallFont, al_map_rgb(235,235,235), 180, 9, ALLEGRO_ALIGN_CENTER, ": %d ",jeu->capaciteElec);
+    al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 180, 50, ALLEGRO_ALIGN_CENTER, ": %d", jeu->capaciteEau);
+    al_draw_scaled_bitmap(jeu->icone[9].image, 0, 0, 978, 371, 1533, 710, 130, 80, 0 );
+    al_draw_scaled_bitmap(jeu->icone[10].image, 0, 0, 273, 204, 1470, 820, 150, 110, 0);
+    al_draw_scaled_bitmap(jeu->icone[11].image, 0, 0, 360, 362, 1575, 870, 90, 60, 0);
 
 }
 
@@ -795,8 +799,7 @@ bool verifierPlacementCentrale(Jeu* jeu, int caseX, int caseY, int type) {
             }
         }
         return false;
-    }
-    else {
+    } else {
         for (int i = 0; i < jeu->nbCentrale; i++) {
             if (jeu->tabCentrale[i].caseX == caseX && jeu->tabCentrale[i].caseY == caseY) {
                 return true;
@@ -804,21 +807,8 @@ bool verifierPlacementCentrale(Jeu* jeu, int caseX, int caseY, int type) {
         }
         return false;
     }
-void barreicone(ALLEGRO_FONT*smallFont ,Jeu*jeu){
-   // al_draw_filled_rounded_rectangle(3, 10, 400, 80, 5, 5, al_map_rgb(73, 132, 171));
-   // al_draw_rounded_rectangle( 3, 10, 400, 80, 5, 5, al_map_rgb(73, 132, 171), 4);
-    al_draw_scaled_bitmap(jeu->icone[5].image, 0,0, 475,336, 10, 3, 75, 42, 0);
-    al_draw_scaled_bitmap(jeu->icone[6].image, 0, 0, 559, 447, 10, 20, 110, 80, 0 );
-    al_draw_scaled_bitmap(jeu->icone[7].image, 0, 0, 512, 512, 1430, 22, 75, 45, 0);
-    //al_draw_scaled_bitmap(jeu->icone[0].image, 0, 0, 1024, 985, 300, 31, 75, 45, 0);
-    al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 1575, 25, ALLEGRO_ALIGN_CENTER, "%d", jeu->argent);
-    al_draw_textf(smallFont, al_map_rgb(235,235,235), 180, 9, ALLEGRO_ALIGN_CENTER, ": %d ",jeu->capaciteElec);
-    al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 180, 50, ALLEGRO_ALIGN_CENTER, ": %d", jeu->capaciteEau);
-    al_draw_scaled_bitmap(jeu->icone[8].image, 0, 0, 978, 371, 0, 877, 130, 80, 0 );
-    al_draw_scaled_bitmap(jeu->icone[9].image, 0, 0, 273, 204, 1440, 830, 150, 110, 0);
-    al_draw_scaled_bitmap(jeu->icone[10].image, 0, 0, 360, 362, 1562, 880, 90, 60, 0);
-
 }
+
 
 
 int verifCentrale(Jeu* jeu, Habitation tabHabitations[jeu->nbHabitants],int i){
