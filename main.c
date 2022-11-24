@@ -24,7 +24,7 @@ int main() {
 
     ///CREATION DU DISPLAY
     al_set_new_display_flags(ALLEGRO_WINDOWED);
-    display = al_create_display(1700, 990);
+    display = al_create_display(1700, 956);
     double height = al_get_display_height(display);
     double width = al_get_display_width(display);
     al_set_window_position(display, 0, 0);
@@ -63,6 +63,11 @@ int main() {
     jeu.icone[6].image = al_load_bitmap("../Bitmap/Icone/EclairOk-removebg-preview.png");
     jeu.icone[7].image = al_load_bitmap("../Bitmap/Icone/IconeEau-removebg-preview.png");
     jeu.icone[8].image = al_load_bitmap("../Bitmap/Icone/coins.png");
+    jeu.icone[9].image = al_load_bitmap("../Bitmap/Icone/SIMCITYECE.png");
+    jeu.icone[10].image = al_load_bitmap("../Bitmap/Icone/CaptureIconeEcole-removebg-preview.png");
+    jeu.icone[11].image = al_load_bitmap("../Bitmap/Icone/PetitEcolier3-removebg-preview.png");
+
+
 
     jeu.route[0].image =  al_load_bitmap("../Bitmap/Batiments/Route0.png");
     jeu.route[1].image =  al_load_bitmap("../Bitmap/Batiments/Route1.png");
