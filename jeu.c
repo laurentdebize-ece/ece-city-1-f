@@ -189,7 +189,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
 
     al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 880, 7, ALLEGRO_ALIGN_CENTER, "%d", jeu->nbHabitants);
     ///DESSINER ARGENT
-    al_draw_textf(smallFont, al_map_rgb(47, 58, 124), 700, 7, ALLEGRO_ALIGN_CENTER, "TIMER : %d", jeu->argent);
+    al_draw_textf(smallFont, al_map_rgb(47, 58, 124), 700, 7, ALLEGRO_ALIGN_CENTER, "ARGENT : %d", jeu->argent);
 
 
     ///////////AFFICHAGE DU NIVEAU O///////////////
@@ -305,6 +305,18 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             jeu->tabHabitations[jeu->nbMaisons].caseY = caseY;
                             jeu->tabHabitations[jeu->nbMaisons].tempsEvolution = jeu->time[1].secondes;
                             jeu->nbMaisons++;
+//                            jeu->matrice = calloc( 1, sizeof(Matricechat *));
+//
+//                            for (int i = 0; i < jeu->nbChateau; i++) {
+//                                jeu->matrice[i]= calloc( jeu->nbChateau, sizeof(Matricechat));
+//                            }
+//                            for (int i = 0; i < jeu->nbMaisons; ++i) {
+//                                for (int j = 0; j < jeu->nbChateau; ++j) {
+//                                    jeu->matrice[i][j].distance = 0;
+//                                    printf("%d ",jeu->matrice[i][j].distance);
+//                                }
+//                                printf("\n");
+//                            }
                             ///POSE DU TERRAIN + CREATION DANS LE TAB
 
                         }
@@ -363,6 +375,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             jeu->tabCentrale[jeu->nbCentrale].capaciteElec += CAPACITE;
                             jeu->tabCentrale[jeu->nbCentrale].quantitedistri = 0;
                             jeu->nbCentrale++;
+                            jeu->capaciteElec += CAPACITE;
                         }
                         break;
                     }
@@ -413,6 +426,8 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                 if (jeu->tabHabitations[i].type != GRATTE_CIEL) {
                     jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
                     jeu->tabHabitations[i].type++;
+                    jeu->argent += 10 * jeu->nbHabitants;
+
                     switch (jeu->tabHabitations[i].type) {
                         case CABANE : {
                             jeu->nbHabitants += 10;
@@ -840,7 +855,6 @@ int determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
     int relie = 0 ;
     int distance = 0;
     int numHab = 0 ;
-    int nbFile = 0 ;
 
     for (int i = 0; i < 3; i++) {
         if ((*jeu)->map[caseX - 2][caseY + 1 - i].type == ROUTE) {
