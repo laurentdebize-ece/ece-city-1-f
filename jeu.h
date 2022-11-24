@@ -14,6 +14,8 @@
 #define CASEX_X (float)26
 #define ARGENTDEP 500000000
 #define CAPACITE 5000
+#include "eva.h"
+#include "stdlib.h"
 
 
 enum Batiments{NUL, NUL1, NUL2, NUL3, NUL4, RIEN, ROUTE, CENTRALE, CHATEAU};
@@ -53,6 +55,12 @@ typedef struct{
     float CaseX_X, oldCaseX_X ;
 }Zoom;
 
+typedef struct{
+    int distance;
+    int quatntitedistribue;
+    int capacite;
+
+}Matricechat;
 typedef struct {
     float width, height,toolboxX ;       // Info écran
     int mouse_x, mouse_y ;
@@ -76,6 +84,9 @@ typedef struct {
 
     //ZOOM
     Zoom zoom ;
+
+    //Matrice chateau d'eau
+    Matricechat** matrice;
 
     //BITMAP
     Bitmap icone[NBICONE]  ;

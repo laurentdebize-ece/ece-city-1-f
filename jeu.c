@@ -188,7 +188,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 880, 7, ALLEGRO_ALIGN_CENTER, "%d", jeu->nbHabitants);
     al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 100, 7, ALLEGRO_ALIGN_CENTER, "ELEC : %d", jeu->capaciteElec);
     ///DESSINER ARGENT
-    al_draw_textf(smallFont, al_map_rgb(47, 58, 124), 700, 7, ALLEGRO_ALIGN_CENTER, "TIMER : %d", jeu->argent);
+    al_draw_textf(smallFont, al_map_rgb(47, 58, 124), 700, 7, ALLEGRO_ALIGN_CENTER, "ARGENT : %d", jeu->argent);
 
 
     ///////////AFFICHAGE DU NIVEAU O///////////////
@@ -304,6 +304,18 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             jeu->tabHabitations[jeu->nbMaisons].caseY = caseY;
                             jeu->tabHabitations[jeu->nbMaisons].tempsEvolution = jeu->time[1].secondes;
                             jeu->nbMaisons++;
+//                            jeu->matrice = calloc( 1, sizeof(Matricechat *));
+//
+//                            for (int i = 0; i < jeu->nbChateau; i++) {
+//                                jeu->matrice[i]= calloc( jeu->nbChateau, sizeof(Matricechat));
+//                            }
+//                            for (int i = 0; i < jeu->nbMaisons; ++i) {
+//                                for (int j = 0; j < jeu->nbChateau; ++j) {
+//                                    jeu->matrice[i][j].distance = 0;
+//                                    printf("%d ",jeu->matrice[i][j].distance);
+//                                }
+//                                printf("\n");
+//                            }
                             ///POSE DU TERRAIN + CREATION DANS LE TAB
 
                         }
@@ -334,6 +346,52 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             jeu->tabChateau[jeu->nbChateau].caseY = caseY;
                             jeu->nbChateau++;
                             jeu->capaciteEau += CAPACITE;
+                            if(jeu->nbChateau == 1 && jeu->nbMaisons == 1){
+                                jeu->matrice = calloc(1, sizeof (Matricechat*));
+                                //for (int i = 0; i < jeu->nbMaisons; i++) {
+                                    jeu->matrice[0] = calloc(jeu->nbChateau, sizeof(Matricechat));
+                                //}
+                                for (int i = 0; i < jeu->nbChateau ; ++i) {
+                                    for (int j = 0; j < 1; ++j) {
+                                        jeu->matrice[i][j].distance = 0;
+                                        jeu->matrice[i][j].capacite = 0;
+                                        jeu->matrice[i][j].quatntitedistribue = 0;
+                                        printf("%d", jeu->matrice[0][0].distance);
+                                    }
+                                    printf("\n");
+                                }
+                            }
+
+                            jeu->matrice = realloc(jeu->matrice, jeu->nbChateau * sizeof (Matricechat*));
+                            for (int i = 0; i < jeu->nbMaisons; i++) {
+                                jeu->matrice[i] = calloc(jeu->nbChateau, sizeof(Matricechat));
+                            }
+                            for (int i = 0; i < jeu->nbChateau ; i++) {
+                                for (int j = 0; j < jeu->nbMaisons; j++) {
+                                    jeu->matrice[i][j].distance = 0;
+                                    jeu->matrice[i][j].capacite = 0;
+                                    jeu->matrice[i][j].quatntitedistribue = 0;
+                                    printf("%d", jeu->matrice[i][j].distance);
+                                }
+                                printf("\n");
+
+                            }
+
+
+
+//                                for (int i = 0; i < jeu->nbMaisons; i++) {
+//                                    jeu->matrice[i] = realloc(jeu->matrice , jeu->nbChateau * sizeof(Matricechat));
+//                                }
+                                //jeu->matrice[1][0].distance = 0;
+//                               for (int i = 0; i < jeu->nbChateau ; ++i) {
+//                                    for (int j = 0; j < jeu->nbMaisons; ++j) {
+//                                        jeu->matrice[i][j].distance = 0;
+//                                        printf("%d", jeu->matrice[i][j].distance);
+//                                    }
+//                                    printf("\n");
+//
+//                                }
+
                         }
                         break;
                     }
@@ -362,6 +420,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             jeu->tabCentrale[jeu->nbCentrale].quantitedistri = 0;
                             jeu->nbCentrale++;
                             jeu->capaciteElec += CAPACITE;
+
                         }
                         break;
                     }
@@ -408,10 +467,12 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
 
         if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 10) {
             jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
-            if (jeu->tabHabitations[i].evolution == 0 && jeu->capaciteElec >jeu->tabHabitations[i].nbHabitant && jeu->capaciteElec - verifCentrale(jeu, jeu->tabHabitations, i) > 0) {
+            if (jeu->tabHabitations[i].evolution == 0 && jeu->capaciteElec >jeu->tabHabitations[i].nbHabitant && jeu->capaciteElec - verifCentrale(jeu, jeu->tabHabitations, i) > 0 && jeu->argent >= 10) {
                 if (jeu->tabHabitations[i].type != GRATTE_CIEL) {
                     jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
                     jeu->tabHabitations[i].type++;
+                    jeu->argent += 10 * jeu->nbHabitants;
+
                     switch (jeu->tabHabitations[i].type) {
                         case CABANE : {
                             jeu->nbHabitants += 10;
@@ -916,7 +977,7 @@ void determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
             longueurFile++ ;
             bfsMarque[caseX + 1][caseY] = 1 ;
         }
-        //CENTRALE
+        //CHATEAU
         if((*jeu)->map[caseX][caseY+1].type == CHATEAU) {
             int numHab = (*jeu)->map[caseX][caseY+1].numConstruction;
             if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
