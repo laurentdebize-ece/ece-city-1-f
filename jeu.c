@@ -83,6 +83,9 @@ void initJeu(Jeu* jeu) {
     }
     for(int i = 0 ; i < MAX ; i++){
         jeu->tabHabitations[i].evolution = 0 ;
+        for(int j = 0 ; j < 10 ; j++) {
+            jeu->tabHabitations[i].filePrioriteDistance[j] = -1;
+        }
     }
 }
 
@@ -185,7 +188,6 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
 
 
     al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 880, 7, ALLEGRO_ALIGN_CENTER, "%d", jeu->nbHabitants);
-    al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 100, 7, ALLEGRO_ALIGN_CENTER, "ELEC : %d", jeu->capaciteElec);
     ///DESSINER ARGENT
     al_draw_textf(smallFont, al_map_rgb(47, 58, 124), 700, 7, ALLEGRO_ALIGN_CENTER, "TIMER : %d", jeu->argent);
 
@@ -358,9 +360,9 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             jeu->tabCentrale[jeu->nbCentrale].caseX = caseX;
                             jeu->tabCentrale[jeu->nbCentrale].caseY = caseY;
                             jeu->tabCentrale[jeu->nbCentrale].electricite += CAPACITE;
+                            jeu->tabCentrale[jeu->nbCentrale].capaciteElec += CAPACITE;
                             jeu->tabCentrale[jeu->nbCentrale].quantitedistri = 0;
                             jeu->nbCentrale++;
-                            jeu->capaciteElec += CAPACITE;
                         }
                         break;
                     }
@@ -402,16 +404,12 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
             }
         }
     }
-    for (int i = 0; i<jeu->nbCentrale; i++){
-        jeu->tabHabitations[i].provenanceElec = determinerDistanceMaison(&jeu, i);
-
-    }
     ///EVOLUTION DES BATIMENTS (Il n'caseY a que la vérification du temps la)
     for (int i = 0; i < jeu->nbMaisons; i++) {
-        int evolution = determinerDistanceMaison(&jeu, i) ;
+        int evolution = determinerDistanceMaison(&jeu, i);
         if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 10 && evolution != 0) {
             jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
-            if (jeu->tabHabitations[i].evolution == 0 && jeu->capaciteElec >jeu->tabHabitations[i].nbHabitant && jeu->capaciteElec - verifCentrale(jeu, jeu->tabHabitations, i) > 0) {
+            if (jeu->tabHabitations[i].evolution == 0  && prioDistance(jeu, i) == TRUE) {
                 if (jeu->tabHabitations[i].type != GRATTE_CIEL) {
                     jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
                     jeu->tabHabitations[i].type++;
@@ -419,25 +417,26 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                         case CABANE : {
                             jeu->nbHabitants += 10;
                             jeu->tabHabitations[i].nbHabitant = 10;
-                            jeu->capaciteElec -= 10;
+                            jeu->tabCentrale[jeu->tabHabitations[i].provenanceElec].quantitedistri += 10;
                             break;
                         }
                         case MAISON : {
-                            jeu->capaciteElec -= 40;
                             jeu->tabHabitations[i].nbHabitant = 50;
                             jeu->nbHabitants += 40;
+                            jeu->tabCentrale[jeu->tabHabitations[i].provenanceElec].quantitedistri += 40;
                             break;
                         }
                         case IMMEUBLE : {
                             jeu->nbHabitants += 50;
                             jeu->tabHabitations[i].nbHabitant = 100;
-                            jeu->capaciteElec -= 50;
+                            jeu->tabCentrale[jeu->tabHabitations[i].provenanceElec].quantitedistri+=50;
                             break;
                         }
                         case GRATTE_CIEL : {
                             jeu->nbHabitants += 900;
                             jeu->tabHabitations[i].nbHabitant = 1000;
-                            jeu->capaciteElec -= 900;
+                            jeu->tabCentrale[jeu->tabHabitations[i].provenanceElec].capaciteElec -= 900;
+                            jeu->tabCentrale[jeu->tabHabitations[i].provenanceElec].quantitedistri += 900;
                             break;
                         }
                     }
@@ -538,7 +537,7 @@ void dessinerNiveau(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu** jeu) {
         al_draw_text(font, al_map_rgb(232, 23, 30), 103, 475, ALLEGRO_ALIGN_CENTER, "2");
     }
     al_draw_textf(smallFont, al_map_rgb(0, 0, 0), 100, 700, ALLEGRO_ALIGN_CENTER, "Niveau %d", (*jeu)->niveauAfficher);
-    barreicone(smallFont, *jeu);
+    //barreicone(smallFont, *jeu);
 
     if((*jeu)->niveauAfficher == ROUTIER) {
         if((*jeu)->toolboxX >= 1500) {
@@ -598,7 +597,6 @@ void barreicone(ALLEGRO_FONT*smallFont ,Jeu*jeu){
     al_draw_scaled_bitmap(jeu->icone[8].image, 0, 0, 512, 512, 1430, 22, 75, 45, 0);
     //al_draw_scaled_bitmap(jeu->icone[0].image, 0, 0, 1024, 985, 300, 31, 75, 45, 0);
     al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 1575, 25, ALLEGRO_ALIGN_CENTER, "%d", jeu->argent);
-    al_draw_textf(smallFont, al_map_rgb(235,235,235), 180, 9, ALLEGRO_ALIGN_CENTER, ": %d ",jeu->capaciteElec);
     al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 180, 50, ALLEGRO_ALIGN_CENTER, ": %d", jeu->capaciteEau);
     al_draw_scaled_bitmap(jeu->icone[9].image, 0, 0, 978, 371, 1533, 710, 130, 80, 0 );
     al_draw_scaled_bitmap(jeu->icone[10].image, 0, 0, 273, 204, 1470, 820, 150, 110, 0);
@@ -822,13 +820,13 @@ int verifCentrale(Jeu* jeu, Habitation tabHabitations[jeu->nbHabitants],int i){
             p= 10;
         }
         case CABANE: {
-            p= 50;
+            p= 40;
         }
         case MAISON: {
-            p= 100;
+            p= 50;
         }
         case IMMEUBLE: {
-            p= 1000;
+            p= 900;
         }
     }
     return p;
@@ -842,6 +840,7 @@ int determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
     int relie = 0 ;
     int distance = 0;
     int numHab = 0 ;
+    int nbFile = 0 ;
 
     for (int i = 0; i < 3; i++) {
         if ((*jeu)->map[caseX - 2][caseY + 1 - i].type == ROUTE) {
@@ -930,7 +929,6 @@ int determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
                 (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
             } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
                 (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
-
             }
         }
         if ((*jeu)->map[caseX - 1][caseY].type == CHATEAU) {
@@ -942,7 +940,7 @@ int determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
             }
         }
         if ((*jeu)->map[caseX][caseY - 1].type == CHATEAU) {
-            numHab = (*jeu)->map[caseX - 1][caseY].numConstruction;
+            numHab = (*jeu)->map[caseX][caseY - 1].numConstruction;
             if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
                 (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
             } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
@@ -951,39 +949,30 @@ int determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
         }
         if ((*jeu)->map[caseX][caseY + 1].type == CENTRALE) {
             numHab = (*jeu)->map[caseX][caseY + 1].numConstruction;
-            if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
-                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
-            } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
-                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
-            }
+            (*jeu)->tabHabitations[quelleMaison].provenanceElec = numHab;
+            (*jeu)->tabHabitations[quelleMaison].filePrioriteDistance[nbFile] = numHab ;
+            nbFile++ ;
             relie++;
         }
         if ((*jeu)->map[caseX + 1][caseY].type == CENTRALE) {
             numHab = (*jeu)->map[caseX + 1][caseY].numConstruction;
-            if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
-                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
-            } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
-                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
-
-            }
+            (*jeu)->tabHabitations[quelleMaison].provenanceElec = numHab;
+            (*jeu)->tabHabitations[quelleMaison].filePrioriteDistance[nbFile] = numHab ;
+            nbFile++ ;
             relie++;
         }
         if ((*jeu)->map[caseX][caseY - 1].type == CENTRALE) {
-            numHab = (*jeu)->map[caseX - 1][caseY].numConstruction;
-            if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
-                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
-            } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
-                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
-            }
+            numHab = (*jeu)->map[caseX][caseY - 1].numConstruction;
+            (*jeu)->tabHabitations[quelleMaison].provenanceElec = numHab;
+            (*jeu)->tabHabitations[quelleMaison].filePrioriteDistance[nbFile] = numHab ;
+            nbFile++ ;
             relie++ ;
         }
         if ((*jeu)->map[caseX - 1][caseY].type == CENTRALE) {
             numHab = (*jeu)->map[caseX - 1][caseY].numConstruction;
-            if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
-                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
-            } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
-                (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
-            }
+            (*jeu)->tabHabitations[quelleMaison].provenanceElec = numHab;
+            (*jeu)->tabHabitations[quelleMaison].filePrioriteDistance[nbFile] = numHab ;
+            nbFile++ ;
             relie++;
         }
         if (longueurFile == 0) {
@@ -994,8 +983,20 @@ int determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
         return 0;
     }
     else {
-        (*jeu)->tabHabitations[quelleMaison].provenanceElec = numHab;
         return distance ;
     }
 
+}
+bool prioDistance (Jeu *jeu, int quelleMaison){
+    int i = 0 ;
+    int suivant =  verifCentrale(jeu, jeu->tabHabitations, i);
+    while(jeu->tabHabitations[quelleMaison].filePrioriteDistance[i] != -1){
+        if(jeu->tabCentrale[jeu->tabHabitations[quelleMaison].filePrioriteDistance[i]].electricite  - jeu->tabCentrale[jeu->tabHabitations[quelleMaison].filePrioriteDistance[i]].quantitedistri - suivant >= 0){
+            return TRUE;
+        }
+        else{
+            i++ ;
+        }
+    }
+    return FALSE;
 }

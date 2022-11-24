@@ -39,12 +39,13 @@ typedef struct {
 }Chateau;
 
 typedef struct {
-    int quantitedistri,type, tempsCentrale, electricite;
+    int quantitedistri,type, tempsCentrale, electricite, capaciteElec;
     int caseX, caseY;
 }Centralelectrique;
 
 typedef struct{
     int caseX, caseY, type, tempsEvolution, evolution, provenanceElec, distance, nbHabitant;
+    int filePrioriteDistance[] ;
 }Habitation;
 
 typedef struct{
@@ -58,7 +59,7 @@ typedef struct {
     int mouse_x, mouse_y ;
     int niveauAfficher, objetSelectionne ;   //Selection
     int nbCentrale, nbMaisons, nbChateau, nbHabitants, argent ; //Info du jeu
-    int capaciteElec, capaciteEau;
+    int capaciteEau;
     bool mouseIsPressed;
 
     //STRUCTURE
@@ -90,7 +91,7 @@ void temps(Temps* time, int compteur, int numTimer) ;
 void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) ;
 void dessinerNiveau(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu** jeu) ;
 void dessinerToolbox(Jeu* jeu) ;
-
+bool prioDistance (Jeu *jeu, int quelleMaison);
 void barreicone(ALLEGRO_FONT*smallFont ,Jeu*jeu) ;
 
 void determinerDistanceCentrale(Jeu** jeu, int quelChateau) ;
