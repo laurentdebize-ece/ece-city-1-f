@@ -673,11 +673,12 @@ void barreicone(ALLEGRO_FONT*smallFont ,Jeu*jeu){
     // al_draw_rounded_rectangle( 3, 10, 400, 80, 5, 5, al_map_rgb(73, 132, 171), 4);
     al_draw_scaled_bitmap(jeu->icone[6].image, 0,0, 475,336, 10, 3, 75, 42, 0);
     al_draw_scaled_bitmap(jeu->icone[7].image, 0, 0, 559, 447, 10, 20, 110, 80, 0 );
-    al_draw_scaled_bitmap(jeu->icone[8].image, 0, 0, 512, 512, 1430, 22, 75, 45, 0);
+    al_draw_scaled_bitmap(jeu->icone[8].image, 0, 0, 512, 512, 1420, 22, 75, 45, 0);
     //al_draw_scaled_bitmap(jeu->icone[0].image, 0, 0, 1024, 985, 300, 31, 75, 45, 0);
     al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 1575, 25, ALLEGRO_ALIGN_CENTER, "%d", jeu->argent);
     al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 180, 50, ALLEGRO_ALIGN_CENTER, ": %d", jeu->capaciteEau);
-    al_draw_scaled_bitmap(jeu->icone[9].image, 0, 0, 978, 371, 1533, 710, 130, 80, 0 );
+    al_draw_textf(smallFont, al_map_rgb(235, 235, 235), 180, 5, ALLEGRO_ALIGN_CENTER, ": %d", jeu->capacitElec);
+    al_draw_scaled_bitmap(jeu->icone[9].image, 0, 0, 978, 371, 1513, 705, 170, 100, 0 );
     al_draw_scaled_bitmap(jeu->icone[10].image, 0, 0, 273, 204, 1470, 820, 150, 110, 0);
     al_draw_scaled_bitmap(jeu->icone[11].image, 0, 0, 360, 362, 1575, 870, 90, 60, 0);
 
