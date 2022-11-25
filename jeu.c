@@ -614,7 +614,7 @@ void dessinerNiveau(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu** jeu) {
         al_draw_text(font, al_map_rgb(232, 23, 30), 103, 475, ALLEGRO_ALIGN_CENTER, "2");
     }
     al_draw_textf(smallFont, al_map_rgb(0, 0, 0), 100, 700, ALLEGRO_ALIGN_CENTER, "Niveau %d", (*jeu)->niveauAfficher);
-    //barreicone(smallFont, *jeu);
+    barreicone(smallFont, *jeu);
 
     if((*jeu)->niveauAfficher == ROUTIER) {
         if((*jeu)->toolboxX >= 1500) {
