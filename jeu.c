@@ -1,6 +1,4 @@
 #include "jeu.h"
-#define MAPX 290
-#define MAPY 60
 
 
 void initImage(Jeu** jeu) {
@@ -65,6 +63,12 @@ void initJeu(Jeu* jeu) {
     jeu->zoom.CaseX_X = jeu->zoom.oldCaseX_X = CASEX_X ;
     jeu->zoom.mapX = jeu->zoom.oldMapX = MAPX ;
     jeu->zoom.mapY = jeu->zoom.oldMapY = MAPY ;
+    jeu->time[0].secondes = 0 ;
+    jeu->time[0].minutes = 0 ;
+    jeu->time[1].dixieme = 0 ;
+    jeu->time[1].secondes = 0 ;
+
+
 
     for(int i = 0 ; i < COLONNE ; i++) {
         for(int j = 0 ; j < LIGNE ; j++) {
@@ -172,6 +176,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
         }
     }
 
+
     dessinerTerrain(jeu);
 
    // al_draw_textf(smallFont, al_map_rgb(255, 255, 255), 500, 500, ALLEGRO_ALIGN_CENTER, "%d, %d",jeu->time[0].secondes, (int)jeu->time[0].dixieme);
@@ -236,6 +241,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
 
                 }
                 break;
+
             }
             case CENTRALE : {
                 if (jeu->mouse_x > mapX && jeu->mouse_x < mapX + 45 * caseX_X && jeu->mouse_y > mapY &&
@@ -304,20 +310,40 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             jeu->tabHabitations[jeu->nbMaisons].caseX = caseX;
                             jeu->tabHabitations[jeu->nbMaisons].caseY = caseY;
                             jeu->tabHabitations[jeu->nbMaisons].tempsEvolution = jeu->time[1].secondes;
-                            jeu->nbMaisons++;
-//                            jeu->matrice = calloc( 1, sizeof(Matricechat *));
-//
-//                            for (int i = 0; i < jeu->nbChateau; i++) {
-//                                jeu->matrice[i]= calloc( jeu->nbChateau, sizeof(Matricechat));
-//                            }
-//                            for (int i = 0; i < jeu->nbMaisons; ++i) {
-//                                for (int j = 0; j < jeu->nbChateau; ++j) {
-//                                    jeu->matrice[i][j].distance = 0;
-//                                    printf("%d ",jeu->matrice[i][j].distance);
-//                                }
-//                                printf("\n");
-//                            }
                             ///POSE DU TERRAIN + CREATION DANS LE TAB
+                            if (jeu->nbChateau == 0) {
+                                if(jeu->nbMaisons == 0) {
+                                    jeu->matrice = calloc(1, sizeof(Matricechat *));
+                                    jeu->matrice[0] = calloc(1, sizeof(Matricechat));
+                                    jeu->matrice[0][0].distance = 0;
+                                    jeu->matrice[0][0].capacite = 1;
+                                    jeu->matrice[0][0].quatntitedistribue = 2;
+                                    jeu->nbMaisons++;
+                                }
+                                else {
+                                    jeu->nbMaisons++;
+                                    jeu->matrice = realloc(jeu->matrice, jeu->nbMaisons*sizeof (Matricechat*)) ;
+                                    for(int i = 0; i < jeu->nbMaisons; i++){
+                                        jeu->matrice[i] = calloc(1, sizeof (Matricechat)) ;
+                                        jeu->matrice[i][0].distance = 0 ;
+                                        jeu->matrice[i][0].capacite = 0 ;
+                                        jeu->matrice[i][0].quatntitedistribue = 0 ;
+                                    }
+                                }
+
+                            }
+                            else{
+                                jeu->nbMaisons++;
+                                if(jeu->nbMaisons > 0) {
+                                    jeu->matrice = realloc(jeu->matrice , jeu->nbMaisons * sizeof (Matricechat*)) ;
+                                    for (int j = 0; j < jeu->nbChateau; j++) {
+                                        jeu->matrice[jeu->nbMaisons-1] = calloc(1, sizeof (Matricechat)) ;
+                                        jeu->matrice[jeu->nbMaisons-1][j].distance = 0;
+                                        jeu->matrice[jeu->nbMaisons-1][j].capacite = 0;
+                                        jeu->matrice[jeu->nbMaisons-1][j].quatntitedistribue = 0;
+                                    }
+                                }
+                            }
 
                         }
                         break;
@@ -325,9 +351,11 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                     case CHATEAU : {
                         //Si on peut pas poser le terrain, on le surbrille en rouge
                         if (verifierTerrain4_6(&jeu, caseX, caseY) == false) {
-                            al_draw_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2,x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 5 * caseX_X / 2,al_map_rgb(255, 0, 0), 4);
+                            al_draw_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2,
+                                              x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 5 * caseX_X / 2,
+                                              al_map_rgb(255, 0, 0), 4);
                         }
-                        //Sinon on peut le poser, on verifie donc les routes à cotés
+                            //Sinon on peut le poser, on verifie donc les routes à cotés
                         else if (routeProximiteCentrale(&jeu, caseX, caseY) == true && jeu->argent >= 100000) {
                             jeu->argent -= 100000;
                             for (int i = 0; i < 6; i++) {
@@ -345,8 +373,43 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             }
                             jeu->tabChateau[jeu->nbChateau].caseX = caseX;
                             jeu->tabChateau[jeu->nbChateau].caseY = caseY;
-                            jeu->nbChateau++;
-                            jeu->capaciteEau += CAPACITE;
+                            if (jeu->nbMaisons == 0) {
+                                if(jeu->nbChateau == 0) {
+                                    jeu->matrice = calloc(1, sizeof(Matricechat *));
+                                    jeu->matrice[0] = calloc(1, sizeof(Matricechat));
+                                    jeu->matrice[0][0].distance = 0;
+                                    jeu->matrice[0][0].capacite = 0;
+                                    jeu->matrice[0][0].quatntitedistribue = 0;
+                                    jeu->nbChateau++;
+                                    jeu->capaciteEau += CAPACITE;
+                                }
+                                else {
+                                    jeu->nbChateau++;
+                                    jeu->capaciteEau += CAPACITE;
+                                    jeu->matrice[0] = realloc(jeu->matrice[0], jeu->nbChateau*sizeof (Matricechat)) ;
+                                    for(int i = 0; i < jeu->nbChateau; i++) {
+                                        jeu->matrice[0][i].distance = 0;
+                                        jeu->matrice[0][i].capacite = 0;
+                                        jeu->matrice[0][i].quatntitedistribue = 0;
+                                    }
+                                }
+                            }
+                            else{
+                                jeu->nbChateau++;
+                                jeu->capaciteEau += CAPACITE;
+                                if(jeu->nbChateau > 0) {
+                                    for(int i = 0; i < jeu->nbMaisons; i++){
+                                        jeu->matrice[i] = realloc(jeu->matrice[i], jeu->nbChateau * sizeof (Matricechat)) ;
+                                    }
+                                    for(int i = 0; i < jeu->nbMaisons; i++) {
+                                        for (int j = 0; j < jeu->nbChateau; j++) {
+                                            jeu->matrice[i][jeu->nbChateau-1].distance = 0;
+                                            jeu->matrice[i][jeu->nbChateau-1].capacite = 0;
+                                            jeu->matrice[i][jeu->nbChateau-1].quatntitedistribue = 0;
+                                        }
+                                    }
+                                }
+                            }
                         }
                         break;
                     }
@@ -375,7 +438,6 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             jeu->tabCentrale[jeu->nbCentrale].capaciteElec += CAPACITE;
                             jeu->tabCentrale[jeu->nbCentrale].quantitedistri = 0;
                             jeu->nbCentrale++;
-                            jeu->capaciteElec += CAPACITE;
                         }
                         break;
                     }
@@ -391,7 +453,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                     int quelRoute = combinaison(*jeu, i, j, &jeu->map[i][j].rotation);
                     al_draw_scaled_rotated_bitmap(jeu->route[quelRoute].image, 12.5, 12.5, jeu->map[i][j].x,jeu->map[i][j].y, scale, scale, jeu->map[i][j].rotation * PI / 2, 0);
                 }
-                    //placement des terrains
+                //placement des terrains
                 else if (verifierPlacementTerrain(jeu, i, j) == true) {
                     int type = jeu->map[i][j].type;
                     if (type == TERRAIN) {
@@ -422,7 +484,8 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
         int evolution = determinerDistanceMaison(&jeu, i);
         if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 10 && evolution != 0) {
             jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
-            if (jeu->tabHabitations[i].evolution == 0  && prioDistance(jeu, i) == TRUE) {
+            int numCentrale = prioDistance(jeu, i) ;
+            if (jeu->tabHabitations[i].evolution == 0  && numCentrale != -1) {
                 if (jeu->tabHabitations[i].type != GRATTE_CIEL) {
                     jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
                     jeu->tabHabitations[i].type++;
@@ -432,26 +495,25 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                         case CABANE : {
                             jeu->nbHabitants += 10;
                             jeu->tabHabitations[i].nbHabitant = 10;
-                            jeu->tabCentrale[jeu->tabHabitations[i].provenanceElec].quantitedistri += 10;
+                            jeu->tabCentrale[numCentrale].quantitedistri += 10;
                             break;
                         }
                         case MAISON : {
                             jeu->tabHabitations[i].nbHabitant = 50;
                             jeu->nbHabitants += 40;
-                            jeu->tabCentrale[jeu->tabHabitations[i].provenanceElec].quantitedistri += 40;
+                            jeu->tabCentrale[numCentrale].quantitedistri += 40;
                             break;
                         }
                         case IMMEUBLE : {
                             jeu->nbHabitants += 50;
                             jeu->tabHabitations[i].nbHabitant = 100;
-                            jeu->tabCentrale[jeu->tabHabitations[i].provenanceElec].quantitedistri+=50;
+                            jeu->tabCentrale[numCentrale].quantitedistri+=50;
                             break;
                         }
                         case GRATTE_CIEL : {
                             jeu->nbHabitants += 900;
                             jeu->tabHabitations[i].nbHabitant = 1000;
-                            jeu->tabCentrale[jeu->tabHabitations[i].provenanceElec].capaciteElec -= 900;
-                            jeu->tabCentrale[jeu->tabHabitations[i].provenanceElec].quantitedistri += 900;
+                            jeu->tabCentrale[numCentrale].quantitedistri += 900;
                             break;
                         }
                     }
@@ -470,17 +532,17 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
             }
         }
     }
+
+
     for(int i = 0 ; i < jeu->nbMaisons ; i++) {
         determinerDistanceMaison(&jeu, i) ;
     }
     dessinerToolbox(jeu);
-
     dessinerNiveau(smallFont, font, &jeu) ;
 
     for(int i = 0 ; i < jeu->nbMaisons ; i++) {
-        al_draw_textf(smallFont, al_map_rgb(255, 0, 0), jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].x - 50, jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].y - 50, 0, "%d", jeu->tabHabitations[i].distance) ;
+        al_draw_textf(smallFont, al_map_rgb(0, 255, 0), jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].x - 50, jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].y - 50, 0, "%d", jeu->tabHabitations[i].distance) ;
     }
-
 }
 
 void dessinerNiveau(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu** jeu) {
@@ -855,6 +917,9 @@ int determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
     int relie = 0 ;
     int distance = 0;
     int numHab = 0 ;
+    int nbFile = 0 ;
+    int pd ;
+
 
     for (int i = 0; i < 3; i++) {
         if ((*jeu)->map[caseX - 2][caseY + 1 - i].type == ROUTE) {
@@ -881,9 +946,9 @@ int determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
 
 
     File file[10] = {0};
-    int bfsMarque[COLONNE][LIGNE] = {0}, longueurFile = 1;
-    file[0].caseX = caseX;
-    file[0].caseY = caseY;
+    int bfsMarque[COLONNE][LIGNE] = {0}, longueurFile = 1 ;
+    file[0].caseX = caseX ;
+    file[0].caseY = caseY ;
 
 
     bfsMarque[caseX][caseY] = 1;
@@ -900,40 +965,42 @@ int determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
         if ((*jeu)->map[caseX][caseY + 1].type == ROUTE && bfsMarque[caseX][caseY + 1] == 0) {
             file[longueurFile].caseX = caseX;
             file[longueurFile].caseY = caseY + 1;
-            file[longueurFile].distance = distance + 1;
-            longueurFile++;
-            bfsMarque[caseX][caseY + 1] = 1;
+            file[longueurFile].distance = distance + 1 ;
+            longueurFile++ ;
+            bfsMarque[caseX][caseY+1] = 1 ;
 
         }
-        if ((*jeu)->map[caseX - 1][caseY].type == ROUTE && bfsMarque[caseX - 1][caseY] == 0) {
-            file[longueurFile].caseX = caseX - 1;
-            file[longueurFile].caseY = caseY;
-            file[longueurFile].distance = distance + 1;
-            longueurFile++;
-            bfsMarque[caseX - 1][caseY] = 1;
+        if((*jeu)->map[caseX - 1][caseY].type == ROUTE && bfsMarque[caseX - 1][caseY]==0) {
+            file[longueurFile].caseX = caseX - 1 ;
+            file[longueurFile].caseY = caseY ;
+            file[longueurFile].distance = distance + 1 ;
+            longueurFile++ ;
+            bfsMarque[caseX - 1][caseY] = 1 ;
 
         }
-        if ((*jeu)->map[caseX][caseY - 1].type == ROUTE && bfsMarque[caseX][caseY - 1] == 0) {
-            file[longueurFile].caseX = caseX;
+        if((*jeu)->map[caseX][caseY - 1].type == ROUTE && bfsMarque[caseX][caseY - 1] == 0) {
+            file[longueurFile].caseX = caseX ;
             file[longueurFile].caseY = caseY - 1;
-            file[longueurFile].distance = distance + 1;
-            longueurFile++;
-            bfsMarque[caseX][caseY - 1] = 1;
+            file[longueurFile].distance = distance + 1 ;
+            longueurFile++ ;
+            bfsMarque[caseX][caseY - 1] = 1 ;
 
         }
-        if ((*jeu)->map[caseX + 1][caseY].type == ROUTE && bfsMarque[caseX + 1][caseY] == 0) {
-            file[longueurFile].caseX = caseX + 1;
-            file[longueurFile].caseY = caseY;
-            file[longueurFile].distance = distance + 1;
-            longueurFile++;
-            bfsMarque[caseX + 1][caseY] = 1;
+        if((*jeu)->map[caseX + 1][caseY].type == ROUTE && bfsMarque[caseX + 1][caseY]==0) {
+            file[longueurFile].caseX = caseX + 1 ;
+            file[longueurFile].caseY = caseY ;
+            file[longueurFile].distance = distance + 1 ;
+            longueurFile++ ;
+            bfsMarque[caseX + 1][caseY] = 1 ;
         }
         if ((*jeu)->map[caseX][caseY + 1].type == CHATEAU) {
             numHab = (*jeu)->map[caseX][caseY + 1].numConstruction;
             if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
                 (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+                (*jeu)->matrice[quelleMaison][numHab].distance = distance + 1 ;
             } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
                 (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+                (*jeu)->matrice[quelleMaison][numHab].distance = distance + 1 ;
             }
 
         }
@@ -941,24 +1008,30 @@ int determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
             numHab = (*jeu)->map[caseX + 1][caseY].numConstruction;
             if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
                 (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+                (*jeu)->matrice[quelleMaison][numHab].distance = distance + 1 ;
             } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
                 (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+                (*jeu)->matrice[quelleMaison][numHab].distance = distance + 1 ;
             }
         }
         if ((*jeu)->map[caseX - 1][caseY].type == CHATEAU) {
             numHab = (*jeu)->map[caseX - 1][caseY].numConstruction;
             if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
                 (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+                (*jeu)->matrice[quelleMaison][numHab].distance = distance + 1 ;
             } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
                 (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+                (*jeu)->matrice[quelleMaison][numHab].distance = distance + 1 ;
             }
         }
         if ((*jeu)->map[caseX][caseY - 1].type == CHATEAU) {
             numHab = (*jeu)->map[caseX][caseY - 1].numConstruction;
             if ((*jeu)->tabHabitations[quelleMaison].distance > distance) {
                 (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+                (*jeu)->matrice[quelleMaison][numHab].distance = distance + 1 ;
             } else if ((*jeu)->tabHabitations[quelleMaison].distance == 0) {
                 (*jeu)->tabHabitations[quelleMaison].distance = distance + 1;
+                (*jeu)->matrice[quelleMaison][numHab].distance = distance + 1 ;
             }
         }
         if ((*jeu)->map[caseX][caseY + 1].type == CENTRALE) {
@@ -992,6 +1065,10 @@ int determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
         if (longueurFile == 0) {
             bfsFini = 1;
         }
+        if((*jeu)->nbMaisons == 9){
+            int stopit ;
+            pd = 4 ;
+        }
     }
     if(relie == 0) {
         return 0;
@@ -999,18 +1076,22 @@ int determinerDistanceMaison(Jeu** jeu,int quelleMaison) {
     else {
         return distance ;
     }
-
 }
-bool prioDistance (Jeu *jeu, int quelleMaison){
+void capaciteEau(Jeu** jeu){
+   for(int i = 0 ; i < (*jeu)->nbMaisons ; i++) {
+
+   }
+}
+int prioDistance (Jeu *jeu, int quelleMaison){
     int i = 0 ;
     int suivant =  verifCentrale(jeu, jeu->tabHabitations, i);
     while(jeu->tabHabitations[quelleMaison].filePrioriteDistance[i] != -1){
         if(jeu->tabCentrale[jeu->tabHabitations[quelleMaison].filePrioriteDistance[i]].electricite  - jeu->tabCentrale[jeu->tabHabitations[quelleMaison].filePrioriteDistance[i]].quantitedistri - suivant >= 0){
-            return TRUE;
+            return jeu->tabHabitations[quelleMaison].filePrioriteDistance[i] ;
         }
         else{
             i++ ;
         }
     }
-    return FALSE;
+    return -1;
 }
