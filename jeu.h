@@ -94,6 +94,11 @@ typedef struct {
     Bitmap habitations[NBHABITATIONS] ;
     Bitmap route[NBROUTE] ;
     Bitmap centrale[3] ;
+
+    // mode comm et cap
+    bool mode;
+    int modeCommuniste, modeCapitaliste;
+
 } Jeu ;
 
 void initJeu(Jeu* jeu) ;

@@ -67,6 +67,8 @@ void initJeu(Jeu* jeu) {
     jeu->time[0].minutes = 0 ;
     jeu->time[1].dixieme = 0 ;
     jeu->time[1].secondes = 0 ;
+    jeu->modeCapitaliste =0;
+    jeu->modeCommuniste = 0;
 
 
 

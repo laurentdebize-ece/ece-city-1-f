@@ -135,7 +135,9 @@ int main() {
                         switch (menu.mode_de_jeu) {
                             case MENU : {
                                 if (jeu.mouse_x > 650 && jeu.mouse_x < 1050 && jeu.mouse_y > 400 && jeu.mouse_y < 520) {
+                                    jeu.mode = true;
                                     menu.mode_de_jeu = JOUER;
+
                                 }
                                 if (jeu.mouse_x > 650 && jeu.mouse_x < 1050 && jeu.mouse_y > 580 && jeu.mouse_y < 700) {
                                     menu.mode_de_jeu = REGLES;
@@ -228,6 +230,9 @@ int main() {
                     if ((event.mouse.button & 1) == 1) {
                         jeu.mouseIsPressed = true;
                     }
+
+
+
                     break;
                 }
                 case ALLEGRO_EVENT_MOUSE_BUTTON_UP: {
@@ -259,6 +264,28 @@ int main() {
             if (draw) {
                 al_draw_scaled_bitmap(menu.deco[4].image, 0, 0, 1704, 960, 0, 0, width, height, 0);
                 dessinerJeu(smallfont, font, &jeu);
+                if(jeu.mode  == true){
+
+                    al_draw_filled_rectangle(750, 400, 1050,600 , al_map_rgb(250,0,0));
+
+                    al_draw_filled_rectangle(750,100,1050, 300, al_map_rgb(250,0,0) );
+
+                    if(jeu.mouseIsPressed == true){
+                        if(jeu.mouse_x < 1050 && jeu.mouse_x > 750 && jeu.mouse_y < 600 && jeu.mouse_y > 400 ){
+                            jeu.mode = false;
+                            jeu.modeCommuniste = 1;
+                        }
+                        if(jeu.mouse_x < 1050 && jeu.mouse_x > 750 && jeu.mouse_y < 300 && jeu.mouse_y > 100){
+                            jeu.mode = false;
+                            jeu.modeCapitaliste = 1;
+
+                        }
+
+                    }
+
+                }
+
+
                 al_flip_display();
                 al_clear_to_color(black);
                 draw = 0;
