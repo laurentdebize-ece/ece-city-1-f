@@ -163,7 +163,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     float x_CaseXY = jeu->map[caseX][caseY].x;
     float y_CaseXY = jeu->map[caseX][caseY].y;
 
-    ///RAPPORT TAILLE CASE ACTUELLE ET TAILLE ORIGINAL (pour zoomer)
+    ///RAPPORT TAILLE CASE ACTUELLE ET TAILLE ORIGINAL (pour zoomer
     float scale = jeu->zoom.CaseX_X / 25;
     int mapX = jeu->zoom.mapX;
     int mapY = jeu->zoom.mapY;
@@ -437,7 +437,9 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             jeu->tabCentrale[jeu->nbCentrale].electricite += CAPACITE;
                             jeu->tabCentrale[jeu->nbCentrale].capaciteElec += CAPACITE;
                             jeu->tabCentrale[jeu->nbCentrale].quantitedistri = 0;
+                            jeu->capacitElec += CAPACITE ;
                             jeu->nbCentrale++;
+
                         }
                         break;
                     }

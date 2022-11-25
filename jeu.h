@@ -67,7 +67,7 @@ typedef struct {
     int mouse_x, mouse_y ;
     int niveauAfficher, objetSelectionne ;   //Selection
     int nbCentrale, nbMaisons, nbChateau, nbHabitants, argent ; //Info du jeu
-    int capaciteEau;
+    int capaciteEau, capacitElec;
     bool mouseIsPressed;
 
     //STRUCTURE
