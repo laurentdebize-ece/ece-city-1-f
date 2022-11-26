@@ -2,6 +2,9 @@
 #define ECE_CITY_1_F_JEU_H
 #include "menu.h"
 #include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+
 #define NBICONE 15
 #define NBHABITATIONS 6
 #define NBROUTE 5
@@ -10,15 +13,13 @@
 #define MAX 20
 #define PI 3.14159265358979323846
 #define MAPX 290
-#define MAPY 60
+#define MAPY 40
 #define CASEX_X (float)26
 #define ARGENTDEP 500000000
 #define CAPACITE 5000
-#include "eva.h"
-#include "stdlib.h"
 
 
-enum Batiments{NUL, NUL1, NUL2, NUL3, NUL4, RIEN, ROUTE, CENTRALE, CHATEAU};
+enum Batiments{NUL, NUL1, NUL2, NUL3, NUL4, RIEN, ROUTE, CENTRALE, CHATEAU, DEMOLITION};
 enum Habitations {TERRAIN, CABANE, MAISON, IMMEUBLE, GRATTE_CIEL, CONSTRUCTION};
 enum Niveau{ROUTIER, EAU, ELECTRICITE};
 enum DirectionRoute{HAUT, BAS, DROITE, GAUCHE};
@@ -38,6 +39,7 @@ typedef struct{
 typedef struct {
     int quantitedistri,type, tempsChateau;
     int caseX, caseY;
+    ALLEGRO_COLOR couleur ;
 }Chateau;
 
 typedef struct {
@@ -46,8 +48,10 @@ typedef struct {
 }Centralelectrique;
 
 typedef struct{
-    int caseX, caseY, type, tempsEvolution, evolution, provenanceElec, distance, nbHabitant;
+    int caseX, caseY, type, tempsEvolution, evolution, distance, nbHabitant, alimenteeEau, alimenteeElec;
     int filePrioriteDistance[10] ;
+    int filePrioriteEau[10] ;
+    int fileLongueur ;
 }Habitation;
 
 typedef struct{
@@ -58,12 +62,12 @@ typedef struct{
 
 typedef struct{
     int distance;
-    int quatntitedistribue;
+    int quantiteDistribue;
     int capacite;
 }Matricechat;
 
 typedef struct {
-    float width, height,toolboxX ;       // Info écran
+    float width, height, toolboxX ;       // Info écran
     int mouse_x, mouse_y ;
     int niveauAfficher, objetSelectionne ;   //Selection
     int nbCentrale, nbMaisons, nbChateau, nbHabitants, argent ; //Info du jeu
@@ -77,8 +81,6 @@ typedef struct {
 
     //GRILLE
     Case map[COLONNE+1][LIGNE+1] ;
-
-    int matriceChateau_Maison[COLONNE][LIGNE] ;
 
     //TEMPS
     Temps time[2];
@@ -107,13 +109,15 @@ void temps(Temps* time, int compteur, int numTimer) ;
 void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) ;
 void dessinerNiveau(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu** jeu) ;
 void dessinerToolbox(Jeu* jeu) ;
-int prioDistance (Jeu *jeu, int quelleMaison);
 void barreicone(ALLEGRO_FONT*smallFont ,Jeu*jeu) ;
 
 void determinerDistanceCentrale(Jeu** jeu, int quelChateau) ;
 
 int determinerCaseX(int mouse_x, int mapX, int caseX_X) ;
 int determinerCaseY(int mouse_y, int mapY, int caseX_X) ;
+int determinerDistanceMaison(Jeu** jeu,int quelleMaison) ;
+int prioDistance (Jeu *jeu, int quelleMaison);
+int capaciteEau(Jeu* jeu, int quelleMaison);
 
 bool verifierTerrain3_3v2(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 bool verifierTerrain4_6(Jeu** jeu, int caseSourisX, int caseSourisY) ;
@@ -121,7 +125,7 @@ bool routeProximiteMaison(Jeu **jeu, int caseSourisX, int caseSourisY);
 bool routeProximiteCentrale(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 bool verifierPlacementTerrain(Jeu* jeu, int caseX, int caseY) ;
 bool verifierPlacementCentrale(Jeu* jeu, int caseX, int caseY, int type) ;
-int determinerDistanceMaison(Jeu** jeu,int quelleMaison) ;
+bool chateauDejaMis(Jeu** jeu, int quelleMaison, int quelChateau)  ;
 
 
 //Affichage de la route

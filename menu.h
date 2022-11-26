@@ -23,5 +23,6 @@ typedef struct {
 void initBitmapDeco(Menu* menu) ;
 void dessinerMenu(ALLEGRO_FONT* font, int mouse_x, int mouse_y) ;
 void dessinerEquipe(Menu* menu, ALLEGRO_FONT* font, float width, float height, float mouse_x, float mouse_y) ;
+void dessinerRegles(Menu* menu, ALLEGRO_FONT* font, ALLEGRO_FONT* smallFont, float width, float height, float mouse_x, float mouse_y, ALLEGRO_BITMAP* terrain, ALLEGRO_BITMAP* cabane, ALLEGRO_BITMAP* maison, ALLEGRO_BITMAP* immeuble, ALLEGRO_BITMAP* gratte) ;
 
 #endif //ECE_CITY_1_F_MENU_H

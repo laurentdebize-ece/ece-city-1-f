@@ -91,3 +91,35 @@ void dessinerEquipe(Menu* menu, ALLEGRO_FONT* font, float width, float height, f
     al_draw_text(font, al_map_rgb(0, 0, 0), 500, 530, ALLEGRO_ALIGN_CENTER, "Eva");
     al_draw_text(font, al_map_rgb(0, 0, 0), 1100, 530, ALLEGRO_ALIGN_CENTER, "Valentin");
 }
+
+void dessinerRegles(Menu* menu, ALLEGRO_FONT* font, ALLEGRO_FONT* smallFont, float width, float height, float mouse_x, float mouse_y, ALLEGRO_BITMAP* terrain, ALLEGRO_BITMAP* cabane, ALLEGRO_BITMAP* maison, ALLEGRO_BITMAP* immeuble, ALLEGRO_BITMAP* gratte) {
+    float largeur = 4;
+    double color = 1.5;
+    al_draw_filled_rectangle(0, 0, width, height, al_map_rgba(150, 150, 150, 150));
+    if (mouse_x < 300 && mouse_x > 20 && mouse_y < 90 && mouse_y > 20) {
+        al_draw_filled_rectangle(20, 20, 300, 90, al_map_rgb(200, 200, 200));
+    } else al_draw_filled_rectangle(20, 20, 300, 90, al_map_rgb(150, 150, 150));
+    al_draw_rectangle(20, 20, 300, 90, al_map_rgb(10, 10, 10), 2);
+    al_draw_text(font, al_map_rgb(10, 10, 10), 155, 25, ALLEGRO_ALIGN_CENTER, "Retour");
+
+    for (int i = 0; i < 80; i++) {
+        al_draw_line(260, 200 + i * largeur, 1440, 200 + i * largeur, al_map_rgba(255, 40 + color * i, 20+color * i, 100),largeur);
+        al_draw_line(260, 520 + i * largeur, 1440, 520+ i * largeur,al_map_rgba(255, 160 - color * i, 140 - color * i, 50), largeur);
+    }
+    al_draw_text(font, al_map_rgb(20, 20, 20), 850, 220, ALLEGRO_ALIGN_CENTER, "Bienvenue sur ECE City !") ;
+    al_draw_text(smallFont, al_map_rgb(100, 100, 100), 280, 340, ALLEGRO_ALIGN_LEFT, "- Le but de ce jeu est de developper sa propre ville : vous etes le maire ici.") ;
+    al_draw_text(smallFont, al_map_rgb(100, 100, 100), 280, 390, ALLEGRO_ALIGN_LEFT, "- Vous devrez construire et ameliorer vos maisons avec un reseau d'eau et") ;
+    al_draw_text(smallFont, al_map_rgb(100, 100, 100), 280, 440, ALLEGRO_ALIGN_LEFT, "d'electricite afin d'obtenir ces batiments :") ;
+
+    al_draw_scaled_bitmap(terrain, 0, 0, 75, 75, 320, 550, 156, 156, 0) ;
+    al_draw_scaled_bitmap(cabane, 0, 0, 112, 147, 556, 550, 136, 156, 0) ;
+    al_draw_scaled_bitmap(maison, 0, 0, 112, 160, 792, 550, 136, 156, 0) ;
+    al_draw_scaled_bitmap(immeuble, 0, 0, 439, 468, 1038, 550, 120, 156, 0) ;
+    al_draw_scaled_bitmap(gratte, 0, 0, 150, 371, 1244, 550, 120, 156, 0) ;
+
+    al_draw_text(font, al_map_rgb(20, 20, 20), 850, 770, ALLEGRO_ALIGN_CENTER, "Bonne Chance !") ;
+
+
+
+
+}

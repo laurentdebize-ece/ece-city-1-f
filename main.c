@@ -1,8 +1,6 @@
 #include "menu.h"
 #include "jeu.h"
-#include "time.h"
 
-#include <stdio.h>
 
 int main() {
     ///INITIALISATION DU DISPLAY ET DU TIMER
@@ -59,6 +57,7 @@ int main() {
     jeu.icone[3].image = al_load_bitmap("../Bitmap/Icone/maison.png");
     jeu.icone[4].image = al_load_bitmap("../Bitmap/Icone/chateau_eau.png");
     jeu.icone[5].image = al_load_bitmap("../Bitmap/Icone/centrale.png");
+    jeu.icone[12].image = al_load_bitmap("../Bitmap/Icone/demolition.png");
 
     jeu.icone[6].image = al_load_bitmap("../Bitmap/Icone/EclairOk-removebg-preview.png");
     jeu.icone[7].image = al_load_bitmap("../Bitmap/Icone/IconeEau-removebg-preview.png");
@@ -181,7 +180,8 @@ int main() {
                         break;
                     }
                     case REGLES : {
-                        al_draw_filled_rectangle(0, 0, width, height, al_map_rgba(150, 150, 150, 150));
+                        dessinerRegles(&menu, font, smallfont,(float) width, (float) height, (float) jeu.mouse_x,
+                                       (float) jeu.mouse_y, jeu.habitations[TERRAIN].image, jeu.habitations[CABANE].image, jeu.habitations[MAISON].image,jeu.habitations[IMMEUBLE].image, jeu.habitations[GRATTE_CIEL].image) ;
                     }
                 }
                 al_flip_display();
