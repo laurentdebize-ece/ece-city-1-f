@@ -15,7 +15,7 @@
 #define MAPX 270
 #define MAPY 40
 #define CASEX_X (float)26
-#define ARGENTDEP 500000000
+#define ARGENTDEP 50000000
 #define CAPACITE 5000
 
 

@@ -66,9 +66,11 @@ int main() {
     jeu.icone[6].image = al_load_bitmap("../Bitmap/Icone/EclairOk-removebg-preview.png");
     jeu.icone[7].image = al_load_bitmap("../Bitmap/Icone/IconeEau-removebg-preview.png");
     jeu.icone[8].image = al_load_bitmap("../Bitmap/Icone/coins.png");
-    jeu.icone[9].image = al_load_bitmap("../Bitmap/Icone/SIMCITYECE.png");
+    jeu.icone[9].image = al_load_bitmap("../Bitmap/Icone/ece.png");
     jeu.icone[10].image = al_load_bitmap("../Bitmap/Icone/CaptureIconeEcole-removebg-preview.png");
     jeu.icone[11].image = al_load_bitmap("../Bitmap/Icone/PetitEcolier3-removebg-preview.png");
+    jeu.icone[13].image = al_load_bitmap("../Bitmap/Menu/chrono.png");
+
 
     jeu.route[0].image =  al_load_bitmap("../Bitmap/Batiments/Route0.png");
     jeu.route[1].image =  al_load_bitmap("../Bitmap/Batiments/Route1.png");
@@ -257,11 +259,12 @@ int main() {
 
                 case ALLEGRO_EVENT_TIMER : {
                     deplacerMap(&jeu) ;
-
                     draw = 1;
-                    compteur++;
-                    temps(&jeu.time[0], compteur, 0);
-                    temps(&jeu.time[1], compteur, 1);
+                    if(jeu.mode == false) {
+                        compteur++;
+                        temps(&jeu.time[0], compteur, 0);
+                        temps(&jeu.time[1], compteur, 1);
+                    }
                     break;
                 }
             }
@@ -283,6 +286,8 @@ int main() {
                     al_draw_filled_rectangle(720, 510, 730, 740, al_map_rgb(164, 8, 30));
                     al_draw_filled_triangle(730, 510, 730, 740, 850, 740, al_map_rgb(164, 8, 30));
                     al_draw_filled_triangle(740, 510, 860, 740, 950, 740, al_map_rgb(44, 8, 130));
+                    al_draw_filled_triangle(740, 510, 830, 510, 950, 740, al_map_rgb(44, 8, 130));
+
                     al_draw_scaled_bitmap(kennedy, 0, 0, 800, 1135, 560, 510, 160, 230, 0);
 
                     if (jeu.mouse_x < 1150 && jeu.mouse_x > 550 && jeu.mouse_y < 400 && jeu.mouse_y > 150) {
