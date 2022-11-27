@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include "construction.h"
 
 #define NBICONE 15
 #define NBHABITATIONS 6
