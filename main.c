@@ -289,6 +289,7 @@ int main() {
                     al_draw_filled_triangle(740, 510, 830, 510, 950, 740, al_map_rgb(44, 8, 130));
 
                     al_draw_scaled_bitmap(kennedy, 0, 0, 800, 1135, 560, 510, 160, 230, 0);
+                    al_draw_text(smallfont, al_map_rgb(0, 0,0), 850, 610, ALLEGRO_ALIGN_CENTER, "En cours de developpement") ;
 
                     if (jeu.mouse_x < 1150 && jeu.mouse_x > 550 && jeu.mouse_y < 400 && jeu.mouse_y > 150) {
                         al_draw_rectangle(550, 150, 1150, 400, al_map_rgb(237, 28, 36), 5);

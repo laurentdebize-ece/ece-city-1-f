@@ -173,7 +173,6 @@ void temps(Temps* time, int compteur, int numTimer) {
 }
 
 void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
-    int pd;
     ///CASE SUR LAQUELLE SE TROUVE LA SOURIS
     int caseX = determinerCaseX(jeu->mouse_x, jeu->zoom.mapX, jeu->zoom.CaseX_X);
     int caseY = determinerCaseY(jeu->mouse_y, jeu->zoom.mapY, jeu->zoom.CaseX_X);
@@ -377,10 +376,6 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                         break;
                     }
                     case CENTRALE : {
-                        if (jeu->nbCentrale == 3) {
-                            int stopit;
-                            pd = 69;
-                        }
                         //PAREIL QUE LE CHATEAU D'EAU
                         if (verifierTerrain4_6(&jeu, caseX, caseY) == false) {
                             al_draw_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2,
@@ -586,6 +581,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
             }
             int evolution = determinerDistanceMaison(&jeu, i);
             if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 15) {
+                jeu->argent += 10 ;
                 jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
                 int numChateau = capaciteEau(jeu, i);
                 int numCentrale = capaciteElec(&jeu, i);
@@ -598,8 +594,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                     jeu->tabHabitations[i].alimenteeElec = 0;
 
                 }
-                if (jeu->tabHabitations[i].evolution == 0 && jeu->tabHabitations[i].alimenteeElec == 1 &&
-                    jeu->tabHabitations[i].alimenteeEau == 1) {
+                if (jeu->tabHabitations[i].evolution == 0 && jeu->tabHabitations[i].alimenteeElec == 1 && jeu->tabHabitations[i].alimenteeEau == 1) {
                     if (jeu->tabHabitations[i].type != GRATTE_CIEL) {
                         jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
                         jeu->tabHabitations[i].type++;
@@ -757,6 +752,7 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
         for (int i = 0; i < jeu->nbMaisons; i++) {
             int evolution = determinerDistanceMaison(&jeu, i);
             if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 15) {
+                jeu->argent += 10 ;
                 int numChateau = capaciteEau(jeu, i);
                 int numCentrale = capaciteElec(&jeu, i);
                 if (numChateau != -1) {
@@ -1124,7 +1120,7 @@ void barreicone(ALLEGRO_FONT*smallFont ,Jeu*jeu){
     if (jeu->time[0].secondes < 10) {
         al_draw_textf(smallFont, al_map_rgb(173,216,230), 850, 2, ALLEGRO_ALIGN_CENTER, "%d : 0%d",jeu->time[0].minutes, jeu->time[0].secondes);
     } else
-        al_draw_textf(smallFont, al_map_rgb(173,216,230), 850, 2, ALLEGRO_ALIGN_CENTER, "%d : %d",jeu->time[0].minutes, jeu->time[0].secondes);
+        al_draw_textf(smallFont, al_map_rgb(173,216,230), 850, 2,   ALLEGRO_ALIGN_CENTER, "%d : %d",jeu->time[0].minutes, jeu->time[0].secondes);
 
 
     ///ICONES
