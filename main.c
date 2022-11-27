@@ -30,10 +30,11 @@ int main() {
 
     ///COULEUR
     ALLEGRO_COLOR black = al_map_rgb(0, 0, 0);
-    ALLEGRO_COLOR white = al_map_rgb(255, 255, 255);
+
 
     ///CREATION DES DONNEES DU JEU
     int isFin = 0, draw = 0, compteur = 0;
+    bool mouseIsPressed = false ;
     times = al_create_timer(0.02);
     Menu menu;
     Jeu jeu;
@@ -88,13 +89,9 @@ int main() {
     ALLEGRO_BITMAP* staline = al_load_bitmap("../Bitmap/Menu/stalion.jpg") ;
     ALLEGRO_BITMAP* kennedy = al_load_bitmap("../Bitmap/Menu/kennion.jpg") ;
 
-
-
-
     ///CREATION DE L'ECRITURE
     ALLEGRO_FONT *font = al_load_ttf_font("../Blomberg-8MKKZ.otf", 70, ALLEGRO_ALIGN_LEFT);
     ALLEGRO_FONT *smallfont = al_load_ttf_font("../Blomberg-8MKKZ.otf", 35, ALLEGRO_ALIGN_LEFT);
-
 
     ///CREATION DE LA QUEUE D'EVENEMENT
     queue = al_create_event_queue();
@@ -138,7 +135,6 @@ int main() {
                                 if (jeu.mouse_x > 650 && jeu.mouse_x < 1050 && jeu.mouse_y > 400 && jeu.mouse_y < 520) {
                                     jeu.mode = true;
                                     menu.mode_de_jeu = JOUER;
-
                                 }
                                 if (jeu.mouse_x > 650 && jeu.mouse_x < 1050 && jeu.mouse_y > 580 && jeu.mouse_y < 700) {
                                     menu.mode_de_jeu = REGLES;
@@ -230,7 +226,10 @@ int main() {
                 }
                 case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN : {
                     if ((event.mouse.button & 1) == 1) {
-                        jeu.mouseIsPressed = true;
+                        if (jeu.mode == false) {
+                            jeu.mouseIsPressed = true;
+                        }
+                        else mouseIsPressed = true ;
                     }
 
 
@@ -239,7 +238,10 @@ int main() {
                 }
                 case ALLEGRO_EVENT_MOUSE_BUTTON_UP: {
                     if ((event.mouse.button & 1) == 1) {
-                        jeu.mouseIsPressed = false;
+                        if (jeu.mode == false) {
+                            jeu.mouseIsPressed = false;
+                        }
+                        else mouseIsPressed = false ;
                     }
                     break;
                 }
@@ -285,16 +287,16 @@ int main() {
 
                     if (jeu.mouse_x < 1150 && jeu.mouse_x > 550 && jeu.mouse_y < 400 && jeu.mouse_y > 150) {
                         al_draw_rectangle(550, 150, 1150, 400, al_map_rgb(237, 28, 36), 5);
-                        if(jeu.mouseIsPressed == true) {
+                        if(mouseIsPressed == true) {
                             jeu.mode = false;
-                            jeu.modeCommuniste = 1;
+                            jeu.modeJeu = COMMUNISTE;
                         }
                     }
                     if (jeu.mouse_x < 1150 && jeu.mouse_x > 550 && jeu.mouse_y < 750 && jeu.mouse_y > 500) {
                         al_draw_rectangle(550, 500, 1150, 750, al_map_rgb(44, 8, 130), 5);
-                        if(jeu.mouseIsPressed == true) {
+                        if(mouseIsPressed == true) {
                             jeu.mode = false;
-                            jeu.modeCapitaliste = 1;
+                            jeu.modeJeu = CAPITALISTE;
                         }
                     }
                 }

@@ -23,6 +23,8 @@ enum Batiments{NUL, NUL1, NUL2, NUL3, NUL4, RIEN, ROUTE, CENTRALE, CHATEAU, DEMO
 enum Habitations {TERRAIN, CABANE, MAISON, IMMEUBLE, GRATTE_CIEL, CONSTRUCTION};
 enum Niveau{ROUTIER, EAU, ELECTRICITE};
 enum DirectionRoute{HAUT, BAS, DROITE, GAUCHE};
+enum Mode{CAPITALISTE, COMMUNISTE};
+
 
 typedef struct{
     int distance;
@@ -102,7 +104,7 @@ typedef struct {
 
     // mode comm et cap
     bool mode;
-    int modeCommuniste, modeCapitaliste;
+    int modeJeu;
 
 } Jeu ;
 
