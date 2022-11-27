@@ -344,7 +344,9 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                     case CHATEAU : {
                         //Si on peut pas poser le terrain, on le surbrille en rouge
                         if (verifierTerrain4_6(&jeu, caseX, caseY) == false) {
-                            al_draw_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2,x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 5 * caseX_X / 2,al_map_rgb(255, 0, 0), 4);
+                            al_draw_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2,
+                                              x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 5 * caseX_X / 2,
+                                              al_map_rgb(255, 0, 0), 4);
                         }
                             //Sinon on peut le poser, on verifie donc les routes à cotés
                         else if (routeProximiteCentrale(&jeu, caseX, caseY) == true && jeu->argent >= 100000) {
@@ -367,21 +369,24 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             jeu->tabChateau[jeu->nbChateau].quantitedistri = 0;
                             jeu->nbChateau++;
                             jeu->capaciteEau += CAPACITE;
-                        }
-                        else  al_draw_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2,x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 5 * caseX_X / 2,al_map_rgb(255, 0, 0), 4);
+                        } else
+                            al_draw_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2,
+                                              x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 5 * caseX_X / 2,
+                                              al_map_rgb(255, 0, 0), 4);
 
                         break;
                     }
                     case CENTRALE : {
-                        if(jeu->nbCentrale == 3) {
-                            int stopit ;
-                            pd = 69 ;
+                        if (jeu->nbCentrale == 3) {
+                            int stopit;
+                            pd = 69;
                         }
                         //PAREIL QUE LE CHATEAU D'EAU
                         if (verifierTerrain4_6(&jeu, caseX, caseY) == false) {
-                            al_draw_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2,x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 5 * caseX_X / 2,al_map_rgb(255, 0, 0), 4);
-                        }
-                        else if (routeProximiteCentrale(&jeu, caseX, caseY) == true && jeu->argent >= 100000) {
+                            al_draw_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2,
+                                              x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 5 * caseX_X / 2,
+                                              al_map_rgb(255, 0, 0), 4);
+                        } else if (routeProximiteCentrale(&jeu, caseX, caseY) == true && jeu->argent >= 100000) {
                             jeu->argent -= 100000;
                             for (int i = 0; i < 6; i++) {
                                 jeu->map[caseX - 2][caseY + 2 - i].type = CENTRALE;
@@ -401,8 +406,10 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                             jeu->tabCentrale[jeu->nbCentrale].quantitedistri = 0;
                             jeu->capacitElec += CAPACITE;
                             jeu->nbCentrale++;
-                        }
-                        else  al_draw_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2,x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 5 * caseX_X / 2,al_map_rgb(255, 0, 0), 4);
+                        } else
+                            al_draw_rectangle(x_CaseXY - 5 * caseX_X / 2, y_CaseXY - 7 * caseX_X / 2,
+                                              x_CaseXY + 3 * caseX_X / 2, y_CaseXY + 5 * caseX_X / 2,
+                                              al_map_rgb(255, 0, 0), 4);
                         break;
                     }
 
@@ -416,52 +423,93 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                 if (jeu->map[i][j].type == ROUTE) {
                     verifierAffichageRoute(&jeu, i, j);
                     int quelRoute = combinaison(*jeu, i, j, &jeu->map[i][j].rotation);
-                    al_draw_scaled_rotated_bitmap(jeu->route[quelRoute].image, 12.5, 12.5, jeu->map[i][j].x,jeu->map[i][j].y, scale, scale, jeu->map[i][j].rotation * PI / 2, 0);
+                    al_draw_scaled_rotated_bitmap(jeu->route[quelRoute].image, 12.5, 12.5, jeu->map[i][j].x,
+                                                  jeu->map[i][j].y, scale, scale, jeu->map[i][j].rotation * PI / 2, 0);
                 }
                     //placement des terrains
                 else if (verifierPlacementTerrain(jeu, i, j) == true) {
                     int type = jeu->map[i][j].type;
                     if (type == TERRAIN) {
-                        al_draw_scaled_bitmap(jeu->habitations[TERRAIN].image, 0, 0, jeu->habitations[TERRAIN].width,jeu->habitations[TERRAIN].height, jeu->map[i][j].x - 5 * caseX_X / 2,jeu->map[i][j].y - 5 * caseX_X / 2, 3 * caseX_X, 3 * caseX_X, 0);
-                        al_draw_scaled_bitmap(jeu->habitations[CONSTRUCTION].image, 0, 0,jeu->habitations[CONSTRUCTION].width,jeu->habitations[CONSTRUCTION].height, jeu->map[i][j].x - 5 * caseX_X / 2,jeu->map[i][j].y - 5 * caseX_X / 2, 3 * caseX_X, 3 * caseX_X, 0);
+                        al_draw_scaled_bitmap(jeu->habitations[TERRAIN].image, 0, 0, jeu->habitations[TERRAIN].width,
+                                              jeu->habitations[TERRAIN].height, jeu->map[i][j].x - 5 * caseX_X / 2,
+                                              jeu->map[i][j].y - 5 * caseX_X / 2, 3 * caseX_X, 3 * caseX_X, 0);
+                        al_draw_scaled_bitmap(jeu->habitations[CONSTRUCTION].image, 0, 0,
+                                              jeu->habitations[CONSTRUCTION].width,
+                                              jeu->habitations[CONSTRUCTION].height, jeu->map[i][j].x - 5 * caseX_X / 2,
+                                              jeu->map[i][j].y - 5 * caseX_X / 2, 3 * caseX_X, 3 * caseX_X, 0);
                     } else if (type == IMMEUBLE) {
-                        al_draw_scaled_bitmap(jeu->habitations[IMMEUBLE].image, 0, 0, jeu->habitations[IMMEUBLE].width,jeu->habitations[IMMEUBLE].height, jeu->map[i][j].x - 5 * caseX_X / 2,jeu->map[i][j].y - 9 * caseX_X / 2, caseX_X * 3, caseX_X * 5, 0);
+                        al_draw_scaled_bitmap(jeu->habitations[IMMEUBLE].image, 0, 0, jeu->habitations[IMMEUBLE].width,
+                                              jeu->habitations[IMMEUBLE].height, jeu->map[i][j].x - 5 * caseX_X / 2,
+                                              jeu->map[i][j].y - 9 * caseX_X / 2, caseX_X * 3, caseX_X * 5, 0);
                     } else if (type == GRATTE_CIEL) {
-                        al_draw_scaled_bitmap(jeu->habitations[GRATTE_CIEL].image, 0, 0,jeu->habitations[GRATTE_CIEL].width, jeu->habitations[GRATTE_CIEL].height,jeu->map[i][j].x - 5 * caseX_X / 2, jeu->map[i][j].y - 11 * caseX_X / 2,caseX_X * 3, caseX_X * 6, 0);
+                        al_draw_scaled_bitmap(jeu->habitations[GRATTE_CIEL].image, 0, 0,
+                                              jeu->habitations[GRATTE_CIEL].width, jeu->habitations[GRATTE_CIEL].height,
+                                              jeu->map[i][j].x - 5 * caseX_X / 2, jeu->map[i][j].y - 11 * caseX_X / 2,
+                                              caseX_X * 3, caseX_X * 6, 0);
                     } else
-                        al_draw_scaled_bitmap(jeu->habitations[type].image, 0, 0, jeu->habitations[type].width,jeu->habitations[type].height, jeu->map[i][j].x - 5 * caseX_X / 2,jeu->map[i][j].y - 7 * caseX_X / 2, caseX_X * 3, caseX_X * 4, 0);
+                        al_draw_scaled_bitmap(jeu->habitations[type].image, 0, 0, jeu->habitations[type].width,
+                                              jeu->habitations[type].height, jeu->map[i][j].x - 5 * caseX_X / 2,
+                                              jeu->map[i][j].y - 7 * caseX_X / 2, caseX_X * 3, caseX_X * 4, 0);
                 } else if (verifierPlacementCentrale(jeu, i, j, 1) == true && jeu->map[i][j].type == CHATEAU) {
-                    al_draw_scaled_bitmap(jeu->centrale[2].image, 0, 0, 64, 96, jeu->map[i][j].x - 5 * caseX_X / 2,jeu->map[i][j].y - 7 * caseX_X / 2, caseX_X * 4, caseX_X * 6, 0);
-                    al_draw_scaled_bitmap(jeu->centrale[0].image, 0, 0, jeu->centrale[0].width, jeu->centrale[0].height,jeu->map[i][j].x - 2 * caseX_X, jeu->map[i][j].y - 5 * caseX_X, caseX_X * 3,caseX_X * 6, 0);
+                    al_draw_scaled_bitmap(jeu->centrale[2].image, 0, 0, 64, 96, jeu->map[i][j].x - 5 * caseX_X / 2,
+                                          jeu->map[i][j].y - 7 * caseX_X / 2, caseX_X * 4, caseX_X * 6, 0);
+                    al_draw_scaled_bitmap(jeu->centrale[0].image, 0, 0, jeu->centrale[0].width, jeu->centrale[0].height,
+                                          jeu->map[i][j].x - 2 * caseX_X, jeu->map[i][j].y - 5 * caseX_X, caseX_X * 3,
+                                          caseX_X * 6, 0);
                     for (int c = 0; c < jeu->nbChateau; c++) {
-                        al_draw_textf(smallFont, al_map_rgb(255, 255, 255),jeu->map[jeu->tabChateau[c].caseX][jeu->tabChateau[c].caseY].x,jeu->map[jeu->tabChateau[c].caseX][jeu->tabChateau[c].caseY].y,ALLEGRO_ALIGN_CENTER, "%d/5000", jeu->tabChateau[c].quantitedistri);
+                        al_draw_textf(smallFont, al_map_rgb(255, 255, 255),
+                                      jeu->map[jeu->tabChateau[c].caseX][jeu->tabChateau[c].caseY].x,
+                                      jeu->map[jeu->tabChateau[c].caseX][jeu->tabChateau[c].caseY].y,
+                                      ALLEGRO_ALIGN_CENTER, "%d/5000", jeu->tabChateau[c].quantitedistri);
                     }
                 } else if (verifierPlacementCentrale(jeu, i, j, 0) == true) {
-                    al_draw_scaled_bitmap(jeu->centrale[2].image, 0, 0, 64, 96, jeu->map[i][j].x - 5 * caseX_X / 2,jeu->map[i][j].y - 7 * caseX_X / 2, caseX_X * 4, caseX_X * 6, 0);
-                    al_draw_scaled_bitmap(jeu->centrale[1].image, 0, 0, jeu->centrale[1].width, jeu->centrale[1].height,jeu->map[i][j].x - 5 * caseX_X / 2 + caseX_X / 8,jeu->map[i][j].y - 9 * caseX_X / 2, caseX_X * 4, caseX_X * 6, 0);
+                    al_draw_scaled_bitmap(jeu->centrale[2].image, 0, 0, 64, 96, jeu->map[i][j].x - 5 * caseX_X / 2,
+                                          jeu->map[i][j].y - 7 * caseX_X / 2, caseX_X * 4, caseX_X * 6, 0);
+                    al_draw_scaled_bitmap(jeu->centrale[1].image, 0, 0, jeu->centrale[1].width, jeu->centrale[1].height,
+                                          jeu->map[i][j].x - 5 * caseX_X / 2 + caseX_X / 8,
+                                          jeu->map[i][j].y - 9 * caseX_X / 2, caseX_X * 4, caseX_X * 6, 0);
                     for (int c = 0; c < jeu->nbCentrale; c++) {
-                        al_draw_textf(smallFont, al_map_rgb(255, 255, 255),jeu->map[jeu->tabCentrale[c].caseX][jeu->tabCentrale[c].caseY].x,jeu->map[jeu->tabCentrale[c].caseX][jeu->tabCentrale[c].caseY].y,ALLEGRO_ALIGN_CENTER, "%d/5000", jeu->tabCentrale[c].quantitedistri);
+                        al_draw_textf(smallFont, al_map_rgb(255, 255, 255),
+                                      jeu->map[jeu->tabCentrale[c].caseX][jeu->tabCentrale[c].caseY].x,
+                                      jeu->map[jeu->tabCentrale[c].caseX][jeu->tabCentrale[c].caseY].y,
+                                      ALLEGRO_ALIGN_CENTER, "%d/5000", jeu->tabCentrale[c].quantitedistri);
                     }
                 }
             }
         }
-        for(int i = 0 ; i < jeu->nbMaisons ; i++) {
-            if(jeu->tabHabitations[i].alimenteeEau == 0) {
-                al_draw_scaled_bitmap(jeu->icone[7].image, 0, 0, 559, 447, jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].x - 2*jeu->zoom.CaseX_X, jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].y - 3*jeu->zoom.CaseX_X/2, 3*jeu->zoom.CaseX_X,  3*jeu->zoom.CaseX_X, 0) ;
+        for (int i = 0; i < jeu->nbMaisons; i++) {
+            if (jeu->tabHabitations[i].alimenteeEau == 0) {
+                al_draw_scaled_bitmap(jeu->icone[7].image, 0, 0, 559, 447,
+                                      jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].x -
+                                      2 * jeu->zoom.CaseX_X,
+                                      jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].y -
+                                      3 * jeu->zoom.CaseX_X / 2, 3 * jeu->zoom.CaseX_X, 3 * jeu->zoom.CaseX_X, 0);
             }
-            if(jeu->tabHabitations[i].alimenteeElec == 0) {
-                al_draw_scaled_bitmap(jeu->icone[6].image, 0, 0, 475, 336, jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].x - jeu->zoom.CaseX_X, jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].y - 3*jeu->zoom.CaseX_X/2, 3*jeu->zoom.CaseX_X,  3*jeu->zoom.CaseX_X, 0) ;
+            if (jeu->tabHabitations[i].alimenteeElec == 0) {
+                al_draw_scaled_bitmap(jeu->icone[6].image, 0, 0, 475, 336,
+                                      jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].x -
+                                      jeu->zoom.CaseX_X,
+                                      jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].y -
+                                      3 * jeu->zoom.CaseX_X / 2, 3 * jeu->zoom.CaseX_X, 3 * jeu->zoom.CaseX_X, 0);
             }
         }
     } else if (jeu->niveauAfficher == EAU) {
         for (int j = 0; j < LIGNE; j++) {
             for (int i = 0; i < COLONNE; i++) {
                 if (jeu->map[i][j].type == ROUTE) {
-                    al_draw_filled_rectangle(jeu->map[i][j].x - jeu->zoom.CaseX_X / 2,jeu->map[i][j].y - jeu->zoom.CaseX_X / 2,jeu->map[i][j].x + jeu->zoom.CaseX_X / 2,jeu->map[i][j].y + jeu->zoom.CaseX_X / 2, al_map_rgb(173, 216, 230));
+                    al_draw_filled_rectangle(jeu->map[i][j].x - jeu->zoom.CaseX_X / 2,
+                                             jeu->map[i][j].y - jeu->zoom.CaseX_X / 2,
+                                             jeu->map[i][j].x + jeu->zoom.CaseX_X / 2,
+                                             jeu->map[i][j].y + jeu->zoom.CaseX_X / 2, al_map_rgb(173, 216, 230));
                 } else if (verifierPlacementTerrain(jeu, i, j) == true) {
-                    al_draw_filled_rectangle(jeu->map[i][j].x - 5 * caseX_X / 2, jeu->map[i][j].y - 5 * caseX_X / 2,jeu->map[i][j].x - 5 * caseX_X / 2 + 3 * caseX_X,jeu->map[i][j].y - 5 * caseX_X / 2 + 3 * caseX_X, al_map_rgb(0, 0, 0));
+                    al_draw_filled_rectangle(jeu->map[i][j].x - 5 * caseX_X / 2, jeu->map[i][j].y - 5 * caseX_X / 2,
+                                             jeu->map[i][j].x - 5 * caseX_X / 2 + 3 * caseX_X,
+                                             jeu->map[i][j].y - 5 * caseX_X / 2 + 3 * caseX_X, al_map_rgb(0, 0, 0));
                 } else if (verifierPlacementCentrale(jeu, i, j, 1) == true && jeu->map[i][j].type == CHATEAU) {
-                    al_draw_filled_rectangle(jeu->map[i][j].x - 5 * caseX_X / 2, jeu->map[i][j].y - 7 * caseX_X / 2,jeu->map[i][j].x - 5 * caseX_X / 2 + caseX_X * 4,jeu->map[i][j].y - 7 * caseX_X / 2 + caseX_X * 6,jeu->tabChateau[jeu->map[i][j].numConstruction].couleur);
+                    al_draw_filled_rectangle(jeu->map[i][j].x - 5 * caseX_X / 2, jeu->map[i][j].y - 7 * caseX_X / 2,
+                                             jeu->map[i][j].x - 5 * caseX_X / 2 + caseX_X * 4,
+                                             jeu->map[i][j].y - 7 * caseX_X / 2 + caseX_X * 6,
+                                             jeu->tabChateau[jeu->map[i][j].numConstruction].couleur);
                 }
             }
             for (int c = 0; c < jeu->nbMaisons; c++) {
@@ -476,22 +524,33 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                 }
             }
         }
-    }
-    else if (jeu->niveauAfficher == ELECTRICITE) {
+    } else if (jeu->niveauAfficher == ELECTRICITE) {
         for (int j = 0; j < LIGNE; j++) {
             for (int i = 0; i < COLONNE; i++) {
                 if (jeu->map[i][j].type == ROUTE) {
-                    al_draw_filled_rectangle(jeu->map[i][j].x - jeu->zoom.CaseX_X / 2,jeu->map[i][j].y - jeu->zoom.CaseX_X / 2,jeu->map[i][j].x + jeu->zoom.CaseX_X / 2,jeu->map[i][j].y + jeu->zoom.CaseX_X / 2, al_map_rgb(255, 255, 0));
+                    al_draw_filled_rectangle(jeu->map[i][j].x - jeu->zoom.CaseX_X / 2,
+                                             jeu->map[i][j].y - jeu->zoom.CaseX_X / 2,
+                                             jeu->map[i][j].x + jeu->zoom.CaseX_X / 2,
+                                             jeu->map[i][j].y + jeu->zoom.CaseX_X / 2, al_map_rgb(255, 255, 0));
                 } else if (verifierPlacementTerrain(jeu, i, j) == true) {
-                    al_draw_filled_rectangle(jeu->map[i][j].x - 5 * caseX_X / 2, jeu->map[i][j].y - 5 * caseX_X / 2,jeu->map[i][j].x - 5 * caseX_X / 2 + 3 * caseX_X,jeu->map[i][j].y - 5 * caseX_X / 2 + 3 * caseX_X, al_map_rgb(0, 0, 0));
+                    al_draw_filled_rectangle(jeu->map[i][j].x - 5 * caseX_X / 2, jeu->map[i][j].y - 5 * caseX_X / 2,
+                                             jeu->map[i][j].x - 5 * caseX_X / 2 + 3 * caseX_X,
+                                             jeu->map[i][j].y - 5 * caseX_X / 2 + 3 * caseX_X, al_map_rgb(0, 0, 0));
                 } else if (verifierPlacementCentrale(jeu, i, j, 0) == true && jeu->map[i][j].type == CENTRALE) {
-                    al_draw_filled_rectangle(jeu->map[i][j].x - 5 * caseX_X / 2, jeu->map[i][j].y - 7 * caseX_X / 2,jeu->map[i][j].x - 5 * caseX_X / 2 + caseX_X * 4,jeu->map[i][j].y - 7 * caseX_X / 2 + caseX_X * 6,jeu->tabCentrale[jeu->map[i][j].numConstruction].couleur);
+                    al_draw_filled_rectangle(jeu->map[i][j].x - 5 * caseX_X / 2, jeu->map[i][j].y - 7 * caseX_X / 2,
+                                             jeu->map[i][j].x - 5 * caseX_X / 2 + caseX_X * 4,
+                                             jeu->map[i][j].y - 7 * caseX_X / 2 + caseX_X * 6,
+                                             jeu->tabCentrale[jeu->map[i][j].numConstruction].couleur);
                 }
             }
             for (int c = 0; c < jeu->nbMaisons; c++) {
                 for (int k = 0; k < jeu->nbCentrale; k++) {
                     if (jeu->tabCentrale[k].quantiteDistribueMaisonN[c] != 0) {
-                        al_draw_textf(smallFont, jeu->tabCentrale[k].couleur,jeu->map[jeu->tabHabitations[c].caseX][jeu->tabHabitations[c].caseY].x,jeu->map[jeu->tabHabitations[c].caseX][jeu->tabHabitations[c].caseY].y +jeu->zoom.CaseX_X / 3 - 2 * jeu->zoom.CaseX_X / 3 * k, ALLEGRO_ALIGN_CENTER, "%d",jeu->tabCentrale[k].quantiteDistribueMaisonN[c]);
+                        al_draw_textf(smallFont, jeu->tabCentrale[k].couleur,
+                                      jeu->map[jeu->tabHabitations[c].caseX][jeu->tabHabitations[c].caseY].x,
+                                      jeu->map[jeu->tabHabitations[c].caseX][jeu->tabHabitations[c].caseY].y +
+                                      jeu->zoom.CaseX_X / 3 - 2 * jeu->zoom.CaseX_X / 3 * k, ALLEGRO_ALIGN_CENTER, "%d",
+                                      jeu->tabCentrale[k].quantiteDistribueMaisonN[c]);
                     }
                 }
             }
@@ -499,174 +558,22 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
     }
 
     ///EVOLUTION DES BATIMENTS
-    for (int i = 0; i < jeu->nbMaisons; i++) {
-        for (int j = 0; j < jeu->nbChateau; j++) {
-            if (jeu->tabChateau[j].maisonRelie[i].quantiteDistribue != 0) {
-                for (int k = 0; k < jeu->tabHabitations[i].fileEau; k++) {
-                    if (j == jeu->tabHabitations[i].filePrioriteEau[k]) {
-                        if (jeu->tabChateau[j].maisonRelie[i].quantiteDistribue == jeu->tabHabitations[i].nbHabitant) {
-                            j = jeu->nbChateau;
-                            break;
-                        } else {
-                            break;
-                        }
-                    } else {
-                        if (jeu->tabChateau[j].maisonRelie[i].quantiteDistribue +
-                            jeu->tabChateau[jeu->tabHabitations[i].filePrioriteEau[k]].quantitedistri <= CAPACITE) {
-                            jeu->tabChateau[jeu->tabHabitations[i].filePrioriteEau[k]].maisonRelie[i].quantiteDistribue += jeu->tabChateau[j].maisonRelie[i].quantiteDistribue;
-                            jeu->tabChateau[j].quantitedistri -= jeu->tabChateau[j].maisonRelie[i].quantiteDistribue;
-                            jeu->tabChateau[jeu->tabHabitations[i].filePrioriteEau[k]].quantitedistri += jeu->tabChateau[j].maisonRelie[i].quantiteDistribue;
-                            jeu->tabChateau[j].maisonRelie[i].quantiteDistribue = 0;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        int evolution = determinerDistanceMaison(&jeu, i);
-        if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 15) {
-            jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
-            int numChateau = capaciteEau(jeu, i);
-            int numCentrale = capaciteElec(&jeu, i);
-            if (numChateau != -1) {
-                jeu->tabHabitations[i].alimenteeEau = 1;
-            } else jeu->tabHabitations[i].alimenteeEau = 0;
-            if (numCentrale != -1) {
-                jeu->tabHabitations[i].alimenteeElec = 1;
-            } else {
-                jeu->tabHabitations[i].alimenteeElec = 0;
-
-            }
-            if (jeu->tabHabitations[i].evolution == 0 && jeu->tabHabitations[i].alimenteeElec == 1 &&
-                jeu->tabHabitations[i].alimenteeEau == 1) {
-                if (jeu->tabHabitations[i].type != GRATTE_CIEL) {
-                    jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
-                    jeu->tabHabitations[i].type++;
-                    jeu->tabHabitations[i].provenanceElec = numCentrale;
-                    switch (jeu->tabHabitations[i].type) {
-                        case CABANE : {
-                            jeu->nbHabitants += 10;
-                            jeu->tabHabitations[i].nbHabitant += 10;
-                            jeu->tabCentrale[numCentrale].quantitedistri += 10;
-                            jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] += 10;
-                            jeu->tabChateau[numChateau].quantitedistri += 10;
-                            jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue += 10;
-                            break;
-                        }
-                        case MAISON : {
-                            jeu->tabHabitations[i].nbHabitant += 40;
-                            jeu->nbHabitants += 40;
-                            jeu->tabCentrale[numCentrale].quantitedistri += 40;
-                            jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] += 40;
-                            jeu->tabChateau[numChateau].quantitedistri += 40;
-                            jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue += 40;
-
-                            break;
-                        }
-                        case IMMEUBLE : {
-                            jeu->nbHabitants += 50;
-                            jeu->tabHabitations[i].nbHabitant += 50;
-                            jeu->tabCentrale[numCentrale].quantitedistri += 50;
-                            jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] += 50;
-                            jeu->tabChateau[numChateau].quantitedistri += 50;
-                            jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue += 50;
-
-                            break;
-                        }
-                        case GRATTE_CIEL : {
-                            jeu->nbHabitants += 900;
-                            jeu->tabHabitations[i].nbHabitant += 900;
-                            jeu->tabCentrale[numCentrale].quantitedistri += 900;
-                            jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] += 900;
-                            jeu->tabChateau[numChateau].quantitedistri += 900;
-                            jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue += 900;
-                            break;
-                        }
-                    }
-                    int caseBatx = jeu->tabHabitations[i].caseX;
-                    int caseBaty = jeu->tabHabitations[i].caseY;
-                    for (int j = 0; j < 3; j++) {
-                        jeu->map[caseBatx - 1][caseBaty - 1 + j].type++;
-                        jeu->map[caseBatx][caseBaty - 1 + j].type++;
-                        jeu->map[caseBatx + 1][caseBaty - 1 + j].type++;
-                    }
-                } else if (jeu->tabHabitations[i].type == GRATTE_CIEL) {
-                    jeu->tabHabitations[i].evolution = 1;
-                }
-            } else if ((jeu->tabHabitations[i].evolution == 0 && jeu->tabHabitations[i].alimenteeElec == 1 &&
-                        jeu->tabHabitations[i].alimenteeEau == 0) ||
-                       (jeu->tabHabitations[i].evolution == 0 && jeu->tabHabitations[i].alimenteeElec == 0 &&
-                        jeu->tabHabitations[i].alimenteeEau == 1) ||
-                       (jeu->tabHabitations[i].evolution == 0 && jeu->tabHabitations[i].alimenteeElec == 0 &&
-                        jeu->tabHabitations[i].alimenteeEau == 0)) {
-                if (jeu->tabHabitations[i].type != TERRAIN) {
-                    jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
-                    jeu->tabHabitations[i].type--;
-                    jeu->tabCentrale[jeu->tabHabitations[i].provenanceElec].quantitedistri -= jeu->tabHabitations[i].nbHabitant;
-                    jeu->tabCentrale[jeu->tabHabitations[i].provenanceElec].quantiteDistribueMaisonN[i] -= jeu->tabHabitations[i].nbHabitant;
-                    jeu->tabHabitations[i].provenanceElec = -1;
-                    for (int k = 0; k < jeu->tabHabitations[i].fileEau; k++) {
-                        if (jeu->tabChateau[jeu->tabHabitations[i].filePrioriteEau[k]].maisonRelie[i].quantiteDistribue ==
-                            jeu->tabHabitations[i].nbHabitant) {
-                            numChateau = jeu->tabHabitations[i].filePrioriteEau[k];
-                            break;
-                        }
-                    }
-                    switch (jeu->tabHabitations[i].type) {
-                        case TERRAIN : {
-                            jeu->nbHabitants -= 10;
-                            jeu->tabHabitations[i].nbHabitant -= 10;
-                            jeu->tabChateau[numChateau].quantitedistri -= 10;
-                            jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue -= 10;
-                            break;
-                        }
-                        case CABANE : {
-                            jeu->nbHabitants -= 40;
-                            jeu->tabHabitations[i].nbHabitant -= 40;
-                            jeu->tabChateau[numChateau].quantitedistri -= 40;
-                            jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue -= 40;
-                            break;
-                        }
-                        case MAISON : {
-                            jeu->tabHabitations[i].nbHabitant -= 50;
-                            jeu->nbHabitants -= 50;
-                            jeu->tabChateau[numChateau].quantitedistri -= 50;
-                            jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue -= 50;
-
-                            break;
-                        }
-                        case IMMEUBLE : {
-                            jeu->nbHabitants -= 900;
-                            jeu->tabHabitations[i].nbHabitant -= 900;
-                            jeu->tabChateau[numChateau].quantitedistri -= 900;
-                            jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue -= 900;
-
-                            break;
-                        }
-
-                    }
-                    int caseBatx = jeu->tabHabitations[i].caseX;
-                    int caseBaty = jeu->tabHabitations[i].caseY;
-                    for (int j = 0; j < 3; j++) {
-                        jeu->map[caseBatx - 1][caseBaty - 1 + j].type--;
-                        jeu->map[caseBatx][caseBaty - 1 + j].type--;
-                        jeu->map[caseBatx + 1][caseBaty - 1 + j].type--;
-                    }
-                }
-            } else jeu->tabHabitations[i].evolution = 0;
-        } else {
-            /*for (int j = 0; j < jeu->nbChateau; j++) {
+    if (jeu->modeJeu == COMMUNISTE) {
+        for (int i = 0; i < jeu->nbMaisons; i++) {
+            for (int j = 0; j < jeu->nbChateau; j++) {
                 if (jeu->tabChateau[j].maisonRelie[i].quantiteDistribue != 0) {
                     for (int k = 0; k < jeu->tabHabitations[i].fileEau; k++) {
                         if (j == jeu->tabHabitations[i].filePrioriteEau[k]) {
-                            if (jeu->tabChateau[j].maisonRelie[i].quantiteDistribue == jeu->tabHabitations[i].nbHabitant) {
+                            if (jeu->tabChateau[j].maisonRelie[i].quantiteDistribue ==
+                                jeu->tabHabitations[i].nbHabitant) {
                                 j = jeu->nbChateau;
                                 break;
                             } else {
                                 break;
                             }
                         } else {
-                            if (jeu->tabChateau[j].maisonRelie[i].quantiteDistribue + jeu->tabChateau[jeu->tabHabitations[i].filePrioriteEau[k]].quantitedistri <= CAPACITE) {
+                            if (jeu->tabChateau[j].maisonRelie[i].quantiteDistribue +
+                                jeu->tabChateau[jeu->tabHabitations[i].filePrioriteEau[k]].quantitedistri <= CAPACITE) {
                                 jeu->tabChateau[jeu->tabHabitations[i].filePrioriteEau[k]].maisonRelie[i].quantiteDistribue += jeu->tabChateau[j].maisonRelie[i].quantiteDistribue;
                                 jeu->tabChateau[j].quantitedistri -= jeu->tabChateau[j].maisonRelie[i].quantiteDistribue;
                                 jeu->tabChateau[jeu->tabHabitations[i].filePrioriteEau[k]].quantitedistri += jeu->tabChateau[j].maisonRelie[i].quantiteDistribue;
@@ -676,27 +583,380 @@ void dessinerJeu(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu* jeu) {
                         }
                     }
                 }
-            }*/
+            }
+            int evolution = determinerDistanceMaison(&jeu, i);
+            if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 15) {
+                jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
+                int numChateau = capaciteEau(jeu, i);
+                int numCentrale = capaciteElec(&jeu, i);
+                if (numChateau != -1) {
+                    jeu->tabHabitations[i].alimenteeEau = 1;
+                } else jeu->tabHabitations[i].alimenteeEau = 0;
+                if (numCentrale != -1) {
+                    jeu->tabHabitations[i].alimenteeElec = 1;
+                } else {
+                    jeu->tabHabitations[i].alimenteeElec = 0;
+
+                }
+                if (jeu->tabHabitations[i].evolution == 0 && jeu->tabHabitations[i].alimenteeElec == 1 &&
+                    jeu->tabHabitations[i].alimenteeEau == 1) {
+                    if (jeu->tabHabitations[i].type != GRATTE_CIEL) {
+                        jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
+                        jeu->tabHabitations[i].type++;
+                        jeu->tabHabitations[i].provenanceElec = numCentrale;
+                        switch (jeu->tabHabitations[i].type) {
+                            case CABANE : {
+                                jeu->nbHabitants += 10;
+                                jeu->tabHabitations[i].nbHabitant += 10;
+                                jeu->tabCentrale[numCentrale].quantitedistri += 10;
+                                jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] += 10;
+                                jeu->tabChateau[numChateau].quantitedistri += 10;
+                                jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue += 10;
+                                break;
+                            }
+                            case MAISON : {
+                                jeu->tabHabitations[i].nbHabitant += 40;
+                                jeu->nbHabitants += 40;
+                                jeu->tabCentrale[numCentrale].quantitedistri += 40;
+                                jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] += 40;
+                                jeu->tabChateau[numChateau].quantitedistri += 40;
+                                jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue += 40;
+
+                                break;
+                            }
+                            case IMMEUBLE : {
+                                jeu->nbHabitants += 50;
+                                jeu->tabHabitations[i].nbHabitant += 50;
+                                jeu->tabCentrale[numCentrale].quantitedistri += 50;
+                                jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] += 50;
+                                jeu->tabChateau[numChateau].quantitedistri += 50;
+                                jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue += 50;
+
+                                break;
+                            }
+                            case GRATTE_CIEL : {
+                                jeu->nbHabitants += 900;
+                                jeu->tabHabitations[i].nbHabitant += 900;
+                                jeu->tabCentrale[numCentrale].quantitedistri += 900;
+                                jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] += 900;
+                                jeu->tabChateau[numChateau].quantitedistri += 900;
+                                jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue += 900;
+                                break;
+                            }
+                        }
+                        int caseBatx = jeu->tabHabitations[i].caseX;
+                        int caseBaty = jeu->tabHabitations[i].caseY;
+                        for (int j = 0; j < 3; j++) {
+                            jeu->map[caseBatx - 1][caseBaty - 1 + j].type++;
+                            jeu->map[caseBatx][caseBaty - 1 + j].type++;
+                            jeu->map[caseBatx + 1][caseBaty - 1 + j].type++;
+                        }
+                    } else if (jeu->tabHabitations[i].type == GRATTE_CIEL) {
+                        jeu->tabHabitations[i].evolution = 1;
+                    }
+                } else if ((jeu->tabHabitations[i].evolution == 0 && jeu->tabHabitations[i].alimenteeElec == 1 && jeu->tabHabitations[i].alimenteeEau == 0) ||
+                           (jeu->tabHabitations[i].evolution == 0 && jeu->tabHabitations[i].alimenteeElec == 0 && jeu->tabHabitations[i].alimenteeEau == 1) ||
+                           (jeu->tabHabitations[i].evolution == 0 && jeu->tabHabitations[i].alimenteeElec == 0 && jeu->tabHabitations[i].alimenteeEau == 0)) {
+                    if (jeu->tabHabitations[i].type != TERRAIN) {
+                        jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
+                        jeu->tabHabitations[i].type--;
+                        int numChateau2 = capaciteEau(jeu, i);
+                        int numCentrale2 = capaciteElec(&jeu, i);
+                        if (numChateau2 != -1) {
+                            jeu->tabHabitations[i].alimenteeEau = 1;
+                        } else jeu->tabHabitations[i].alimenteeEau = 0;
+                        if (numCentrale2 != -1) {
+                            jeu->tabHabitations[i].alimenteeElec = 1;
+                        } else {
+                            jeu->tabHabitations[i].alimenteeElec = 0;
+                        }
+                        if (jeu->tabHabitations[i].alimenteeElec == 1 && jeu->tabHabitations[i].alimenteeEau == 1) {
+                            jeu->tabHabitations[i].type++;
+                        }
+                        else if (jeu->tabHabitations[i].alimenteeElec != 1 && jeu->tabHabitations[i].alimenteeEau != 1) {
+                        jeu->tabCentrale[jeu->tabHabitations[i].provenanceElec].quantitedistri -= jeu->tabHabitations[i].nbHabitant;
+                        jeu->tabCentrale[jeu->tabHabitations[i].provenanceElec].quantiteDistribueMaisonN[i] -= jeu->tabHabitations[i].nbHabitant;
+                        jeu->tabHabitations[i].provenanceElec = -1;
+                        for (int k = 0; k < jeu->tabHabitations[i].fileEau; k++) {
+                            if (jeu->tabChateau[jeu->tabHabitations[i].filePrioriteEau[k]].maisonRelie[i].quantiteDistribue ==
+                                jeu->tabHabitations[i].nbHabitant) {
+                                numChateau = jeu->tabHabitations[i].filePrioriteEau[k];
+                                break;
+                            }
+                        }
+
+                            switch (jeu->tabHabitations[i].type) {
+                                case TERRAIN : {
+                                    jeu->nbHabitants -= 10;
+                                    jeu->tabHabitations[i].nbHabitant -= 10;
+                                    jeu->tabChateau[numChateau].quantitedistri -= 10;
+                                    jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue -= 10;
+                                    jeu->tabCentrale[numCentrale].quantitedistri -= 10;
+                                    jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] -= 10;
+                                    break;
+                                }
+                                case CABANE : {
+                                    jeu->nbHabitants -= 40;
+                                    jeu->tabHabitations[i].nbHabitant -= 40;
+                                    jeu->tabChateau[numChateau].quantitedistri -= 40;
+                                    jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue -= 40;
+                                    jeu->tabCentrale[numCentrale].quantitedistri -= 40;
+                                    jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] -= 40;
+                                    break;
+                                }
+                                case MAISON : {
+                                    jeu->tabHabitations[i].nbHabitant -= 50;
+                                    jeu->nbHabitants -= 50;
+                                    jeu->tabChateau[numChateau].quantitedistri -= 50;
+                                    jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue -= 50;
+                                    //jeu->tabCentrale[numCentrale].quantitedistri -= 50;
+                                    jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] -= 50;
+
+                                    break;
+                                }
+                                case IMMEUBLE : {
+                                    jeu->nbHabitants -= 900;
+                                    jeu->tabHabitations[i].nbHabitant -= 900;
+                                    jeu->tabCentrale[numCentrale].quantitedistri -= 900;
+                                    jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] -= 900;
+                                    jeu->tabChateau[numChateau].quantitedistri -= 900;
+                                    jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue -= 900;
+
+                                    break;
+                                }
+
+                            }
+                            int caseBatx = jeu->tabHabitations[i].caseX;
+                            int caseBaty = jeu->tabHabitations[i].caseY;
+                            for (int j = 0; j < 3; j++) {
+                                jeu->map[caseBatx - 1][caseBaty - 1 + j].type--;
+                                jeu->map[caseBatx][caseBaty - 1 + j].type--;
+                                jeu->map[caseBatx + 1][caseBaty - 1 + j].type--;
+                            }
+                        }
+                    }
+                }
+            } else jeu->tabHabitations[i].evolution = 0;
         }
+            for (int i = 0; i < jeu->nbChateau; i++) {
+                int somme = 0;
+                for (int j = 0; j < jeu->nbMaisons; j++) {
+                    somme += jeu->tabChateau[i].maisonRelie[j].quantiteDistribue;
+                }
+                jeu->tabChateau[i].quantitedistri = somme;
+                somme = 0;
+            }
+            dessinerToolbox(jeu);
+            dessinerNiveau(smallFont, font, &jeu);
     }
 
-    for (int i = 0; i < jeu->nbChateau; i++) {
-        int somme = 0;
-        for (int j = 0; j < jeu->nbMaisons; j++) {
-            somme += jeu->tabChateau[i].maisonRelie[j].quantiteDistribue;
+
+
+
+    if(jeu->modeJeu == CAPITALISTE){
+        for (int i = 0; i < jeu->nbMaisons; i++) {
+            int evolution = determinerDistanceMaison(&jeu, i);
+            if (jeu->time[1].secondes - jeu->tabHabitations[i].tempsEvolution == 15) {
+                int numChateau = capaciteEau(jeu, i);
+                int numCentrale = capaciteElec(&jeu, i);
+                if (numChateau != -1) {
+                    jeu->tabHabitations[i].alimenteeEau = 1;
+                } else jeu->tabHabitations[i].alimenteeEau = 0;
+                if (numCentrale != -1) {
+                    jeu->tabHabitations[i].alimenteeElec = 1;
+                } else {
+                    jeu->tabHabitations[i].alimenteeElec = 0;
+                }
+                jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
+                if (jeu->tabHabitations[i].evolution == 0) {
+                    if (jeu->tabHabitations[i].type != GRATTE_CIEL) {
+                        jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
+                        jeu->tabHabitations[i].type++;
+                        jeu->tabHabitations[i].provenanceElec = numCentrale;
+                        switch (jeu->tabHabitations[i].type) {
+                            case CABANE : {
+                                jeu->nbHabitants += 10;
+                                jeu->tabHabitations[i].nbHabitant += 10;
+                                jeu->tabCentrale[numCentrale].quantitedistri += 10;
+                                jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] += 10;
+                                jeu->tabChateau[numChateau].quantitedistri += 10;
+                                jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue += 10;
+                                break;
+                            }
+                            case MAISON : {
+                                jeu->tabHabitations[i].nbHabitant += 40;
+                                jeu->nbHabitants += 40;
+                                jeu->tabCentrale[numCentrale].quantitedistri += 40;
+                                jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] += 40;
+                                jeu->tabChateau[numChateau].quantitedistri += 40;
+                                jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue += 40;
+
+                                break;
+                            }
+                            case IMMEUBLE : {
+                                jeu->nbHabitants += 50;
+                                jeu->tabHabitations[i].nbHabitant += 50;
+                                jeu->tabCentrale[numCentrale].quantitedistri += 50;
+                                jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] += 50;
+                                jeu->tabChateau[numChateau].quantitedistri += 50;
+                                jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue += 50;
+
+                                break;
+                            }
+                            case GRATTE_CIEL : {
+                                jeu->nbHabitants += 900;
+                                jeu->tabHabitations[i].nbHabitant += 900;
+                                jeu->tabCentrale[numCentrale].quantitedistri += 900;
+                                jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] += 900;
+                                jeu->tabChateau[numChateau].quantitedistri += 900;
+                                jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue += 900;
+
+                                break;
+                            }
+                        }
+                        jeu->argent += 10 * jeu->tabHabitations[i].nbHabitant;
+                        int caseBatx = jeu->tabHabitations[i].caseX;
+                        int caseBaty = jeu->tabHabitations[i].caseY;
+                        for (int j = 0; j < 3; j++) {
+                            jeu->map[caseBatx - 1][caseBaty - 1 + j].type++;
+                            jeu->map[caseBatx][caseBaty - 1 + j].type++;
+                            jeu->map[caseBatx + 1][caseBaty - 1 + j].type++;
+                        }
+                    } else if (jeu->tabHabitations[i].type == GRATTE_CIEL) {
+
+                        int numChateau2 = capaciteEau(jeu, i);
+                        int numCentrale2 = capaciteElec(&jeu, i);
+
+                        if (numChateau2 != -1) {
+                            jeu->tabHabitations[i].alimenteeEau = 1;
+                        } else jeu->tabHabitations[i].alimenteeEau = 0;
+                        if (numCentrale2 != -1) {
+                            jeu->tabHabitations[i].alimenteeElec = 1;
+                        } else {
+                            jeu->tabHabitations[i].alimenteeElec = 0;
+
+                        }
+                        if((jeu->tabHabitations[i].evolution == 0 && jeu->tabHabitations[i].alimenteeElec == 1  && jeu->tabHabitations[i].alimenteeEau == 0) || (jeu->tabHabitations[i].evolution == 0 && jeu->tabHabitations[i].alimenteeElec == 0  && jeu->tabHabitations[i].alimenteeEau == 1) || (jeu->tabHabitations[i].evolution == 0 && jeu->tabHabitations[i].alimenteeElec == 0  && jeu->tabHabitations[i].alimenteeEau == 0)) {
+                            if (jeu->tabHabitations[i].type != TERRAIN) {
+                                jeu->tabHabitations[i].type--;
+                                int numChateau3 = capaciteEau(jeu, i);
+                                int numCentrale3= capaciteElec(&jeu, i);
+                                if (numChateau3 != -1) {
+                                    jeu->tabHabitations[i].alimenteeEau = 1;
+                                } else jeu->tabHabitations[i].alimenteeEau = 0;
+                                if (numCentrale3 != -1) {
+                                    jeu->tabHabitations[i].alimenteeElec = 1;
+                                } else {
+                                    jeu->tabHabitations[i].alimenteeElec = 0;
+
+                                }
+                                jeu->tabHabitations[i].provenanceElec =numChateau3;
+                                jeu->tabCentrale[numChateau3].quantiteDistribueMaisonN[i]= jeu->tabHabitations[i].nbHabitant;
+                                jeu->tabCentrale[numChateau3].quantitedistri= jeu->tabHabitations[i].nbHabitant;
+
+                                if (jeu->tabHabitations[i].alimenteeElec == 1 && jeu->tabHabitations[i].alimenteeEau == 1) {
+                                    jeu->tabHabitations[i].type++;
+                                }
+                                else if (jeu->tabHabitations[i].alimenteeElec != 1 && jeu->tabHabitations[i].alimenteeEau != 1) {
+
+                                    jeu->tabHabitations[i].tempsEvolution = jeu->time[1].secondes;
+                                    jeu->tabHabitations[i].provenanceElec = numCentrale;
+                                    switch (jeu->tabHabitations[i].type) {
+                                        case TERRAIN : {
+                                            jeu->nbHabitants -= 10;
+                                            jeu->tabHabitations[i].nbHabitant -= 10;
+                                            jeu->tabCentrale[numCentrale].quantitedistri -= 10;
+                                            jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] -= 10;
+                                            jeu->tabChateau[numChateau].quantitedistri -= 10;
+                                            jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue -= 10;
+                                            break;
+                                        }
+                                        case CABANE : {
+                                            jeu->nbHabitants -= 40;
+                                            jeu->tabHabitations[i].nbHabitant -= 40;
+                                            jeu->tabCentrale[numCentrale].quantitedistri -= 40;
+                                            jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] -= 40;
+                                            jeu->tabChateau[numChateau].quantitedistri -= 40;
+                                            jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue -= 40;
+                                            break;
+                                        }
+                                        case MAISON : {
+                                            jeu->tabHabitations[i].nbHabitant -= 50;
+                                            jeu->nbHabitants -= 50;
+                                            jeu->tabCentrale[numCentrale].quantitedistri -= 50;
+                                            jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] -= 50;
+                                            jeu->tabChateau[numChateau].quantitedistri -= 50;
+                                            jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue -= 50;
+
+                                            break;
+                                        }
+                                        case IMMEUBLE : {
+                                            jeu->nbHabitants -= 900;
+                                            jeu->tabHabitations[i].nbHabitant -= 900;
+                                            jeu->tabCentrale[numCentrale].quantitedistri -= 900;
+                                            jeu->tabCentrale[numCentrale].quantiteDistribueMaisonN[i] -= 900;
+                                            jeu->tabChateau[numChateau].quantitedistri -= 900;
+                                            jeu->tabChateau[numChateau].maisonRelie[i].quantiteDistribue -= 900;
+
+                                            break;
+                                        }
+
+                                    }
+                                    int caseBatx = jeu->tabHabitations[i].caseX;
+                                    int caseBaty = jeu->tabHabitations[i].caseY;
+                                    for (int j = 0; j < 3; j++) {
+                                        jeu->map[caseBatx - 1][caseBaty - 1 + j].type--;
+                                        jeu->map[caseBatx][caseBaty - 1 + j].type--;
+                                        jeu->map[caseBatx + 1][caseBaty - 1 + j].type--;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (int j = 0; j < jeu->nbChateau; j++) {
+                    if (jeu->tabChateau[j].maisonRelie[i].quantiteDistribue != 0) {
+                        for (int k = 0; k < jeu->tabHabitations[i].fileEau; k++) {
+                            if (j == jeu->tabHabitations[i].filePrioriteEau[k]) {
+                                if (jeu->tabChateau[j].maisonRelie[i].quantiteDistribue ==
+                                    jeu->tabHabitations[i].nbHabitant) {
+                                    j = jeu->nbChateau;
+                                    break;
+                                } else {
+                                    break;
+                                }
+                            } else {
+                                if (jeu->tabChateau[j].maisonRelie[i].quantiteDistribue +
+                                    jeu->tabChateau[jeu->tabHabitations[i].filePrioriteEau[k]].quantitedistri <=
+                                    CAPACITE) {
+                                    jeu->tabChateau[jeu->tabHabitations[i].filePrioriteEau[k]].maisonRelie[i].quantiteDistribue += jeu->tabChateau[j].maisonRelie[i].quantiteDistribue;
+                                    jeu->tabChateau[j].quantitedistri -= jeu->tabChateau[j].maisonRelie[i].quantiteDistribue;
+                                    jeu->tabChateau[jeu->tabHabitations[i].filePrioriteEau[k]].quantitedistri += jeu->tabChateau[j].maisonRelie[i].quantiteDistribue;
+                                    jeu->tabChateau[j].maisonRelie[i].quantiteDistribue = 0;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
-        jeu->tabChateau[i].quantitedistri = somme;
-        somme = 0;
+
+
+        for (int i = 0; i < jeu->nbChateau; i++) {
+            int somme = 0;
+            for (int j = 0; j < jeu->nbMaisons; j++) {
+                somme += jeu->tabChateau[i].maisonRelie[j].quantiteDistribue;
+            }
+            jeu->tabChateau[i].quantitedistri = somme;
+            somme = 0;
+        }
+        dessinerToolbox(jeu);
+        dessinerNiveau(smallFont, font, &jeu);
     }
-    dessinerToolbox(jeu);
-    dessinerNiveau(smallFont, font, &jeu);
 
-    /*for(int i = 0 ; i < jeu->nbMaisons ; i++) {
-        int p = 0 ;
-        al_draw_textf(smallFont, al_map_rgb(0, 0, 255), jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].x, jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].y - 50 + 20*j, 0, "%d", jeu->tabHabitations[i].fileRelie[p]) ;
 
-        al_draw_textf(smallFont, al_map_rgb(0, 255, 0), jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].x - 50, jeu->map[jeu->tabHabitations[i].caseX][jeu->tabHabitations[i].caseY].y - 50, 0, "%d", jeu->tabHabitations[i].distance) ;
-    }*/
 }
 
 void dessinerNiveau(ALLEGRO_FONT* smallFont, ALLEGRO_FONT* font, Jeu** jeu) {
@@ -1328,6 +1588,7 @@ bool dejaMis(Jeu** jeu, int quelleMaison, int quelChateau, int chatORCent) {
         return true;
     }
 }
+
 
 
 int capaciteEau(Jeu* jeu, int quelleMaison){
