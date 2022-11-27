@@ -12,7 +12,7 @@
 #define LIGNE 35
 #define MAX 20
 #define PI 3.14159265358979323846
-#define MAPX 290
+#define MAPX 270
 #define MAPY 40
 #define CASEX_X (float)26
 #define ARGENTDEP 500000000
@@ -24,6 +24,11 @@ enum Habitations {TERRAIN, CABANE, MAISON, IMMEUBLE, GRATTE_CIEL, CONSTRUCTION};
 enum Niveau{ROUTIER, EAU, ELECTRICITE};
 enum DirectionRoute{HAUT, BAS, DROITE, GAUCHE};
 
+typedef struct{
+    int distance;
+    int quantiteDistribue;
+    int capacite;
+}Matrice;
 
 typedef struct{
     float dixieme ;
@@ -39,19 +44,22 @@ typedef struct{
 typedef struct {
     int quantitedistri,type, tempsChateau;
     int caseX, caseY;
+    Matrice maisonRelie[MAX] ;
     ALLEGRO_COLOR couleur ;
 }Chateau;
 
 typedef struct {
-    int quantitedistri,type, tempsCentrale, electricite, capaciteElec;
+    int quantitedistri,type, tempsCentrale;
     int caseX, caseY;
+    int quantiteDistribueMaisonN[MAX] ;
+    ALLEGRO_COLOR couleur ;
 }Centralelectrique;
 
 typedef struct{
-    int caseX, caseY, type, tempsEvolution, evolution, distance, nbHabitant, alimenteeEau, alimenteeElec;
-    int filePrioriteDistance[10] ;
+    int caseX, caseY, type, tempsEvolution, evolution, distance, nbHabitant, alimenteeEau, alimenteeElec,provenanceElec;
+    int fileRelie[10] ;
     int filePrioriteEau[10] ;
-    int fileLongueur ;
+    int fileEau, fileElec ;
 }Habitation;
 
 typedef struct{
@@ -59,12 +67,6 @@ typedef struct{
     float mapX, oldMapX, mapY, oldMapY ;
     float CaseX_X, oldCaseX_X ;
 }Zoom;
-
-typedef struct{
-    int distance;
-    int quantiteDistribue;
-    int capacite;
-}Matricechat;
 
 typedef struct {
     float width, height, toolboxX ;       // Info écran
@@ -89,7 +91,8 @@ typedef struct {
     Zoom zoom ;
 
     //Matrice chateau d'eau
-    Matricechat** matrice;
+    Matrice** matrice;
+    int tailleMatriceM, tailleMatriceC ;
 
     //BITMAP
     Bitmap icone[NBICONE]  ;
@@ -116,8 +119,9 @@ void determinerDistanceCentrale(Jeu** jeu, int quelChateau) ;
 int determinerCaseX(int mouse_x, int mapX, int caseX_X) ;
 int determinerCaseY(int mouse_y, int mapY, int caseX_X) ;
 int determinerDistanceMaison(Jeu** jeu,int quelleMaison) ;
-int prioDistance (Jeu *jeu, int quelleMaison);
 int capaciteEau(Jeu* jeu, int quelleMaison);
+int capaciteElec(Jeu** jeu, int quelleMaison) ;
+
 
 bool verifierTerrain3_3v2(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 bool verifierTerrain4_6(Jeu** jeu, int caseSourisX, int caseSourisY) ;
@@ -125,7 +129,7 @@ bool routeProximiteMaison(Jeu **jeu, int caseSourisX, int caseSourisY);
 bool routeProximiteCentrale(Jeu** jeu, int caseSourisX, int caseSourisY) ;
 bool verifierPlacementTerrain(Jeu* jeu, int caseX, int caseY) ;
 bool verifierPlacementCentrale(Jeu* jeu, int caseX, int caseY, int type) ;
-bool chateauDejaMis(Jeu** jeu, int quelleMaison, int quelChateau)  ;
+bool dejaMis(Jeu** jeu, int quelleMaison, int quelChateau, int chatORCent)  ;
 
 
 //Affichage de la route

@@ -10,11 +10,19 @@ void initBitmapDeco(Menu* menu) {
 
     menu->deco[2].width = 307 ;
     menu->deco[2].height = 305 ;
+
     menu->deco[3].width = 330 ;
     menu->deco[3].height = 322 ;
 
-    menu->deco[4].width = 1024 ;
-    menu->deco[4].height = 767 ;
+    menu->deco[4].width = 320 ;
+    menu->deco[4].height = 310 ;
+
+    menu->deco[5].width = 316 ;
+    menu->deco[5].height = 314 ;
+
+
+    menu->deco[6].width = 1024 ;
+    menu->deco[6].height = 767 ;
 }
 
 void dessinerMenu(ALLEGRO_FONT* font, int mouse_x, int mouse_y) {
@@ -80,15 +88,17 @@ void dessinerEquipe(Menu* menu, ALLEGRO_FONT* font, float width, float height, f
     }
 
 
-    al_draw_scaled_bitmap(menu->deco[2].image, 0, 0, menu->deco[2].width, menu->deco[2].height, 406, 300, 2*282 /3, 4*341 / 7, 0);
+    al_draw_scaled_bitmap(menu->deco[2].image, 0, 0, menu->deco[2].width, menu->deco[2].height, 456, 300, 2*282 /3, 4*341 / 7, 0);
     al_draw_scaled_bitmap(menu->deco[3].image, 0, 0, menu->deco[3].width, menu->deco[3].height, 1006, 610, 2*282 /3, 4*341 /7, 0);
+    al_draw_scaled_bitmap(menu->deco[4].image, 0, 0, menu->deco[4].width, menu->deco[4].height, 1006, 300, 2*282 /3, 4*341 / 7, 0);
+    al_draw_scaled_bitmap(menu->deco[5].image, 0, 0, menu->deco[5].width, menu->deco[5].height, 456, 610, 2*282 /3, 4*341 /7, 0);
 
     al_draw_scaled_bitmap(menu->deco[0].image, 0, 0, menu->deco[0].width, menu->deco[0].height, 160, 260, 3* menu->deco[0].width / 5, 3 * menu->deco[0].height /5, 0);
     al_draw_scaled_bitmap(menu->deco[1].image, 0, 0, menu->deco[1].width, menu->deco[1].height, 1370, 200, 3 * menu->deco[1].width / 5, 3 * menu->deco[1].height /5, 1);
 
-    al_draw_text(font, al_map_rgb(0, 0, 0), 500, 230, ALLEGRO_ALIGN_CENTER, "Fares");
+    al_draw_text(font, al_map_rgb(0, 0, 0), 550, 230, ALLEGRO_ALIGN_CENTER, "Fares");
     al_draw_text(font, al_map_rgb(0, 0, 0), 1100, 230, ALLEGRO_ALIGN_CENTER, "Lisa");
-    al_draw_text(font, al_map_rgb(0, 0, 0), 500, 530, ALLEGRO_ALIGN_CENTER, "Eva");
+    al_draw_text(font, al_map_rgb(0, 0, 0), 550, 530, ALLEGRO_ALIGN_CENTER, "Eva");
     al_draw_text(font, al_map_rgb(0, 0, 0), 1100, 530, ALLEGRO_ALIGN_CENTER, "Valentin");
 }
 
@@ -118,8 +128,5 @@ void dessinerRegles(Menu* menu, ALLEGRO_FONT* font, ALLEGRO_FONT* smallFont, flo
     al_draw_scaled_bitmap(gratte, 0, 0, 150, 371, 1244, 550, 120, 156, 0) ;
 
     al_draw_text(font, al_map_rgb(20, 20, 20), 850, 770, ALLEGRO_ALIGN_CENTER, "Bonne Chance !") ;
-
-
-
 
 }

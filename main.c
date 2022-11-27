@@ -48,7 +48,10 @@ int main() {
     menu.deco[1].image = al_load_bitmap("../Bitmap/Menu/bat4.png")  ;
     menu.deco[2].image = al_load_bitmap("../Bitmap/Photo/fares.png");
     menu.deco[3].image = al_load_bitmap("../Bitmap/Photo/valentin.png");
-    menu.deco[4].image = al_load_bitmap("../Bitmap/map.png");
+    menu.deco[4].image = al_load_bitmap("../Bitmap/Photo/lisa.png");
+    menu.deco[5].image = al_load_bitmap("../Bitmap/Photo/eva.png");
+
+    menu.deco[6].image = al_load_bitmap("../Bitmap/map.png");
 
 
     jeu.icone[0].image = al_load_bitmap("../Bitmap/Icone/habitant.png");
@@ -66,8 +69,6 @@ int main() {
     jeu.icone[10].image = al_load_bitmap("../Bitmap/Icone/CaptureIconeEcole-removebg-preview.png");
     jeu.icone[11].image = al_load_bitmap("../Bitmap/Icone/PetitEcolier3-removebg-preview.png");
 
-
-
     jeu.route[0].image =  al_load_bitmap("../Bitmap/Batiments/Route0.png");
     jeu.route[1].image =  al_load_bitmap("../Bitmap/Batiments/Route1.png");
     jeu.route[2].image =  al_load_bitmap("../Bitmap/Batiments/Route2.png");
@@ -84,7 +85,8 @@ int main() {
     jeu.centrale[1].image = al_load_bitmap("../Bitmap/Batiments/centrale.png") ;
     jeu.centrale[2].image = al_load_bitmap("../Bitmap/Batiments/terrainRoute.png") ;
 
-
+    ALLEGRO_BITMAP* staline = al_load_bitmap("../Bitmap/Menu/stalion.jpg") ;
+    ALLEGRO_BITMAP* kennedy = al_load_bitmap("../Bitmap/Menu/kennion.jpg") ;
 
 
 
@@ -262,27 +264,39 @@ int main() {
                 }
             }
             if (draw) {
-                al_draw_scaled_bitmap(menu.deco[4].image, 0, 0, 1704, 960, 0, 0, width, height, 0);
+                al_draw_scaled_bitmap(menu.deco[6].image, 0, 0, 1704, 960, 0, 0, width, height, 0);
                 dessinerJeu(smallfont, font, &jeu);
-                if(jeu.mode  == true){
+                if(jeu.mode  == true) {
+                    al_draw_filled_rectangle(0, 0, width, height, al_map_rgba(150, 150, 150, 150));
+                    al_draw_filled_rectangle(550, 150, 1150, 400, al_map_rgb(67, 18, 14));
+                    al_draw_rectangle(550, 150, 1150, 400, al_map_rgb(235, 166, 160), 5);
+                    al_draw_filled_triangle(980, 160, 750, 390, 980, 390, al_map_rgb(237, 28, 36));
+                    al_draw_filled_triangle(560, 390, 740, 390, 740, 160, al_map_rgb(235, 166, 160));
+                    al_draw_filled_triangle(740, 390, 740, 160, 970, 160, al_map_rgb(235, 166, 160));
+                    al_draw_filled_triangle(650, 250, 560, 160, 970, 160, al_map_rgb(67, 18, 14));
+                    al_draw_scaled_bitmap(staline, 0, 0, 463, 647, 980, 160, 160, 230, 1);
 
-                    al_draw_filled_rectangle(750, 400, 1050,600 , al_map_rgb(250,0,0));
+                    al_draw_filled_rectangle(550, 500, 1150, 750, al_map_rgb(143, 180, 206));
+                    al_draw_rectangle(550, 500, 1150, 750, al_map_rgb(255, 255, 255), 5);
+                    al_draw_filled_rectangle(720, 510, 730, 740, al_map_rgb(164, 8, 30));
+                    al_draw_filled_triangle(730, 510, 730, 740, 850, 740, al_map_rgb(164, 8, 30));
+                    al_draw_filled_triangle(740, 510, 860, 740, 950, 740, al_map_rgb(44, 8, 130));
+                    al_draw_scaled_bitmap(kennedy, 0, 0, 800, 1135, 560, 510, 160, 230, 0);
 
-                    al_draw_filled_rectangle(750,100,1050, 300, al_map_rgb(250,0,0) );
-
-                    if(jeu.mouseIsPressed == true){
-                        if(jeu.mouse_x < 1050 && jeu.mouse_x > 750 && jeu.mouse_y < 600 && jeu.mouse_y > 400 ){
+                    if (jeu.mouse_x < 1150 && jeu.mouse_x > 550 && jeu.mouse_y < 400 && jeu.mouse_y > 150) {
+                        al_draw_rectangle(550, 150, 1150, 400, al_map_rgb(237, 28, 36), 5);
+                        if(jeu.mouseIsPressed == true) {
                             jeu.mode = false;
                             jeu.modeCommuniste = 1;
                         }
-                        if(jeu.mouse_x < 1050 && jeu.mouse_x > 750 && jeu.mouse_y < 300 && jeu.mouse_y > 100){
+                    }
+                    if (jeu.mouse_x < 1150 && jeu.mouse_x > 550 && jeu.mouse_y < 750 && jeu.mouse_y > 500) {
+                        al_draw_rectangle(550, 500, 1150, 750, al_map_rgb(44, 8, 130), 5);
+                        if(jeu.mouseIsPressed == true) {
                             jeu.mode = false;
                             jeu.modeCapitaliste = 1;
-
                         }
-
                     }
-
                 }
 
 
